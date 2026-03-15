@@ -5,6 +5,7 @@ import {
   Briefcase,
   CalendarDays,
   CheckCircle2,
+  ChevronRight,
   FileText,
   Mail,
   MapPin,
@@ -13,6 +14,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
+  Star,
   TrendingUp,
   X,
 } from 'lucide-react';
@@ -133,6 +135,13 @@ const seoKeywords = [
   'Process Improvement Consulting',
 ];
 
+const metrics = [
+  { value: '6+', label: 'Service Areas' },
+  { value: 'End-to-End', label: 'Delivery Support' },
+  { value: 'SMEs & Professionals', label: 'Client Focus' },
+  { value: 'UK Based', label: 'Business Presence' },
+];
+
 export default function ArcklenConsultingWebsite() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -141,9 +150,7 @@ export default function ArcklenConsultingWebsite() {
       { label: 'Home', href: '#home' },
       { label: 'About', href: '#about' },
       { label: 'Services', href: '#services' },
-      { label: 'Industries', href: '#industries' },
       { label: 'Case Studies', href: '#case-studies' },
-      { label: 'Testimonials', href: '#testimonials' },
       { label: 'Insights', href: '#insights' },
       { label: 'Contact', href: '#contact' },
     ],
@@ -152,33 +159,51 @@ export default function ArcklenConsultingWebsite() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white" id="home">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
+      <div className="border-b border-white/10 bg-slate-950">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
+            <Sparkles className="h-3.5 w-3.5" />
+            Premium consulting presence for modern businesses
+          </div>
+          <div className="hidden items-center gap-6 md:flex">
+            <span className="inline-flex items-center gap-2">
+              <Mail className="h-4 w-4 text-slate-500" />
+              Business email can be added
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Phone className="h-4 w-4 text-slate-500" />
+              Business phone can be added
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <a href="#home" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg">
-              <img
-                src="/Arcklen Group Limited logo.png"
-                alt="Arcklen Group Logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
+          <a href="#home" className="flex items-center gap-4">
+            <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
             <div>
-              <p className="text-sm font-semibold tracking-wide">Arcklen Group Limited</p>
-              <p className="text-xs text-slate-400">Consulting • Strategy • Business Analysis</p>
+              <p className="text-base font-semibold tracking-[0.14em] text-white">Arcklen Group Limited</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Consulting • Strategy • Business Analysis</p>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-6 lg:flex">
+          <nav className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
-              <a key={item.label} href={item.href} className="text-sm text-slate-300 transition hover:text-white">
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-sm font-medium text-slate-300 transition hover:text-white"
+              >
                 {item.label}
               </a>
             ))}
             <a
               href="#contact"
-              className="rounded-2xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
             >
-              Let’s Talk
+              Book a Consultation
+              <ArrowRight className="h-4 w-4" />
             </a>
           </nav>
 
@@ -192,7 +217,7 @@ export default function ArcklenConsultingWebsite() {
         </div>
 
         {mobileOpen && (
-          <div className="border-t border-white/10 px-6 py-4 lg:hidden">
+          <div className="border-t border-white/10 px-6 py-5 lg:hidden">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <a
@@ -204,86 +229,122 @@ export default function ArcklenConsultingWebsite() {
                   {item.label}
                 </a>
               ))}
+              <a
+                href="#contact"
+                className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900"
+                onClick={() => setMobileOpen(false)}
+              >
+                Book a Consultation
+              </a>
             </div>
           </div>
         )}
       </header>
 
-      <section className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-emerald-500/20" />
-        <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
-        
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_30%)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-2 lg:px-8 lg:py-28">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
-              Full Business Website Concept
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-28 lg:pt-24">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
+              <Star className="h-4 w-4 text-emerald-300" />
+              Premium consulting website experience
             </div>
-            <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Building credible business presence with clarity, structure, and consulting value.
+
+            <h1 className="mt-7 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Make your business look trusted, premium, and impossible to ignore.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Arcklen Group Limited is a modern consulting brand focused on business analysis, transformation support,
-              strategic advisory, and professional services for organisations and individuals.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+              Arcklen Group Limited helps businesses and professionals communicate clarity, authority, and execution
+              strength through consulting, analysis, transformation support, and strategic advisory.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap gap-4">
               <a
-                href="#services"
-                className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:scale-[1.02]"
+                href="#contact"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
               >
-                Explore Services
+                Start a Project
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="#contact"
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+                href="#case-studies"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
-                Contact Us
+                View Case Studies
+                <ChevronRight className="h-4 w-4" />
               </a>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-10 flex flex-wrap gap-3">
               {highlights.map((item) => (
                 <span
                   key={item}
-                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200"
+                  className="rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 text-sm text-slate-200"
                 >
                   {item}
                 </span>
               ))}
             </div>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+              {[
+                'Professional consulting presence',
+                'Lead-generation focused layout',
+                'Built to scale with your brand',
+              ].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                  <p className="text-sm leading-6 text-slate-300">{item}</p>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="lg:justify-self-end"
+            transition={{ duration: 0.65, delay: 0.08 }}
+            className="lg:pl-6"
           >
-            <div className="rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl">
-              <div className="rounded-[22px] bg-slate-900/80 p-6">
-                <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="rounded-[32px] border border-white/10 bg-white/[0.07] p-4 shadow-[0_40px_120px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
+              <div className="rounded-[26px] border border-white/10 bg-slate-950/90 p-6">
+                <div className="mb-6 flex items-center justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
-                    <p className="text-sm text-slate-400">Business Focus</p>
-                    <h2 className="text-2xl font-semibold">Built for growth</h2>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Business Focus</p>
+                    <h2 className="mt-2 text-2xl font-semibold text-white">Built for growth and trust</h2>
                   </div>
-                  <div className="rounded-2xl bg-emerald-400/15 px-3 py-2 text-sm text-emerald-300">Growth Ready</div>
+                  <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
+                    Premium Positioning
+                  </div>
                 </div>
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   {services.slice(0, 4).map((service, index) => {
                     const Icon = serviceIconMap[index % serviceIconMap.length];
                     return (
-                      <div key={service.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <div className="mb-3 inline-flex rounded-xl border border-white/10 bg-slate-950/80 p-2">
-                          <Icon className="h-4 w-4 text-emerald-300" />
+                      <div
+                        key={service.title}
+                        className="group rounded-[22px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.07]"
+                      >
+                        <div className="mb-4 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
+                          <Icon className="h-5 w-5 text-emerald-300" />
                         </div>
-                        <h3 className="text-base font-semibold">{service.title}</h3>
+                        <h3 className="text-base font-semibold text-white">{service.title}</h3>
                         <p className="mt-2 text-sm leading-6 text-slate-300">{service.desc}</p>
                       </div>
                     );
                   })}
+                </div>
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                  {metrics.slice(0, 3).map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-5 text-center">
+                      <p className="text-lg font-semibold text-white">{item.value}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-500">{item.label}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -291,47 +352,71 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-6 py-10 lg:grid-cols-4 lg:px-8">
-        {[
-          { value: '6+', label: 'Service Areas' },
-          { value: 'End-to-End', label: 'Delivery Support' },
-          { value: 'SMEs & Professionals', label: 'Client Focus' },
-          { value: 'UK Based', label: 'Business Presence' },
-        ].map((item) => (
-          <div key={item.label} className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-center shadow-lg">
-            <p className="text-2xl font-bold text-white">{item.value}</p>
-            <p className="mt-2 text-sm text-slate-400">{item.label}</p>
-          </div>
-        ))}
+      <section className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+        <div className="grid gap-4 lg:grid-cols-4">
+          {metrics.map((item) => (
+            <div
+              key={item.label}
+              className="rounded-[26px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-6 shadow-[0_15px_40px_rgba(15,23,42,0.22)]"
+            >
+              <p className="text-3xl font-semibold text-white">{item.value}</p>
+              <p className="mt-2 text-sm uppercase tracking-[0.22em] text-slate-400">{item.label}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section id="about" className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-2 lg:px-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">About Us</p>
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">A consulting brand with practical business value</h2>
-            <p className="mt-5 leading-8 text-slate-300">
-              Arcklen Group Limited is positioned as a consulting business serving organisations and individuals who need
-              support with analysis, improvement, documentation, change initiatives, and structured execution.
+      <section className="border-y border-white/10 bg-white/[0.03]">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Trusted Positioning</p>
+              <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Designed to feel credible from the first glance</h2>
+            </div>
+            <p className="max-w-2xl text-slate-300">
+              Your website should not feel like a starter template. It should communicate confidence, clarity, and
+              commercial value before the first call even happens.
             </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              The brand is built to present a professional, modern, and trusted image while remaining flexible enough to
-              expand into a multi-service business over time.
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {clientLogos.map((logo) => (
+              <div
+                key={logo}
+                className="rounded-[22px] border border-white/10 bg-slate-950/80 px-6 py-5 text-center text-base font-semibold tracking-wide text-slate-200 shadow-lg"
+              >
+                {logo}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About Arcklen</p>
+            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">A consulting brand built around clarity, trust, and execution</h2>
+            <p className="mt-5 leading-8 text-slate-300">
+              Arcklen Group Limited is positioned to serve organisations and individuals who need structure, business
+              insight, confident execution, and modern professional support. The brand is designed to feel premium,
+              commercially credible, and ready for long-term growth.
             </p>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-slate-900/70 p-8 shadow-xl">
-            <h3 className="text-2xl font-semibold">Why clients work with Arcklen</h3>
-            <div className="mt-5 space-y-4 text-slate-300">
+          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
+            <h3 className="text-2xl font-semibold text-white">Why clients work with Arcklen</h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {[
                 'Clear thinking that turns complex needs into actionable steps.',
                 'Strong business analysis foundations with delivery awareness.',
-                'Professional support for both organisations and individual clients.',
-                'Flexible service model that can grow with your brand and ambitions.',
+                'Professional support for organisations and individual clients.',
+                'A flexible service model that grows with your ambitions.',
               ].map((item) => (
-                <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                  <p>{item}</p>
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <p className="text-sm leading-7 text-slate-300">{item}</p>
                 </div>
               ))}
             </div>
@@ -339,12 +424,14 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section id="services" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">Services</p>
-          <h2 className="mt-3 text-3xl font-bold sm:text-4xl">What Arcklen can help with</h2>
-          <p className="mt-4 text-slate-300">
-            Flexible support for organisations and individuals looking for structure, insight, and delivery confidence.
+      <section id="services" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Services</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Premium services built around business value</h2>
+          </div>
+          <p className="max-w-2xl text-slate-300">
+            Clear service packaging, premium layout, and stronger visual hierarchy make your business look far more established and trustworthy.
           </p>
         </div>
 
@@ -354,62 +441,42 @@ export default function ArcklenConsultingWebsite() {
             return (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 18 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.35, delay: index * 0.06 }}
-                whileHover={{ y: -6 }}
-                className="rounded-[24px] border border-white/10 bg-white/5 p-6 shadow-lg"
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.35, delay: index * 0.05 }}
+                whileHover={{ y: -8 }}
+                className="group rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.22)] transition"
               >
-                <div className="mb-4 inline-flex rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+                <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
                   <Icon className="h-5 w-5 text-emerald-300" />
                 </div>
-                <h3 className="text-xl font-semibold">{service.title}</h3>
+                <h3 className="text-xl font-semibold text-white">{service.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-300">{service.desc}</p>
+                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/90">
+                  Learn more <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </div>
               </motion.div>
             );
           })}
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-300">Trusted By</p>
-              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Built to serve ambitious teams and professionals</h2>
-            </div>
-            <p className="max-w-2xl text-slate-300">
-              A strong brand presence supported by structured delivery, practical consulting support, and professional
-              coaching services.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {clientLogos.map((logo) => (
-              <div
-                key={logo}
-                className="rounded-[20px] border border-white/10 bg-slate-950/60 px-6 py-5 text-center text-lg font-semibold text-slate-200 shadow-lg"
-              >
-                {logo}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="industries" className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="industries" className="border-y border-white/10 bg-white/[0.03]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Industries</p>
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Sectors we can support</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Industries</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Sectors we can support</h2>
           </div>
-
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {industries.map((industry) => (
-              <div key={industry} className="rounded-[24px] border border-white/10 bg-slate-950/60 p-6 shadow-lg">
-                <h3 className="text-lg font-semibold">{industry}</h3>
+              <div
+                key={industry}
+                className="rounded-[26px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
+              >
+                <h3 className="text-lg font-semibold text-white">{industry}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-300">
-                  Tailored support designed around structure, clarity, documentation, and operational improvement.
+                  Tailored support designed around structure, documentation, operational improvement, and delivery confidence.
                 </p>
               </div>
             ))}
@@ -417,51 +484,44 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section id="founder" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8 shadow-xl">
-            <img src="/Arcklen Group Limited logo.png" alt="Founder" className="mb-4 w-20" />
-            <h3 className="text-2xl font-semibold">Founder</h3>
+      <section id="founder" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+            <div className="inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
+              <img src="/logo.png" alt="Founder" className="h-16 w-auto rounded-xl" />
+            </div>
+            <h3 className="mt-6 text-2xl font-semibold text-white">Founder</h3>
             <p className="mt-4 leading-8 text-slate-300">
-              Arcklen Group Limited is led by Nuel Okoloigwe, a Business Analyst and consulting professional focused on
-              helping organisations bring structure, clarity, and delivery confidence to business change and
-              transformation initiatives.
+              Arcklen Group Limited is led by Nuel Okoloigwe, a Business Analyst and consulting professional focused on helping organisations bring structure, clarity, and delivery confidence to business change and transformation initiatives.
             </p>
             <p className="mt-4 leading-8 text-slate-300">
-              With experience in financial services and consulting environments, the goal of Arcklen is to combine
-              practical business analysis with strategic thinking to support businesses and professionals navigating
-              complex problems.
+              With experience in financial services and consulting environments, the goal of Arcklen is to combine practical business analysis with strategic thinking to support businesses and professionals navigating complex problems.
             </p>
           </div>
           <div>
-            <h2 className="text-3xl font-bold">Leadership & Vision</h2>
-            <p className="mt-5 leading-8 text-slate-300">
-              Arcklen was created to become a trusted advisory brand that supports organisations with analysis,
-              documentation, change delivery, and strategic thinking while also helping professionals grow in their
-              careers.
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Leadership & Vision</p>
+            <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">A modern consulting presence that inspires confidence</h2>
+            <p className="mt-6 max-w-2xl leading-8 text-slate-300">
+              The strongest consulting websites do not just explain services. They communicate authority, premium positioning, and a sense of confidence that makes clients want to start the conversation.
             </p>
           </div>
         </div>
       </section>
 
-      <section id="case-studies" className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="case-studies" className="border-y border-white/10 bg-white/[0.03]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">Case Studies</p>
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Selected work and outcomes</h2>
-            <p className="mt-4 text-slate-300">
-              A consulting website needs proof of thinking. This section shows the kind of structured results Arcklen can
-              deliver.
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Case Studies</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Selected work and visible outcomes</h2>
           </div>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {caseStudies.map((item) => (
-              <div key={item.title} className="rounded-[24px] border border-white/10 bg-slate-950/60 p-6 shadow-lg">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Outcome</p>
-                <h3 className="mt-3 text-xl font-semibold">{item.title}</h3>
+              <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-300">Outcome</p>
+                <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
-                <div className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
+                <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
                   {item.result}
                 </div>
               </div>
@@ -470,18 +530,23 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section id="testimonials" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="testimonials" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">Testimonials</p>
-          <h2 className="mt-3 text-3xl font-bold sm:text-4xl">What clients say</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Testimonials</p>
+          <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">What clients say</h2>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {testimonials.map((item) => (
-            <div key={`${item.name}-${item.role}`} className="rounded-[24px] border border-white/10 bg-white/5 p-6 shadow-lg">
+            <div key={`${item.name}-${item.role}`} className="rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-xl">
+              <div className="mb-5 flex gap-1 text-emerald-300">
+                {[...Array(5)].map((_, index) => (
+                  <Star key={index} className="h-4 w-4 fill-current" />
+                ))}
+              </div>
               <p className="text-sm leading-7 text-slate-300">“{item.quote}”</p>
               <div className="mt-6 border-t border-white/10 pt-4">
-                <p className="font-semibold">{item.name}</p>
+                <p className="font-semibold text-white">{item.name}</p>
                 <p className="text-sm text-slate-400">{item.role}</p>
               </div>
             </div>
@@ -489,29 +554,28 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Book a Consultation</p>
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Make it easy for visitors to contact you</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Book a Consultation</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Make it effortless for clients to contact you</h2>
             <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-              This booking section can later connect to Calendly, Google Calendar, or a custom booking flow so prospects
-              can schedule calls directly.
+              The strongest business websites remove friction. Add your consultation booking flow here and turn website visits into real conversations.
             </p>
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8 shadow-xl">
-            <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl backdrop-blur-xl">
+            <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
               <CalendarDays className="h-6 w-6 text-emerald-300" />
             </div>
-            <h3 className="text-2xl font-semibold">Consultation Booking</h3>
+            <h3 className="text-2xl font-semibold text-white">Consultation Booking</h3>
             <p className="mt-3 leading-7 text-slate-300">
               Add your booking tool here to allow strategy calls, BA coaching sessions, and discovery meetings.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <button className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:scale-[1.02]">
+              <button className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                 Book Discovery Call
               </button>
-              <button className="rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                 View Availability
               </button>
             </div>
@@ -519,15 +583,14 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section className="border-y border-white/10 bg-white/[0.03]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">BA Interview Coaching</p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">BA Interview Coaching</p>
+              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
               <p className="mt-4 leading-8 text-slate-300">
-                Arcklen can also support aspiring and experienced Business Analysts with interview preparation,
-                confidence building, and stronger self-presentation.
+                Arcklen also supports aspiring and experienced Business Analysts with interview preparation, confidence building, and stronger self-presentation.
               </p>
               <div className="mt-6 space-y-4">
                 {coachingFeatures.map((feature) => (
@@ -538,8 +601,8 @@ export default function ArcklenConsultingWebsite() {
                 ))}
               </div>
             </div>
-            <div className="rounded-[28px] border border-white/10 bg-slate-950/60 p-8 shadow-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Ideal For</p>
+            <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-300">Ideal For</p>
               <div className="mt-5 grid gap-4">
                 {[
                   'Entry-level BA candidates',
@@ -547,7 +610,7 @@ export default function ArcklenConsultingWebsite() {
                   'Senior BAs preparing for interviews',
                   'Candidates needing mock interview support',
                 ].map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-300">
+                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-slate-300">
                     {item}
                   </div>
                 ))}
@@ -557,55 +620,48 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section id="insights" className="border-y border-white/10 bg-white/5">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Insights</p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Articles and business insights</h2>
-              <p className="mt-4 text-slate-300">
-                A section for blog posts, educational content, and thought leadership pieces that strengthen your online
-                presence.
-              </p>
-            </div>
-            <a href="#contact" className="text-sm font-semibold text-white underline underline-offset-4">
-              Discuss content strategy
-            </a>
+      <section id="insights" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Insights</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Thought leadership that strengthens your brand</h2>
           </div>
+          <a href="#contact" className="text-sm font-semibold text-white underline underline-offset-4">
+            Discuss content strategy
+          </a>
+        </div>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {insights.map((item) => (
-              <div key={item.title} className="rounded-[24px] border border-white/10 bg-slate-950/60 p-6 shadow-lg">
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
-                  {item.tag}
-                </span>
-                <h3 className="mt-4 text-xl font-semibold">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
-                <button className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
-                  Read more <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          {insights.map((item) => (
+            <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-xl">
+              <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-300">
+                {item.tag}
+              </span>
+              <h3 className="mt-5 text-xl font-semibold text-white">{item.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
+              <button className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
+                Read more <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-2xl">
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">SEO Ready Structure</p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Built with search visibility in mind</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">SEO Ready Structure</p>
+              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Built to rank, position, and convert</h2>
               <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-                The website now includes clear service sections, founder credibility, case studies, coaching offers, and
-                searchable business themes that help position Arcklen better online.
+                Clear services, founder credibility, case studies, coaching offers, and structured content all work together to position Arcklen more strongly online.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {seoKeywords.map((keyword) => (
                 <div
                   key={keyword}
-                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm text-slate-300"
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/75 p-4 text-sm text-slate-300"
                 >
                   <Search className="h-4 w-4 text-emerald-300" />
                   <span>{keyword}</span>
@@ -616,40 +672,39 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </section>
 
-      <section id="contact" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="rounded-[32px] border border-white/10 bg-gradient-to-r from-blue-600/20 to-emerald-500/20 p-8 shadow-2xl backdrop-blur">
+      <section id="contact" className="mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-8">
+        <div className="rounded-[36px] border border-white/10 bg-gradient-to-r from-blue-600/20 via-slate-900 to-emerald-500/20 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.45)] backdrop-blur-xl lg:p-10">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-200">Contact Us</p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Let’s build a stronger business presence</h2>
-              <p className="mt-4 max-w-xl text-slate-200">
-                This full website concept gives Arcklen a professional home online and can be expanded further with live
-                forms, booking, case studies, service pages, and a real blog.
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-200">Contact Us</p>
+              <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">Let’s build a stronger business presence</h2>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-slate-200">
+                This website is now designed to look premium, communicate trust, and feel commercially credible from the first impression.
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-white/10 bg-slate-950/70 p-6">
-              <p className="text-sm text-slate-400">Get in touch</p>
-              <div className="mt-5 space-y-4 text-slate-300">
+            <div className="rounded-[28px] border border-white/10 bg-slate-950/75 p-7 shadow-xl">
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Get in touch</p>
+              <div className="mt-6 space-y-5 text-slate-300">
                 <div className="flex items-center gap-3">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-4 w-4 text-emerald-300" />
                   <span>United Kingdom</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4" />
+                  <Mail className="h-4 w-4 text-emerald-300" />
                   <span>Email address can be added here</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4" />
+                  <Phone className="h-4 w-4 text-emerald-300" />
                   <span>Phone number can be added here</span>
                 </div>
               </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <button className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:scale-[1.02]">
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                <button className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                   Book a Consultation
                 </button>
-                <button className="rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                   Request a Callback
                 </button>
               </div>
@@ -661,19 +716,15 @@ export default function ArcklenConsultingWebsite() {
       <footer className="border-t border-white/10 bg-slate-950">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-4 lg:px-8">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 overflow-hidden rounded-xl bg-white">
-                <img
-                  src="/Arcklen Group Limited logo.png"
-                  alt="Arcklen Group Logo"
-                  className="h-full w-full object-contain"
-                />
+            <div className="flex items-center gap-4">
+              <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
+              <div>
+                <h3 className="text-xl font-semibold text-white">Arcklen Group Limited</h3>
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Consulting • Strategy • Business Analysis</p>
               </div>
-              <h3 className="text-xl font-semibold">Arcklen Group Limited</h3>
             </div>
             <p className="mt-4 max-w-lg text-sm leading-7 text-slate-400">
-              A modern consulting brand focused on business analysis, strategic support, transformation thinking, and
-              professional business services.
+              A modern consulting brand focused on business analysis, strategic support, transformation thinking, and professional business services.
             </p>
           </div>
 
@@ -703,7 +754,7 @@ export default function ArcklenConsultingWebsite() {
 }
 
 export const __sanityChecks = {
-  navItemCount: 8,
+  navItemCount: 6,
   serviceCount: services.length,
   caseStudyCount: caseStudies.length,
   testimonialCount: testimonials.length,
