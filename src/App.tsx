@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -142,105 +142,86 @@ const metrics = [
   { value: 'UK Based', label: 'Business Presence' },
 ];
 
-export default function ArcklenConsultingWebsite() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
 
-  const navItems = useMemo(
-    () => [
-      { label: 'Home', href: '#home' },
-      { label: 'About', href: '#about' },
-      { label: 'Services', href: '#services' },
-      { label: 'Case Studies', href: '#case-studies' },
-      { label: 'Insights', href: '#insights' },
-      { label: 'Contact', href: '#contact' },
-    ],
-    []
-  );
+const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: string }> = {
+  home: {
+    title: 'Premium consulting presence for ambitious businesses.',
+    eyebrow: 'Landing Page',
+    description:
+      'A high-converting landing page that introduces Arcklen clearly, establishes trust fast, and routes visitors into your key offers.',
+  },
+  about: {
+    title: 'A consulting brand built around clarity, trust, and execution.',
+    eyebrow: 'About Page',
+    description:
+      'A dedicated page that explains who Arcklen is, the quality of thinking behind the brand, and why clients should trust the business.',
+  },
+  services: {
+    title: 'Premium services built around business value.',
+    eyebrow: 'Services Page',
+    description:
+      'A focused service page that makes each offer feel more credible, premium, and easier for visitors to understand.',
+  },
+  'case-studies': {
+    title: 'Selected work and visible outcomes.',
+    eyebrow: 'Case Studies Page',
+    description:
+      'A proof-driven page that shows thinking, outcomes, and the type of transformation support Arcklen can provide.',
+  },
+  insights: {
+    title: 'Thought leadership that strengthens your brand.',
+    eyebrow: 'Insights Page',
+    description:
+      'A dedicated insights page for authority-building articles, guidance, and content that supports SEO and trust.',
+  },
+  contact: {
+    title: 'Turn interest into conversations.',
+    eyebrow: 'Contact Page',
+    description:
+      'A conversion-focused page for enquiries, consultations, and strong call-to-action pathways.',
+  },
+};
+
+const getPageFromPath = (): PageKey => {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('/about')) return 'about';
+  if (path.includes('/services')) return 'services';
+  if (path.includes('/case-studies')) return 'case-studies';
+  if (path.includes('/insights')) return 'insights';
+  if (path.includes('/contact')) return 'contact';
+  return 'home';
+};
+
+function PremiumPageHero({ page }: { page: PageKey }) {
+  const meta = pageMeta[page];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white" id="home">
-      <div className="border-b border-white/10 bg-slate-950">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
-            <Sparkles className="h-3.5 w-3.5" />
-            Premium consulting presence for modern businesses
+    <section className="relative overflow-hidden border-b border-white/10">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_30%)]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute left-1/2 top-16 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-16 lg:px-8 lg:pb-20 lg:pt-20">
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
+            <Star className="h-4 w-4 text-emerald-300" />
+            {meta.eyebrow}
           </div>
-          <div className="hidden items-center gap-6 md:flex">
-            <span className="inline-flex items-center gap-2">
-              <Mail className="h-4 w-4 text-slate-500" />
-              Business email can be added
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Phone className="h-4 w-4 text-slate-500" />
-              Business phone can be added
-            </span>
-          </div>
-        </div>
+          <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            {meta.title}
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">{meta.description}</p>
+        </motion.div>
       </div>
+    </section>
+  );
+}
 
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <a href="#home" className="flex items-center gap-4">
-            <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
-            <div>
-              <p className="text-base font-semibold tracking-[0.14em] text-white">Arcklen Group Limited</p>
-              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Consulting • Strategy • Business Analysis</p>
-            </div>
-          </a>
-
-          <nav className="hidden items-center gap-7 lg:flex">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-slate-300 transition hover:text-white"
-              >
-                {item.label}
-              </a>
-            ))}
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
-            >
-              Book a Consultation
-              <ArrowRight className="h-4 w-4" />
-            </a>
-          </nav>
-
-          <button
-            onClick={() => setMobileOpen((prev) => !prev)}
-            className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden"
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-
-        {mobileOpen && (
-          <div className="border-t border-white/10 px-6 py-5 lg:hidden">
-            <div className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-sm text-slate-300"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <a
-                href="#contact"
-                className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900"
-                onClick={() => setMobileOpen(false)}
-              >
-                Book a Consultation
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
-
+function LandingPage() {
+  return (
+    <>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_30%)]" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -263,14 +244,14 @@ export default function ArcklenConsultingWebsite() {
 
             <div className="mt-10 flex flex-wrap gap-4">
               <a
-                href="#contact"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
               >
                 Start a Project
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="#case-studies"
+                href="/case-studies"
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 View Case Studies
@@ -390,8 +371,15 @@ export default function ArcklenConsultingWebsite() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      <section id="about" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+function AboutPage() {
+  return (
+    <>
+      <PremiumPageHero page="about" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
           <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About Arcklen</p>
@@ -422,9 +410,35 @@ export default function ArcklenConsultingWebsite() {
             </div>
           </div>
         </div>
-      </section>
 
-      <section id="services" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="mt-12 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+            <div className="inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
+              <img src="/logo.png" alt="Founder" className="h-16 w-auto rounded-xl" />
+            </div>
+            <h3 className="mt-6 text-2xl font-semibold text-white">Founder</h3>
+            <p className="mt-4 leading-8 text-slate-300">
+              Arcklen Group Limited is led by Nuel Okoloigwe, a Business Analyst and consulting professional focused on helping organisations bring structure, clarity, and delivery confidence to business change and transformation initiatives.
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Leadership & Vision</p>
+            <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">A modern consulting presence that inspires confidence</h2>
+            <p className="mt-6 max-w-2xl leading-8 text-slate-300">
+              The strongest consulting websites do not just explain services. They communicate authority, premium positioning, and a sense of confidence that makes clients want to start the conversation.
+            </p>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ServicesPage() {
+  return (
+    <>
+      <PremiumPageHero page="services" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Services</p>
@@ -460,178 +474,73 @@ export default function ArcklenConsultingWebsite() {
             );
           })}
         </div>
-      </section>
 
-      <section id="industries" className="border-y border-white/10 bg-white/[0.03]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Industries</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Sectors we can support</h2>
-          </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {industries.map((industry) => (
-              <div
-                key={industry}
-                className="rounded-[26px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
-              >
-                <h3 className="text-lg font-semibold text-white">{industry}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">
-                  Tailored support designed around structure, documentation, operational improvement, and delivery confidence.
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="founder" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-            <div className="inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
-              <img src="/logo.png" alt="Founder" className="h-16 w-auto rounded-xl" />
-            </div>
-            <h3 className="mt-6 text-2xl font-semibold text-white">Founder</h3>
-            <p className="mt-4 leading-8 text-slate-300">
-              Arcklen Group Limited is led by Nuel Okoloigwe, a Business Analyst and consulting professional focused on helping organisations bring structure, clarity, and delivery confidence to business change and transformation initiatives.
-            </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              With experience in financial services and consulting environments, the goal of Arcklen is to combine practical business analysis with strategic thinking to support businesses and professionals navigating complex problems.
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Leadership & Vision</p>
-            <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">A modern consulting presence that inspires confidence</h2>
-            <p className="mt-6 max-w-2xl leading-8 text-slate-300">
-              The strongest consulting websites do not just explain services. They communicate authority, premium positioning, and a sense of confidence that makes clients want to start the conversation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="case-studies" className="border-y border-white/10 bg-white/[0.03]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Case Studies</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Selected work and visible outcomes</h2>
-          </div>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {caseStudies.map((item) => (
-              <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-300">Outcome</p>
-                <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
-                <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
-                  {item.result}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="testimonials" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Testimonials</p>
-          <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">What clients say</h2>
-        </div>
-
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          {testimonials.map((item) => (
-            <div key={`${item.name}-${item.role}`} className="rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-xl">
-              <div className="mb-5 flex gap-1 text-emerald-300">
-                {[...Array(5)].map((_, index) => (
-                  <Star key={index} className="h-4 w-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-sm leading-7 text-slate-300">“{item.quote}”</p>
-              <div className="mt-6 border-t border-white/10 pt-4">
-                <p className="font-semibold text-white">{item.name}</p>
-                <p className="text-sm text-slate-400">{item.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Book a Consultation</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Make it effortless for clients to contact you</h2>
-            <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-              The strongest business websites remove friction. Add your consultation booking flow here and turn website visits into real conversations.
-            </p>
-          </div>
-          <div className="rounded-[32px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl backdrop-blur-xl">
-            <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
-              <CalendarDays className="h-6 w-6 text-emerald-300" />
-            </div>
-            <h3 className="text-2xl font-semibold text-white">Consultation Booking</h3>
-            <p className="mt-3 leading-7 text-slate-300">
-              Add your booking tool here to allow strategy calls, BA coaching sessions, and discovery meetings.
-            </p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <button className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
-                Book Discovery Call
-              </button>
-              <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                View Availability
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-white/[0.03]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+        <div className="mt-14 rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">BA Interview Coaching</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">BA Interview Coaching</p>
               <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
               <p className="mt-4 leading-8 text-slate-300">
                 Arcklen also supports aspiring and experienced Business Analysts with interview preparation, confidence building, and stronger self-presentation.
               </p>
-              <div className="mt-6 space-y-4">
-                {coachingFeatures.map((feature) => (
-                  <div key={feature} className="flex items-start gap-3 text-slate-300">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
             </div>
-            <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-300">Ideal For</p>
-              <div className="mt-5 grid gap-4">
-                {[
-                  'Entry-level BA candidates',
-                  'Professionals switching into BA roles',
-                  'Senior BAs preparing for interviews',
-                  'Candidates needing mock interview support',
-                ].map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-slate-300">
-                    {item}
-                  </div>
-                ))}
-              </div>
+            <div className="space-y-4">
+              {coachingFeatures.map((feature) => (
+                <div key={feature} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-slate-300">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
+                  <span>{feature}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      <section id="insights" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Insights</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Thought leadership that strengthens your brand</h2>
-          </div>
-          <a href="#contact" className="text-sm font-semibold text-white underline underline-offset-4">
-            Discuss content strategy
-          </a>
+function CaseStudiesPage() {
+  return (
+    <>
+      <PremiumPageHero page="case-studies" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {caseStudies.map((item) => (
+            <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-300">Outcome</p>
+              <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
+              <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
+                {item.result}
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {industries.map((industry) => (
+            <div
+              key={industry}
+              className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
+            >
+              <h3 className="text-lg font-semibold text-white">{industry}</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Tailored support designed around structure, documentation, operational improvement, and delivery confidence.
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function InsightsPage() {
+  return (
+    <>
+      <PremiumPageHero page="insights" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-3">
           {insights.map((item) => (
             <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-xl">
               <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-300">
@@ -645,10 +554,8 @@ export default function ArcklenConsultingWebsite() {
             </div>
           ))}
         </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+        <div className="mt-12 rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">SEO Ready Structure</p>
@@ -671,8 +578,15 @@ export default function ArcklenConsultingWebsite() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      <section id="contact" className="mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-8">
+function ContactPage() {
+  return (
+    <>
+      <PremiumPageHero page="contact" />
+      <section className="mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-8">
         <div className="rounded-[36px] border border-white/10 bg-gradient-to-r from-blue-600/20 via-slate-900 to-emerald-500/20 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.45)] backdrop-blur-xl lg:p-10">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
@@ -712,6 +626,141 @@ export default function ArcklenConsultingWebsite() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+export default function ArcklenConsultingWebsite() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState<PageKey>(getPageFromPath());
+
+  useEffect(() => {
+    const handleRouteChange = () => setCurrentPage(getPageFromPath());
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
+
+  const navItems = useMemo(
+    () => [
+      { label: 'Home', href: '/' as const, key: 'home' as PageKey },
+      { label: 'About', href: '/about' as const, key: 'about' as PageKey },
+      { label: 'Services', href: '/services' as const, key: 'services' as PageKey },
+      { label: 'Case Studies', href: '/case-studies' as const, key: 'case-studies' as PageKey },
+      { label: 'Insights', href: '/insights' as const, key: 'insights' as PageKey },
+      { label: 'Contact', href: '/contact' as const, key: 'contact' as PageKey },
+    ],
+    []
+  );
+
+  const navigateTo = (href: string) => {
+    window.history.pushState({}, '', href);
+    setCurrentPage(getPageFromPath());
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'about':
+        return <AboutPage />;
+      case 'services':
+        return <ServicesPage />;
+      case 'case-studies':
+        return <CaseStudiesPage />;
+      case 'insights':
+        return <InsightsPage />;
+      case 'contact':
+        return <ContactPage />;
+      default:
+        return <LandingPage />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      <div className="border-b border-white/10 bg-slate-950">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
+            <Sparkles className="h-3.5 w-3.5" />
+            Premium consulting presence for modern businesses
+          </div>
+          <div className="hidden items-center gap-6 md:flex">
+            <span className="inline-flex items-center gap-2">
+              <Mail className="h-4 w-4 text-slate-500" />
+              Business email can be added
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Phone className="h-4 w-4 text-slate-500" />
+              Business phone can be added
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+          <button onClick={() => navigateTo('/')} className="flex items-center gap-4 text-left">
+            <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
+            <div>
+              <p className="text-base font-semibold tracking-[0.14em] text-white">Arcklen Group Limited</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Consulting • Strategy • Business Analysis</p>
+            </div>
+          </button>
+
+          <nav className="hidden items-center gap-7 lg:flex">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigateTo(item.href)}
+                className={`text-sm font-medium transition hover:text-white ${
+                  currentPage === item.key ? 'text-white' : 'text-slate-300'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+            <button
+              onClick={() => navigateTo('/contact')}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
+            >
+              Book a Consultation
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </nav>
+
+          <button
+            onClick={() => setMobileOpen((prev) => !prev)}
+            className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden"
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {mobileOpen && (
+          <div className="border-t border-white/10 px-6 py-5 lg:hidden">
+            <div className="flex flex-col gap-4">
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => navigateTo(item.href)}
+                  className="text-left text-sm text-slate-300"
+                >
+                  {item.label}
+                </button>
+              ))}
+              <button
+                onClick={() => navigateTo('/contact')}
+                className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900"
+              >
+                Book a Consultation
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {renderPage()}
 
       <footer className="border-t border-white/10 bg-slate-950">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-4 lg:px-8">
@@ -731,10 +780,14 @@ export default function ArcklenConsultingWebsite() {
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Quick Links</h4>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-400">
-              {navItems.slice(1).map((item) => (
-                <a key={item.label} href={item.href} className="transition hover:text-white">
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => navigateTo(item.href)}
+                  className="text-left transition hover:text-white"
+                >
                   {item.label}
-                </a>
+                </button>
               ))}
             </div>
           </div>
