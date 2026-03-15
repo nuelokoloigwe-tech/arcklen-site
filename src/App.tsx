@@ -2,9 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Briefcase,
-  CalendarDays,
-  CheckCircle2,
+  Briefcase,  CheckCircle2,
   ChevronRight,
   FileText,
   Mail,
