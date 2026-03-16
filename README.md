@@ -4,14 +4,21 @@ Official website project for Arcklen Group Limited.
 
 ## Overview
 
-This project powers the Arcklen Group consulting website.
+This project powers the Arcklen consulting website.
 
 Arcklen focuses on:
 
 - Business Analysis Consulting
-- Process Improvement
+- Process Improvement & Documentation
 - Change & Transformation Support
 - BA Career Coaching
+
+## Target Audience
+
+- SMEs needing clearer processes
+- Financial services and change teams
+- Businesses undergoing transformation
+- Professionals preparing for Business Analyst interviews
 
 ## Tech Stack
 
@@ -19,6 +26,7 @@ React
 TypeScript  
 Vite  
 Framer Motion  
+Tailwind CSS
 
 ## Development
 
@@ -38,11 +46,10 @@ npm run build
 
 ## Deployment
 
-This project is deployed on Vercel.
+The project is deployed on **Vercel**.
 
-Each push to the main branch triggers an automatic deployment.
+Each push to the `main` branch automatically triggers a new deployment.
 
 ## Repository
 
-GitHub:  
 https://github.com/nuelokoloigwe-tech/arcklen-site
