@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Briefcase,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
@@ -12,7 +11,6 @@ import {
   MapPin,
   Menu,
   Phone,
-  Search,
   Send,
   ShieldCheck,
   Sparkles,
@@ -21,87 +19,41 @@ import {
   X,
 } from 'lucide-react';
 
-const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles, Briefcase, CheckCircle2];
+const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles];
 
 const services = [
   {
     title: 'Business Analysis Consulting',
-    desc: 'Requirements gathering, process mapping, stakeholder engagement, user story development, and delivery support for change initiatives.',
+    desc: 'Requirements gathering, stakeholder engagement, user stories, process mapping, and analysis support for projects and change initiatives.',
   },
   {
-    title: 'Strategy & Transformation',
-    desc: 'Practical advisory support for businesses improving operations, customer journeys, governance, and decision-making.',
+    title: 'Process Improvement & Documentation',
+    desc: 'SOP creation, process mapping, requirement packs, and structured documentation that improves clarity and operational consistency.',
   },
   {
-    title: 'Project & Change Support',
-    desc: 'Support with change coordination, documentation, implementation readiness, impact analysis, and structured delivery execution.',
+    title: 'Change & Transformation Support',
+    desc: 'Support for business change initiatives including impact analysis, delivery support, governance structure, and implementation readiness.',
   },
   {
-    title: 'Career & Interview Coaching',
-    desc: 'Interview preparation, CV positioning, career support, and coaching for aspiring and experienced Business Analysts.',
-  },
-  {
-    title: 'Documentation & Process Design',
-    desc: 'Professional business documents, process flows, SOPs, requirement packs, and operational support materials.',
-  },
-  {
-    title: 'Real Estate & Admin Support',
-    desc: 'Property-related coordination, managed support services, documentation support, and administrative business assistance.',
+    title: 'BA Career Coaching',
+    desc: 'Interview preparation, CV positioning, mock interviews, and coaching for aspiring or experienced Business Analysts.',
   },
 ];
 
-const clientLogos = ['FinEdge', 'NovaSphere', 'PrimeNest', 'AxisPoint', 'BluePeak'];
+const clientLogos = ['SMEs', 'Financial Services', 'Change Teams', 'Operations', 'BA Coaching'];
 
 const caseStudies = [
   {
-    title: 'Mortgage Journey Process Improvement',
-    result: 'Reduced process ambiguity and improved stakeholder alignment.',
-    desc: 'Mapped current-state workflows, identified pain points, and created clearer requirements for a lending-related change initiative.',
+    title: 'Mortgage Process Improvement',
+    desc: 'Mapped workflows and clarified stakeholder requirements to improve alignment and reduce operational friction.',
   },
   {
-    title: 'SME Operations Documentation Pack',
-    result: 'Improved consistency and handover readiness.',
-    desc: 'Developed structured SOPs, process documentation, and operating guidance to support a growing business team.',
+    title: 'Operations Documentation Pack',
+    desc: 'Developed structured SOPs and process documentation to improve consistency and operational readiness.',
   },
   {
     title: 'BA Interview Coaching Programme',
-    result: 'Increased candidate confidence and interview readiness.',
-    desc: 'Delivered structured coaching sessions covering storytelling, scenario answers, CV positioning, and mock interview practice.',
-  },
-];
-
-const coachingFeatures = [
-  'Mock interviews and feedback',
-  'CV and LinkedIn positioning',
-  'STAR answer coaching',
-  'BA scenario and stakeholder questions',
-];
-
-const industries = [
-  'Financial Services',
-  'Consulting & Professional Services',
-  'Property & Real Estate',
-  'Operations & Service Businesses',
-];
-
-const testimonials = [
-  {
-    name: 'Client Team Lead',
-    role: 'Transformation Programme',
-    quote:
-      'Arcklen brought structure, clarity, and momentum to our change work. The analysis was practical and easy for stakeholders to understand.',
-  },
-  {
-    name: 'Business Owner',
-    role: 'SME Advisory Client',
-    quote:
-      'We needed order around our processes and documentation. The support was professional, thoughtful, and immediately useful.',
-  },
-  {
-    name: 'Career Coaching Client',
-    role: 'Business Analyst Candidate',
-    quote:
-      'The interview coaching helped me present my experience with confidence and structure. It made a real difference.',
+    desc: 'Helped candidates improve interview structure, confidence, and performance through targeted coaching.',
   },
 ];
 
@@ -116,112 +68,122 @@ const blogPosts = [
     title: 'Why Requirements Quality Decides Project Success',
     category: 'Business Analysis',
     readTime: '5 min read',
-    desc: 'A strong look at how weak requirements create rework, confusion, and delivery risk across transformation programmes.',
+    desc: 'How stronger requirements reduce confusion, rework, and delivery risk across change initiatives.',
   },
   {
-    title: 'What Makes a Premium Consulting Brand Look Trustworthy Online',
-    category: 'Consulting',
+    title: 'How Better Process Documentation Supports Change Delivery',
+    category: 'Process Improvement',
     readTime: '4 min read',
-    desc: 'Positioning, credibility, proof, and conversion design choices that help service businesses feel more premium.',
+    desc: 'A look at how SOPs, process maps, and structured documentation improve operational clarity.',
   },
   {
     title: 'Stakeholder Management Mistakes That Slow Delivery',
-    category: 'Delivery',
+    category: 'Transformation',
     readTime: '7 min read',
-    desc: 'Common breakdowns between business and delivery teams, and how strong analysis closes the gap.',
+    desc: 'Common breakdowns between teams and how stronger business analysis helps close the gap.',
   },
   {
     title: 'How SMEs Can Use Process Design to Scale Better',
     category: 'Operations',
     readTime: '5 min read',
-    desc: 'A simple overview of documentation, SOPs, handoffs, and process clarity for growing teams.',
+    desc: 'A practical guide to clearer handoffs, documentation, and operating consistency for growing businesses.',
   },
   {
-    title: 'How to Prepare for Stakeholder Workshops',
-    category: 'Transformation',
+    title: 'Preparing for Workshops and Requirement Sessions',
+    category: 'Delivery Support',
     readTime: '6 min read',
-    desc: 'A practical guide to planning, facilitation, and turning conversations into useful requirements.',
+    desc: 'A practical guide to turning conversations into useful requirements and clearer action points.',
   },
 ];
 
-const highlights = [
-  'Process Improvement',
-  'Stakeholder Management',
-  'Requirements Documentation',
-  'Change Delivery',
+const trustIndicators = ['UK Based', 'Business Analysis', 'Process Improvement', 'Change Support'];
+
+const whyChooseArcklen = [
+  'Clear and practical business analysis',
+  'Strong documentation and process thinking',
+  'Delivery-focused support, not just theory',
+  'Professional guidance for business and career growth',
 ];
 
 const seoKeywords = [
   'Business Analysis Consulting UK',
   'Transformation Support',
-  'Business Analyst Interview Coaching',
-  'Process Improvement Consulting',
-  'Business Consultant Coventry',
-  'BA Career Coaching UK',
+  'Process Improvement',
+  'Business Analyst Coaching',
+  'Requirements Gathering',
+  'Change Support UK',
 ];
 
 const metrics = [
-  { value: '6+', label: 'Service Areas' },
-  { value: 'End-to-End', label: 'Delivery Support' },
-  { value: 'SMEs & Professionals', label: 'Client Focus' },
-  { value: 'UK Based', label: 'Business Presence' },
+  { value: 'UK Based', label: 'Consulting Presence' },
+  { value: '4', label: 'Core Services' },
+  { value: 'SMEs & FS', label: 'Primary Audience' },
+  { value: 'Delivery-Focused', label: 'Approach' },
 ];
 
 type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
 
 const businessEmail = 'hello@arcklengroup.com';
 const businessPhone = '+44 7498 847956';
-const bookingUrl = 'https://calendly.com/your-handle/discovery-call';
-const formEndpoint = 'https://formspree.io/f/your-form-id';
+const bookingUrl = '#';
+// TODO: Replace with real Calendly booking link
+const formEndpoint = '#';
+// TODO: Replace with real Formspree or backend endpoint
 
 const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: string; seoTitle: string; seoDescription: string }> = {
   home: {
-    title: 'Premium consulting presence for ambitious businesses.',
-    eyebrow: 'Landing Page',
+    title: 'Business Analysis & Transformation Support for Growing UK Businesses',
+    eyebrow: 'Business Analysis & Transformation Consulting',
     description:
-      'A high-converting landing page that introduces Arcklen clearly, establishes trust fast, and routes visitors into your key offers.',
-    seoTitle: 'Arcklen Group Limited | Business Analysis Consulting UK',
-    seoDescription: 'Premium consulting, business analysis, transformation support, and BA interview coaching in the UK.',
+      'Arcklen Group helps organisations bring structure to change through clear requirements, stronger processes, practical documentation, and delivery-focused support.',
+    seoTitle: 'Arcklen Group | Business Analysis & Transformation Consulting UK',
+    seoDescription:
+      'Arcklen Group provides business analysis consulting, process improvement, documentation, transformation support, and BA coaching for UK businesses.',
   },
   about: {
-    title: 'A consulting brand built around clarity, trust, and execution.',
-    eyebrow: 'About Page',
+    title: 'Clarity for businesses delivering change',
+    eyebrow: 'About Arcklen',
     description:
-      'A dedicated page that explains who Arcklen is, the quality of thinking behind the brand, and why clients should trust the business.',
-    seoTitle: 'About Arcklen Group Limited | Consulting and Strategy',
-    seoDescription: 'Learn about Arcklen Group Limited, its vision, founder, and premium consulting approach.',
+      'Arcklen Group Limited supports organisations that need clearer requirements, better processes, stronger documentation, and practical support delivering change.',
+    seoTitle: 'About Arcklen Group | Business Analysis & Transformation Support',
+    seoDescription:
+      'Learn how Arcklen Group supports UK businesses with business analysis, process improvement, documentation, and change support.',
   },
   services: {
-    title: 'Premium services built around business value.',
-    eyebrow: 'Services Page',
+    title: 'Focused support for business analysis, process improvement, and change delivery',
+    eyebrow: 'Core Services',
     description:
-      'A focused service page that makes each offer feel more credible, premium, and easier for visitors to understand.',
-    seoTitle: 'Services | Business Analysis, Strategy and Coaching',
-    seoDescription: 'Explore Arcklen services: business analysis consulting, transformation support, documentation, and BA coaching.',
+      'Explore Arcklen’s core offers across business analysis consulting, documentation, transformation support, and BA career coaching.',
+    seoTitle: 'Services | Business Analysis & Transformation Consulting UK',
+    seoDescription:
+      'Explore Arcklen services: business analysis consulting, process improvement, change support, and BA career coaching.',
   },
   'case-studies': {
-    title: 'Selected work and visible outcomes.',
-    eyebrow: 'Case Studies Page',
+    title: 'Examples of structured support and practical outcomes',
+    eyebrow: 'Case Studies',
     description:
-      'A proof-driven page that shows thinking, outcomes, and the type of transformation support Arcklen can provide.',
-    seoTitle: 'Case Studies | Arcklen Group Limited',
-    seoDescription: 'See selected outcomes, case studies, and examples of Arcklen consulting work.',
+      'See examples of how Arcklen supports process clarity, documentation, stakeholder alignment, and coaching outcomes.',
+    seoTitle: 'Case Studies | Arcklen Group',
+    seoDescription:
+      'See practical examples of Arcklen’s work across process improvement, documentation, and BA coaching.',
   },
   insights: {
-    title: 'Thought leadership that strengthens your brand.',
-    eyebrow: 'Insights Page',
+    title: 'Business analysis and change insights for growing organisations',
+    eyebrow: 'Insights',
     description:
-      'A dedicated insights page for authority-building articles, guidance, and content that supports SEO and trust.',
-    seoTitle: 'Insights | Business Analysis and Consulting Articles',
-    seoDescription: 'Read Arcklen insights on business analysis, consulting, process improvement, and career coaching.',
+      'Read practical content on business analysis, process improvement, stakeholder management, and BA career growth.',
+    seoTitle: 'Insights | Arcklen Group',
+    seoDescription:
+      'Read Arcklen insights on business analysis, documentation, transformation support, and BA interview preparation.',
   },
   contact: {
-    title: 'Turn interest into conversations.',
-    eyebrow: 'Contact Page',
+    title: 'Need clarity on a project, process, or change initiative?',
+    eyebrow: 'Contact',
     description:
-      'A conversion-focused page for enquiries, consultations, and strong call-to-action pathways.',
-    seoTitle: 'Contact Arcklen Group Limited',
-    seoDescription: 'Book a consultation, send an enquiry, and contact Arcklen Group Limited.',
+      'Whether you need business analysis support, stronger documentation, process improvement, or BA interview coaching, Arcklen can help bring structure and clarity to your next step.',
+    seoTitle: 'Contact Arcklen Group | Business Analysis Consulting UK',
+    seoDescription:
+      'Book a consultation or send an enquiry to Arcklen Group for business analysis, change support, process improvement, and BA coaching.',
   },
 };
 
@@ -326,24 +288,21 @@ function BookingCard() {
       </div>
       <h3 className="text-2xl font-semibold text-white">Book a Consultation</h3>
       <p className="mt-3 leading-7 text-slate-300">
-        Connect this button to Calendly or your preferred booking tool so prospects can instantly schedule discovery calls and strategy sessions.
+        Schedule a discovery call to discuss your project, business analysis needs, or consulting support.
       </p>
-      <div className="mt-6 space-y-3 text-sm text-slate-400">
-        <p>Suggested booking URL:</p>
-        <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-300">{bookingUrl}</div>
-      </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <a
           href={bookingUrl}
-          target="_blank"
-          rel="noreferrer"
           className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
         >
-          Open Booking Link
+          Book a Consultation
         </a>
-        <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-          View Availability
-        </button>
+        <a
+          href="/contact"
+          className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          Send an Enquiry
+        </a>
       </div>
     </div>
   );
@@ -359,19 +318,33 @@ function ContactFormCard() {
 
   return (
     <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-2xl">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Lead Capture Form</p>
-      <h3 className="mt-3 text-2xl font-semibold text-white">Collect enquiries directly from the site</h3>
+      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Send an Enquiry</p>
+      <h3 className="mt-3 text-2xl font-semibold text-white">Tell us how Arcklen can help</h3>
       <p className="mt-3 text-sm leading-7 text-slate-300">
-        Replace the placeholder endpoint with Formspree, Resend, EmailJS, or your backend to receive enquiries directly in your inbox.
+        Share a few details about your project, process, or business analysis needs and we will get back to you.
       </p>
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Your name" />
-        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Email address" type="email" />
-        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Company or business" />
-        <textarea className="min-h-[140px] w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Tell us what you need help with" />
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-xs text-slate-400">
-          Form endpoint placeholder: <span className="text-slate-200">{formEndpoint}</span>
-        </div>
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit} action={formEndpoint} method="POST">
+        <input
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+          placeholder="Your name"
+          name="name"
+        />
+        <input
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+          placeholder="Email address"
+          type="email"
+          name="email"
+        />
+        <input
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+          placeholder="Company or business"
+          name="company"
+        />
+        <textarea
+          className="min-h-[140px] w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+          placeholder="Tell us what you need help with"
+          name="message"
+        />
         <button className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5" type="submit">
           Send Enquiry
           <Send className="h-4 w-4" />
@@ -379,14 +352,14 @@ function ContactFormCard() {
       </form>
       {submitted && (
         <div className="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
-          Demo submission captured. Connect this form to Formspree, Resend, or EmailJS to receive real enquiries.
+          Your enquiry has been captured. We will be in touch shortly.
         </div>
       )}
     </div>
   );
 }
 
-function LandingPage() {
+function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
   return (
     <>
       <section className="relative overflow-hidden">
@@ -397,52 +370,38 @@ function LandingPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
               <Star className="h-4 w-4 text-emerald-300" />
-              Premium consulting website experience
+              Business Analysis & Transformation Consulting
             </div>
 
             <h1 className="mt-7 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Make your business look trusted, premium, and impossible to ignore.
+              Business Analysis & Transformation Support for Growing UK Businesses
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              Arcklen Group Limited helps businesses and professionals communicate clarity, authority, and execution strength through consulting, analysis, transformation support, and strategic advisory.
+              Arcklen Group helps organisations bring structure to change through clear requirements, stronger processes, practical documentation, and delivery-focused support.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href="/contact"
+              <button
+                onClick={() => navigateTo('/contact')}
                 className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
               >
-                Start a Project
+                Book a Consultation
                 <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href={bookingUrl}
-                target="_blank"
-                rel="noreferrer"
+              </button>
+              <button
+                onClick={() => navigateTo('/contact')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
-                Book a Discovery Call
+                Send an Enquiry
                 <ChevronRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
 
             <div className="mt-10 flex flex-wrap gap-3">
-              {highlights.map((item) => (
+              {trustIndicators.map((item) => (
                 <span key={item} className="rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 text-sm text-slate-200">
                   {item}
                 </span>
-              ))}
-            </div>
-
-            <div className="mt-12 grid gap-4 sm:grid-cols-3">
-              {[
-                'Professional consulting presence',
-                'Lead-generation focused layout',
-                'Built to scale with your brand',
-              ].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                  <p className="text-sm leading-6 text-slate-300">{item}</p>
-                </div>
               ))}
             </div>
           </motion.div>
@@ -457,16 +416,16 @@ function LandingPage() {
               <div className="rounded-[26px] border border-white/10 bg-slate-950/90 p-6">
                 <div className="mb-6 flex items-center justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Business Focus</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Built for growth and trust</h2>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Focused Support</p>
+                    <h2 className="mt-2 text-2xl font-semibold text-white">Built for clarity and delivery</h2>
                   </div>
                   <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
-                    Premium Positioning
+                    UK Based
                   </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {services.slice(0, 4).map((service, index) => {
+                  {services.map((service, index) => {
                     const Icon = serviceIconMap[index % serviceIconMap.length];
                     return (
                       <div key={service.title} className="group rounded-[22px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.07]">
@@ -478,15 +437,6 @@ function LandingPage() {
                       </div>
                     );
                   })}
-                </div>
-
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  {metrics.slice(0, 3).map((item) => (
-                    <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-5 text-center">
-                      <p className="text-lg font-semibold text-white">{item.value}</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-500">{item.label}</p>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
@@ -505,15 +455,47 @@ function LandingPage() {
         </div>
       </section>
 
+      <section id="about" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About</p>
+            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">Clarity for businesses delivering change</h2>
+            <p className="mt-5 leading-8 text-slate-300">
+              Arcklen Group Limited supports organisations that need clearer requirements, better processes, stronger documentation, and practical support delivering change.
+            </p>
+            <p className="mt-4 leading-8 text-slate-300">
+              We combine business analysis thinking with hands-on transformation support to help teams move from ambiguity to action.
+            </p>
+            <p className="mt-4 leading-8 text-slate-300">
+              Led by a UK-based Business Analyst, Arcklen works with businesses that want structured thinking, clear documentation, and effective delivery support.
+            </p>
+          </div>
+
+          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
+            <h3 className="text-2xl font-semibold text-white">Why businesses choose Arcklen</h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {whyChooseArcklen.map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <p className="text-sm leading-7 text-slate-300">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="border-y border-white/10 bg-white/[0.03]">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Trusted Positioning</p>
-              <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Designed to feel credible from the first glance</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Focused Audience</p>
+              <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Supporting SMEs, financial services teams, and businesses in change</h2>
             </div>
             <p className="max-w-2xl text-slate-300">
-              Your website should not feel like a starter template. It should communicate confidence, clarity, and commercial value before the first call even happens.
+              Arcklen is positioned for growing UK businesses, delivery teams, and professionals who need practical support rather than generic advice.
             </p>
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -525,83 +507,19 @@ function LandingPage() {
           </div>
         </div>
       </section>
-    </>
-  );
-}
 
-function AboutPage() {
-  return (
-    <>
-      <PremiumPageHero page="about" />
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About Arcklen</p>
-            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">A consulting brand built around clarity, trust, and execution</h2>
-            <p className="mt-5 leading-8 text-slate-300">
-              Arcklen Group Limited is positioned to serve organisations and individuals who need structure, business insight, confident execution, and modern professional support. The brand is designed to feel premium, commercially credible, and ready for long-term growth.
-            </p>
-          </div>
-
-          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
-            <h3 className="text-2xl font-semibold text-white">Why clients work with Arcklen</h3>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {[
-                'Clear thinking that turns complex needs into actionable steps.',
-                'Strong business analysis foundations with delivery awareness.',
-                'Professional support for organisations and individual clients.',
-                'A flexible service model that grows with your ambitions.',
-              ].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </div>
-                  <p className="text-sm leading-7 text-slate-300">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-12 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-            <div className="inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
-              <img src="/logo.png" alt="Founder" className="h-16 w-auto rounded-xl" />
-            </div>
-            <h3 className="mt-6 text-2xl font-semibold text-white">Founder</h3>
-            <p className="mt-4 leading-8 text-slate-300">
-              Arcklen Group Limited is led by Nuel Okoloigwe, a Business Analyst and consulting professional focused on helping organisations bring structure, clarity, and delivery confidence to business change and transformation initiatives.
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Leadership & Vision</p>
-            <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">A modern consulting presence that inspires confidence</h2>
-            <p className="mt-6 max-w-2xl leading-8 text-slate-300">
-              The strongest consulting websites do not just explain services. They communicate authority, premium positioning, and a sense of confidence that makes clients want to start the conversation.
-            </p>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
-
-function ServicesPage() {
-  return (
-    <>
-      <PremiumPageHero page="services" />
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Services</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Premium services built around business value</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Core Services</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Support built around business analysis, process improvement, and delivery clarity</h2>
           </div>
           <p className="max-w-2xl text-slate-300">
-            Clear service packaging, premium layout, and stronger visual hierarchy make your business look far more established and trustworthy.
+            Arcklen’s service offer is focused, practical, and built for businesses that need structure, documentation, and effective change support.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {services.map((service, index) => {
             const Icon = serviceIconMap[index % serviceIconMap.length];
             return (
@@ -619,35 +537,159 @@ function ServicesPage() {
                 </div>
                 <h3 className="text-xl font-semibold text-white">{service.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-slate-300">{service.desc}</p>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/90">
-                  Learn more <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="border-y border-white/10 bg-white/[0.03]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Case Studies</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Examples of structured support and practical outcomes</h2>
+          </div>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {caseStudies.map((item) => (
+              <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
+                <h3 className="text-xl font-semibold text-white">{item.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-300">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Call to Action</p>
+              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Need clarity on a project, process, or change initiative?</h2>
+              <p className="mt-4 max-w-2xl leading-8 text-slate-300">
+                Whether you need business analysis support, stronger documentation, process improvement, or BA interview coaching, Arcklen can help bring structure and clarity to your next step.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                onClick={() => navigateTo('/contact')}
+                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+              >
+                Book a Consultation
+              </button>
+              <button
+                onClick={() => navigateTo('/contact')}
+                className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Send an Enquiry
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function AboutPage() {
+  return (
+    <>
+      <PremiumPageHero page="about" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
+            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Clarity for businesses delivering change</h2>
+            <p className="mt-5 leading-8 text-slate-300">
+              Arcklen Group Limited supports organisations that need clearer requirements, better processes, stronger documentation, and practical support delivering change.
+            </p>
+            <p className="mt-4 leading-8 text-slate-300">
+              We combine business analysis thinking with hands-on transformation support to help teams move from ambiguity to action.
+            </p>
+            <p className="mt-4 leading-8 text-slate-300">
+              Led by a UK-based Business Analyst, Arcklen works with businesses that want structured thinking, clear documentation, and effective delivery support.
+            </p>
+          </div>
+
+          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
+            <h3 className="text-2xl font-semibold text-white">Why businesses choose Arcklen</h3>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {whyChooseArcklen.map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <p className="text-sm leading-7 text-slate-300">{item}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ServicesPage({ navigateTo }: { navigateTo: (href: string) => void }) {
+  return (
+    <>
+      <PremiumPageHero page="services" />
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Core Services</p>
+          <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Support built around business analysis, process improvement, and change delivery</h2>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {services.map((service, index) => {
+            const Icon = serviceIconMap[index % serviceIconMap.length];
+            return (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.35, delay: index * 0.05 }}
+                whileHover={{ y: -8 }}
+                className="group rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.22)] transition"
+              >
+                <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
+                  <Icon className="h-5 w-5 text-emerald-300" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">{service.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-300">{service.desc}</p>
               </motion.div>
             );
           })}
         </div>
 
         <div className="mt-14 grid gap-8 lg:grid-cols-2">
+          <BookingCard />
           <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-            <div className="grid gap-8 lg:grid-cols-1 lg:items-center">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">BA Interview Coaching</p>
-                <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
-                <p className="mt-4 leading-8 text-slate-300">
-                  Arcklen also supports aspiring and experienced Business Analysts with interview preparation, confidence building, and stronger self-presentation.
-                </p>
-              </div>
-              <div className="space-y-4">
-                {coachingFeatures.map((feature) => (
-                  <div key={feature} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-slate-300">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
+            <h3 className="text-2xl font-semibold text-white">Why businesses choose Arcklen</h3>
+            <div className="mt-6 space-y-4">
+              {whyChooseArcklen.map((item) => (
+                <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-slate-300">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <button
+                onClick={() => navigateTo('/contact')}
+                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+              >
+                Book a Consultation
+              </button>
+              <button
+                onClick={() => navigateTo('/contact')}
+                className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Send an Enquiry
+              </button>
             </div>
           </div>
-          <BookingCard />
         </div>
       </section>
     </>
@@ -662,23 +704,8 @@ function CaseStudiesPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           {caseStudies.map((item) => (
             <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-300">Outcome</p>
-              <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
-              <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
-                {item.result}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {industries.map((industry) => (
-            <div key={industry} className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]">
-              <h3 className="text-lg font-semibold text-white">{industry}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-300">
-                Tailored support designed around structure, documentation, operational improvement, and delivery confidence.
-              </p>
+              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
+              <p className="mt-4 text-sm leading-7 text-slate-300">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -707,26 +734,6 @@ function InsightsPage() {
             </div>
           ))}
         </div>
-
-        <div className="mt-12 rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">SEO Ready Structure</p>
-              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Built to rank, position, and convert</h2>
-              <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-                Clear services, founder credibility, case studies, coaching offers, and structured content all work together to position Arcklen more strongly online.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {seoKeywords.map((keyword) => (
-                <div key={keyword} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/75 p-4 text-sm text-slate-300">
-                  <Search className="h-4 w-4 text-emerald-300" />
-                  <span>{keyword}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </section>
     </>
   );
@@ -740,10 +747,10 @@ function ContactPage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="rounded-[36px] border border-white/10 bg-gradient-to-r from-blue-600/20 via-slate-900 to-emerald-500/20 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.45)] backdrop-blur-xl lg:p-10">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-200">Contact Us</p>
-              <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">Let’s build a stronger business presence</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-200">Need clarity on a project, process, or change initiative?</p>
+              <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">Let’s discuss your next step</h2>
               <p className="mt-5 max-w-xl text-lg leading-8 text-slate-200">
-                This website is now designed to look premium, communicate trust, and feel commercially credible from the first impression.
+                Whether you need business analysis support, stronger documentation, process improvement, or BA interview coaching, Arcklen can help bring structure and clarity to your next step.
               </p>
             </div>
 
@@ -765,12 +772,12 @@ function ContactPage() {
               </div>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <a href={bookingUrl} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
+                <a href={bookingUrl} className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                   Book a Consultation
                 </a>
-                <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                  Request a Callback
-                </button>
+                <a href={`mailto:${businessEmail}`} className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10">
+                  Send an Enquiry
+                </a>
               </div>
             </div>
           </div>
@@ -816,7 +823,7 @@ export default function ArcklenConsultingWebsite() {
       case 'about':
         return <AboutPage />;
       case 'services':
-        return <ServicesPage />;
+        return <ServicesPage navigateTo={navigateTo} />;
       case 'case-studies':
         return <CaseStudiesPage />;
       case 'insights':
@@ -824,7 +831,7 @@ export default function ArcklenConsultingWebsite() {
       case 'contact':
         return <ContactPage />;
       default:
-        return <LandingPage />;
+        return <LandingPage navigateTo={navigateTo} />;
     }
   };
 
@@ -836,7 +843,7 @@ export default function ArcklenConsultingWebsite() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
             <Sparkles className="h-3.5 w-3.5" />
-            Premium consulting presence for modern businesses
+            Business Analysis & Transformation Consulting
           </div>
           <div className="hidden items-center gap-6 md:flex">
             <span className="inline-flex items-center gap-2">
@@ -857,7 +864,7 @@ export default function ArcklenConsultingWebsite() {
             <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
             <div>
               <p className="text-base font-semibold tracking-[0.14em] text-white">Arcklen Group Limited</p>
-              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Consulting • Strategy • Business Analysis</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Business Analysis & Transformation Consulting</p>
             </div>
           </button>
 
@@ -871,15 +878,13 @@ export default function ArcklenConsultingWebsite() {
                 {item.label}
               </button>
             ))}
-            <a
-              href={bookingUrl}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              onClick={() => navigateTo('/contact')}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
             >
               Book a Consultation
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </button>
           </nav>
 
           <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden" aria-label="Toggle menu">
@@ -895,9 +900,9 @@ export default function ArcklenConsultingWebsite() {
                   {item.label}
                 </button>
               ))}
-              <a href={bookingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
+              <button onClick={() => navigateTo('/contact')} className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
                 Book a Consultation
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -912,11 +917,11 @@ export default function ArcklenConsultingWebsite() {
               <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
               <div>
                 <h3 className="text-xl font-semibold text-white">Arcklen Group Limited</h3>
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Consulting • Strategy • Business Analysis</p>
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Business Analysis & Transformation Consulting</p>
               </div>
             </div>
             <p className="mt-4 max-w-lg text-sm leading-7 text-slate-400">
-              A modern consulting brand focused on business analysis, strategic support, transformation thinking, and professional business services.
+              Arcklen supports UK businesses with business analysis consulting, process improvement, documentation, transformation support, and BA coaching.
             </p>
           </div>
 
@@ -949,6 +954,5 @@ export const __sanityChecks = {
   navItemCount: 6,
   serviceCount: services.length,
   caseStudyCount: caseStudies.length,
-  testimonialCount: testimonials.length,
   blogPostCount: blogPosts.length,
 };
