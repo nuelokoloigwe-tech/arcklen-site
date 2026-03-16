@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Briefcase,  CheckCircle2,
+  Briefcase,
+  CalendarDays,
+  CheckCircle2,
   ChevronRight,
   FileText,
   Mail,
@@ -10,6 +12,7 @@ import {
   Menu,
   Phone,
   Search,
+  Send,
   ShieldCheck,
   Sparkles,
   Star,
@@ -101,21 +104,42 @@ const testimonials = [
   },
 ];
 
-const insights = [
+const blogPosts = [
   {
-    title: 'Why Business Analysis Matters in Growing Organisations',
-    tag: 'Insight',
-    desc: 'How structured requirements and stakeholder engagement reduce confusion and improve delivery outcomes.',
+    title: 'How to Pass a Business Analyst Interview with Confidence',
+    category: 'BA Coaching',
+    readTime: '6 min read',
+    desc: 'A practical framework for answering scenario questions, stakeholder questions, and delivery-focused interview prompts.',
   },
   {
-    title: 'What Makes a Strong Change Initiative Successful',
-    tag: 'Transformation',
-    desc: 'A practical view of clarity, ownership, documentation, and communication in business change.',
+    title: 'Why Requirements Quality Decides Project Success',
+    category: 'Business Analysis',
+    readTime: '5 min read',
+    desc: 'A strong look at how weak requirements create rework, confusion, and delivery risk across transformation programmes.',
   },
   {
-    title: 'How to Prepare for a Business Analyst Interview',
-    tag: 'Career',
-    desc: 'A simple framework for telling your story, demonstrating value, and answering scenario-based questions.',
+    title: 'What Makes a Premium Consulting Brand Look Trustworthy Online',
+    category: 'Consulting',
+    readTime: '4 min read',
+    desc: 'Positioning, credibility, proof, and conversion design choices that help service businesses feel more premium.',
+  },
+  {
+    title: 'Stakeholder Management Mistakes That Slow Delivery',
+    category: 'Delivery',
+    readTime: '7 min read',
+    desc: 'Common breakdowns between business and delivery teams, and how strong analysis closes the gap.',
+  },
+  {
+    title: 'How SMEs Can Use Process Design to Scale Better',
+    category: 'Operations',
+    readTime: '5 min read',
+    desc: 'A simple overview of documentation, SOPs, handoffs, and process clarity for growing teams.',
+  },
+  {
+    title: 'How to Prepare for Stakeholder Workshops',
+    category: 'Transformation',
+    readTime: '6 min read',
+    desc: 'A practical guide to planning, facilitation, and turning conversations into useful requirements.',
   },
 ];
 
@@ -131,6 +155,8 @@ const seoKeywords = [
   'Transformation Support',
   'Business Analyst Interview Coaching',
   'Process Improvement Consulting',
+  'Business Consultant Coventry',
+  'BA Career Coaching UK',
 ];
 
 const metrics = [
@@ -142,42 +168,59 @@ const metrics = [
 
 type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
 
-const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: string }> = {
+const businessEmail = 'hello@arcklengroup.com';
+const businessPhone = '+44 7498 847956';
+const bookingUrl = 'https://calendly.com/your-handle/discovery-call';
+const formEndpoint = 'https://formspree.io/f/your-form-id';
+
+const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: string; seoTitle: string; seoDescription: string }> = {
   home: {
     title: 'Premium consulting presence for ambitious businesses.',
     eyebrow: 'Landing Page',
     description:
       'A high-converting landing page that introduces Arcklen clearly, establishes trust fast, and routes visitors into your key offers.',
+    seoTitle: 'Arcklen Group Limited | Business Analysis Consulting UK',
+    seoDescription: 'Premium consulting, business analysis, transformation support, and BA interview coaching in the UK.',
   },
   about: {
     title: 'A consulting brand built around clarity, trust, and execution.',
     eyebrow: 'About Page',
     description:
       'A dedicated page that explains who Arcklen is, the quality of thinking behind the brand, and why clients should trust the business.',
+    seoTitle: 'About Arcklen Group Limited | Consulting and Strategy',
+    seoDescription: 'Learn about Arcklen Group Limited, its vision, founder, and premium consulting approach.',
   },
   services: {
     title: 'Premium services built around business value.',
     eyebrow: 'Services Page',
     description:
       'A focused service page that makes each offer feel more credible, premium, and easier for visitors to understand.',
+    seoTitle: 'Services | Business Analysis, Strategy and Coaching',
+    seoDescription: 'Explore Arcklen services: business analysis consulting, transformation support, documentation, and BA coaching.',
   },
   'case-studies': {
     title: 'Selected work and visible outcomes.',
     eyebrow: 'Case Studies Page',
     description:
       'A proof-driven page that shows thinking, outcomes, and the type of transformation support Arcklen can provide.',
+    seoTitle: 'Case Studies | Arcklen Group Limited',
+    seoDescription: 'See selected outcomes, case studies, and examples of Arcklen consulting work.',
   },
   insights: {
     title: 'Thought leadership that strengthens your brand.',
     eyebrow: 'Insights Page',
     description:
       'A dedicated insights page for authority-building articles, guidance, and content that supports SEO and trust.',
+    seoTitle: 'Insights | Business Analysis and Consulting Articles',
+    seoDescription: 'Read Arcklen insights on business analysis, consulting, process improvement, and career coaching.',
   },
   contact: {
     title: 'Turn interest into conversations.',
     eyebrow: 'Contact Page',
     description:
       'A conversion-focused page for enquiries, consultations, and strong call-to-action pathways.',
+    seoTitle: 'Contact Arcklen Group Limited',
+    seoDescription: 'Book a consultation, send an enquiry, and contact Arcklen Group Limited.',
   },
 };
 
@@ -192,14 +235,71 @@ const getPageFromPath = (): PageKey => {
   return 'home';
 };
 
+function SeoManager({ page }: { page: PageKey }) {
+  useEffect(() => {
+    const meta = pageMeta[page];
+    document.title = meta.seoTitle;
+
+    const ensureMeta = (name: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.name = name;
+        document.head.appendChild(tag);
+      }
+      return tag;
+    };
+
+    const ensurePropertyMeta = (property: string) => {
+      let tag = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
+      }
+      return tag;
+    };
+
+    ensureMeta('description').content = meta.seoDescription;
+    ensureMeta('keywords').content = seoKeywords.join(', ');
+    ensurePropertyMeta('og:title').content = meta.seoTitle;
+    ensurePropertyMeta('og:description').content = meta.seoDescription;
+    ensurePropertyMeta('og:type').content = 'website';
+  }, [page]);
+
+  return null;
+}
+
+function LuxeBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"
+        animate={{ x: [0, 30, 0], y: [0, 20, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute right-0 top-0 h-[28rem] w-[28rem] rounded-full bg-emerald-500/15 blur-3xl"
+        animate={{ x: [0, -40, 0], y: [0, 30, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-400/10 blur-3xl"
+        animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.55, 0.35] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:90px_90px] opacity-20" />
+    </div>
+  );
+}
+
 function PremiumPageHero({ page }: { page: PageKey }) {
   const meta = pageMeta[page];
 
   return (
     <section className="relative overflow-hidden border-b border-white/10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_30%)]" />
+      <LuxeBackground />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      <div className="absolute left-1/2 top-16 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-16 lg:px-8 lg:pb-20 lg:pt-20">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
@@ -217,13 +317,80 @@ function PremiumPageHero({ page }: { page: PageKey }) {
   );
 }
 
+function BookingCard() {
+  return (
+    <div className="rounded-[32px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl backdrop-blur-xl">
+      <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3">
+        <CalendarDays className="h-6 w-6 text-emerald-300" />
+      </div>
+      <h3 className="text-2xl font-semibold text-white">Book a Consultation</h3>
+      <p className="mt-3 leading-7 text-slate-300">
+        Connect this button to Calendly or your preferred booking tool so prospects can instantly schedule discovery calls and strategy sessions.
+      </p>
+      <div className="mt-6 space-y-3 text-sm text-slate-400">
+        <p>Suggested booking URL:</p>
+        <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4 font-mono text-xs text-slate-300">{bookingUrl}</div>
+      </div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <a
+          href={bookingUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+        >
+          Open Booking Link
+        </a>
+        <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+          View Availability
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ContactFormCard() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-2xl">
+      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Lead Capture Form</p>
+      <h3 className="mt-3 text-2xl font-semibold text-white">Collect enquiries directly from the site</h3>
+      <p className="mt-3 text-sm leading-7 text-slate-300">
+        Replace the placeholder endpoint with Formspree, Resend, EmailJS, or your backend to receive enquiries directly in your inbox.
+      </p>
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Your name" />
+        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Email address" type="email" />
+        <input className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Company or business" />
+        <textarea className="min-h-[140px] w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500" placeholder="Tell us what you need help with" />
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-xs text-slate-400">
+          Form endpoint placeholder: <span className="text-slate-200">{formEndpoint}</span>
+        </div>
+        <button className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5" type="submit">
+          Send Enquiry
+          <Send className="h-4 w-4" />
+        </button>
+      </form>
+      {submitted && (
+        <div className="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
+          Demo submission captured. Connect this form to Formspree, Resend, or EmailJS to receive real enquiries.
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LandingPage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_30%)]" />
+        <LuxeBackground />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
 
         <div className="relative mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-28 lg:pt-24">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
@@ -236,8 +403,7 @@ function LandingPage() {
               Make your business look trusted, premium, and impossible to ignore.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              Arcklen Group Limited helps businesses and professionals communicate clarity, authority, and execution
-              strength through consulting, analysis, transformation support, and strategic advisory.
+              Arcklen Group Limited helps businesses and professionals communicate clarity, authority, and execution strength through consulting, analysis, transformation support, and strategic advisory.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
@@ -249,20 +415,19 @@ function LandingPage() {
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="/case-studies"
+                href={bookingUrl}
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
-                View Case Studies
+                Book a Discovery Call
                 <ChevronRight className="h-4 w-4" />
               </a>
             </div>
 
             <div className="mt-10 flex flex-wrap gap-3">
               {highlights.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 text-sm text-slate-200"
-                >
+                <span key={item} className="rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 text-sm text-slate-200">
                   {item}
                 </span>
               ))}
@@ -303,10 +468,7 @@ function LandingPage() {
                   {services.slice(0, 4).map((service, index) => {
                     const Icon = serviceIconMap[index % serviceIconMap.length];
                     return (
-                      <div
-                        key={service.title}
-                        className="group rounded-[22px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.07]"
-                      >
+                      <div key={service.title} className="group rounded-[22px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.07]">
                         <div className="mb-4 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
                           <Icon className="h-5 w-5 text-emerald-300" />
                         </div>
@@ -334,10 +496,7 @@ function LandingPage() {
       <section className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-4">
           {metrics.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-[26px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-6 shadow-[0_15px_40px_rgba(15,23,42,0.22)]"
-            >
+            <div key={item.label} className="rounded-[26px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-6 shadow-[0_15px_40px_rgba(15,23,42,0.22)]">
               <p className="text-3xl font-semibold text-white">{item.value}</p>
               <p className="mt-2 text-sm uppercase tracking-[0.22em] text-slate-400">{item.label}</p>
             </div>
@@ -353,16 +512,12 @@ function LandingPage() {
               <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Designed to feel credible from the first glance</h2>
             </div>
             <p className="max-w-2xl text-slate-300">
-              Your website should not feel like a starter template. It should communicate confidence, clarity, and
-              commercial value before the first call even happens.
+              Your website should not feel like a starter template. It should communicate confidence, clarity, and commercial value before the first call even happens.
             </p>
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {clientLogos.map((logo) => (
-              <div
-                key={logo}
-                className="rounded-[22px] border border-white/10 bg-slate-950/80 px-6 py-5 text-center text-base font-semibold tracking-wide text-slate-200 shadow-lg"
-              >
+              <div key={logo} className="rounded-[22px] border border-white/10 bg-slate-950/80 px-6 py-5 text-center text-base font-semibold tracking-wide text-slate-200 shadow-lg">
                 {logo}
               </div>
             ))}
@@ -383,9 +538,7 @@ function AboutPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About Arcklen</p>
             <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">A consulting brand built around clarity, trust, and execution</h2>
             <p className="mt-5 leading-8 text-slate-300">
-              Arcklen Group Limited is positioned to serve organisations and individuals who need structure, business
-              insight, confident execution, and modern professional support. The brand is designed to feel premium,
-              commercially credible, and ready for long-term growth.
+              Arcklen Group Limited is positioned to serve organisations and individuals who need structure, business insight, confident execution, and modern professional support. The brand is designed to feel premium, commercially credible, and ready for long-term growth.
             </p>
           </div>
 
@@ -473,24 +626,27 @@ function ServicesPage() {
           })}
         </div>
 
-        <div className="mt-14 rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">BA Interview Coaching</p>
-              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
-              <p className="mt-4 leading-8 text-slate-300">
-                Arcklen also supports aspiring and experienced Business Analysts with interview preparation, confidence building, and stronger self-presentation.
-              </p>
-            </div>
-            <div className="space-y-4">
-              {coachingFeatures.map((feature) => (
-                <div key={feature} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-slate-300">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                  <span>{feature}</span>
-                </div>
-              ))}
+        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+          <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
+            <div className="grid gap-8 lg:grid-cols-1 lg:items-center">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">BA Interview Coaching</p>
+                <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">A dedicated path for Business Analyst candidates</h2>
+                <p className="mt-4 leading-8 text-slate-300">
+                  Arcklen also supports aspiring and experienced Business Analysts with interview preparation, confidence building, and stronger self-presentation.
+                </p>
+              </div>
+              <div className="space-y-4">
+                {coachingFeatures.map((feature) => (
+                  <div key={feature} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-slate-300">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+          <BookingCard />
         </div>
       </section>
     </>
@@ -517,10 +673,7 @@ function CaseStudiesPage() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {industries.map((industry) => (
-            <div
-              key={industry}
-              className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
-            >
+            <div key={industry} className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.2)]">
               <h3 className="text-lg font-semibold text-white">{industry}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">
                 Tailored support designed around structure, documentation, operational improvement, and delivery confidence.
@@ -539,15 +692,16 @@ function InsightsPage() {
       <PremiumPageHero page="insights" />
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          {insights.map((item) => (
+          {blogPosts.map((item) => (
             <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-xl">
-              <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-300">
-                {item.tag}
-              </span>
+              <div className="flex items-center justify-between gap-4">
+                <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-300">{item.category}</span>
+                <span className="text-xs uppercase tracking-[0.18em] text-slate-500">{item.readTime}</span>
+              </div>
               <h3 className="mt-5 text-xl font-semibold text-white">{item.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
               <button className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
-                Read more <ArrowRight className="h-4 w-4" />
+                Read article <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -564,10 +718,7 @@ function InsightsPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {seoKeywords.map((keyword) => (
-                <div
-                  key={keyword}
-                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/75 p-4 text-sm text-slate-300"
-                >
+                <div key={keyword} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/75 p-4 text-sm text-slate-300">
                   <Search className="h-4 w-4 text-emerald-300" />
                   <span>{keyword}</span>
                 </div>
@@ -585,8 +736,8 @@ function ContactPage() {
     <>
       <PremiumPageHero page="contact" />
       <section className="mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-8">
-        <div className="rounded-[36px] border border-white/10 bg-gradient-to-r from-blue-600/20 via-slate-900 to-emerald-500/20 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.45)] backdrop-blur-xl lg:p-10">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div className="rounded-[36px] border border-white/10 bg-gradient-to-r from-blue-600/20 via-slate-900 to-emerald-500/20 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.45)] backdrop-blur-xl lg:p-10">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-200">Contact Us</p>
               <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">Let’s build a stronger business presence</h2>
@@ -595,7 +746,7 @@ function ContactPage() {
               </p>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-slate-950/75 p-7 shadow-xl">
+            <div className="mt-8 rounded-[28px] border border-white/10 bg-slate-950/75 p-7 shadow-xl">
               <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Get in touch</p>
               <div className="mt-6 space-y-5 text-slate-300">
                 <div className="flex items-center gap-3">
@@ -604,24 +755,26 @@ function ContactPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-emerald-300" />
-                  <span>Email address can be added here</span>
+                  <span>{businessEmail}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-emerald-300" />
-                  <span>Phone number can be added here</span>
+                  <span>{businessPhone}</span>
                 </div>
               </div>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <button className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
+                <a href={bookingUrl} target="_blank" rel="noreferrer" className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                   Book a Consultation
-                </button>
+                </a>
                 <button className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                   Request a Callback
                 </button>
               </div>
             </div>
           </div>
+
+          <ContactFormCard />
         </div>
       </section>
     </>
@@ -676,6 +829,8 @@ export default function ArcklenConsultingWebsite() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      <SeoManager page={currentPage} />
+
       <div className="border-b border-white/10 bg-slate-950">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
@@ -685,11 +840,11 @@ export default function ArcklenConsultingWebsite() {
           <div className="hidden items-center gap-6 md:flex">
             <span className="inline-flex items-center gap-2">
               <Mail className="h-4 w-4 text-slate-500" />
-              Business email can be added
+              {businessEmail}
             </span>
             <span className="inline-flex items-center gap-2">
               <Phone className="h-4 w-4 text-slate-500" />
-              Business phone can be added
+              {businessPhone}
             </span>
           </div>
         </div>
@@ -710,27 +865,23 @@ export default function ArcklenConsultingWebsite() {
               <button
                 key={item.label}
                 onClick={() => navigateTo(item.href)}
-                className={`text-sm font-medium transition hover:text-white ${
-                  currentPage === item.key ? 'text-white' : 'text-slate-300'
-                }`}
+                className={`text-sm font-medium transition hover:text-white ${currentPage === item.key ? 'text-white' : 'text-slate-300'}`}
               >
                 {item.label}
               </button>
             ))}
-            <button
-              onClick={() => navigateTo('/contact')}
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
             >
               Book a Consultation
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </a>
           </nav>
 
-          <button
-            onClick={() => setMobileOpen((prev) => !prev)}
-            className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden"
-            aria-label="Toggle menu"
-          >
+          <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden" aria-label="Toggle menu">
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -739,20 +890,13 @@ export default function ArcklenConsultingWebsite() {
           <div className="border-t border-white/10 px-6 py-5 lg:hidden">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => navigateTo(item.href)}
-                  className="text-left text-sm text-slate-300"
-                >
+                <button key={item.label} onClick={() => navigateTo(item.href)} className="text-left text-sm text-slate-300">
                   {item.label}
                 </button>
               ))}
-              <button
-                onClick={() => navigateTo('/contact')}
-                className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900"
-              >
+              <a href={bookingUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
                 Book a Consultation
-              </button>
+              </a>
             </div>
           </div>
         )}
@@ -779,11 +923,7 @@ export default function ArcklenConsultingWebsite() {
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Quick Links</h4>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-400">
               {navItems.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => navigateTo(item.href)}
-                  className="text-left transition hover:text-white"
-                >
+                <button key={item.label} onClick={() => navigateTo(item.href)} className="text-left transition hover:text-white">
                   {item.label}
                 </button>
               ))}
@@ -794,8 +934,8 @@ export default function ArcklenConsultingWebsite() {
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Business Info</h4>
             <div className="mt-4 space-y-3 text-sm text-slate-400">
               <p>United Kingdom</p>
-              <p>Business email can be added</p>
-              <p>Business phone can be added</p>
+              <p>{businessEmail}</p>
+              <p>{businessPhone}</p>
             </div>
           </div>
         </div>
@@ -809,4 +949,5 @@ export const __sanityChecks = {
   serviceCount: services.length,
   caseStudyCount: caseStudies.length,
   testimonialCount: testimonials.length,
+  blogPostCount: blogPosts.length,
 };
