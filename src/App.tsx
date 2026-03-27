@@ -332,10 +332,27 @@ function BookingCard() {
 function ContactFormCard() {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const data = new FormData(form);
+
+  const response = await fetch(formEndpoint, {
+    method: 'POST',
+    body: data,
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (response.ok) {
     setSubmitted(true);
-  };
+    form.reset();
+  } else {
+    alert('Something went wrong. Please try again.');
+  }
+};
 
   return (
     <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-2xl">
