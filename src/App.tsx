@@ -145,7 +145,7 @@ const metrics = [
 type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
 
 const businessEmail = 'hello@arcklengroup.com';
-const businessPhone = '+44 7498 847956';
+const businessPhone = '+447425705787';
 const bookingUrl = '#';
 // TODO: Replace with real Calendly booking link
 const formEndpoint = 'https://formspree.io/f/mykbkjdw';
