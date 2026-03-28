@@ -333,26 +333,26 @@ function ContactFormCard() {
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const form = event.currentTarget;
-  const data = new FormData(form);
+    const form = event.currentTarget;
+    const data = new FormData(form);
 
-  const response = await fetch(formEndpoint, {
-    method: 'POST',
-    body: data,
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+    const response = await fetch(formEndpoint, {
+      method: 'POST',
+      body: data,
+      headers: {
+        Accept: 'application/json',
+      },
+    });
 
-  if (response.ok) {
-    setSubmitted(true);
-    form.reset();
-  } else {
-    alert('Something went wrong. Please try again.');
-  }
-};
+    if (response.ok) {
+      setSubmitted(true);
+      form.reset();
+    } else {
+      alert('Something went wrong. Please try again.');
+    }
+  };
 
   return (
     <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-2xl">
@@ -851,11 +851,10 @@ function ContactPage() {
                   <span>{businessEmail}</span>
                 </div>
                 <div className="flex items-center gap-3">
-  <Phone className="h-4 w-4 text-emerald-300" />
-  <a href={`tel:${businessPhone}`} className="hover:underline">
-    {businessPhone}
-  </a>
-</div>
+                  <Phone className="h-4 w-4 text-emerald-300" />
+                  <span>{businessPhone}</span>
+                </div>
+              </div>
 
               <p className="mt-6 text-sm leading-7 text-slate-400">
                 Best for project enquiries, consulting support, process improvement work, and BA coaching discussions.
@@ -941,11 +940,9 @@ export default function ArcklenConsultingWebsite() {
               {businessEmail}
             </span>
             <span className="inline-flex items-center gap-2">
-  <Phone className="h-4 w-4 text-slate-500" />
-  <a href={`tel:${businessPhone}`} className="hover:underline">
-    {businessPhone}
-  </a>
-</span>
+              <Phone className="h-4 w-4 text-slate-500" />
+              {businessPhone}
+            </span>
           </div>
         </div>
       </div>
@@ -1033,11 +1030,7 @@ export default function ArcklenConsultingWebsite() {
             <div className="mt-4 space-y-3 text-sm text-slate-400">
               <p>United Kingdom</p>
               <p>{businessEmail}</p>
-              <p>
-  <a href={`tel:${businessPhone}`} className="hover:underline">
-    {businessPhone}
-  </a>
-</p>
+              <p>{businessPhone}</p>
             </div>
           </div>
         </div>
