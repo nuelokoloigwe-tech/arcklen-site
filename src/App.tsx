@@ -361,7 +361,7 @@ function ContactFormCard() {
       <p className="mt-3 text-sm leading-7 text-slate-300">
         Share a few details about your project, process, or business analysis needs and we will get back to you.
       </p>
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit} action={formEndpoint} method="POST">
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <input
           className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-slate-500"
           placeholder="Your name"
