@@ -851,10 +851,11 @@ function ContactPage() {
                   <span>{businessEmail}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-emerald-300" />
-                  <a href={`tel:${businessPhone}`}>{businessPhone}</a>
-                </div>
-              </div>
+  <Phone className="h-4 w-4 text-emerald-300" />
+  <a href={`tel:${businessPhone}`} className="hover:underline">
+    {businessPhone}
+  </a>
+</div>
 
               <p className="mt-6 text-sm leading-7 text-slate-400">
                 Best for project enquiries, consulting support, process improvement work, and BA coaching discussions.
@@ -940,9 +941,11 @@ export default function ArcklenConsultingWebsite() {
               {businessEmail}
             </span>
             <span className="inline-flex items-center gap-2">
-              <Phone className="h-4 w-4 text-slate-500" />
-              {businessPhone}
-            </span>
+  <Phone className="h-4 w-4 text-slate-500" />
+  <a href={`tel:${businessPhone}`} className="hover:underline">
+    {businessPhone}
+  </a>
+</span>
           </div>
         </div>
       </div>
@@ -1030,7 +1033,11 @@ export default function ArcklenConsultingWebsite() {
             <div className="mt-4 space-y-3 text-sm text-slate-400">
               <p>United Kingdom</p>
               <p>{businessEmail}</p>
-              <p>{businessPhone}</p>
+              <p>
+  <a href={`tel:${businessPhone}`} className="hover:underline">
+    {businessPhone}
+  </a>
+</p>
             </div>
           </div>
         </div>
