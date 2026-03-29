@@ -314,12 +314,14 @@ function BookingCard() {
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <a
           href={bookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
         >
           Book a Consultation
         </a>
         <a
-          href={bookingUrl} target="_blank"
+          href={`mailto:${businessEmail}`}
           className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Send an Enquiry
@@ -863,7 +865,7 @@ function ContactPage() {
               </p>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <a href={bookingUrl} className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
+                <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                   Book a Consultation
                 </a>
                 <a href={`mailto:${businessEmail}`} className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10">
