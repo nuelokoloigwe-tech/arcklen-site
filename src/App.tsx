@@ -146,7 +146,7 @@ type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'co
 
 const businessEmail = 'hello@arcklengroup.com';
 const businessPhone = '+447425705787';
-const bookingUrl = 'https://calendly.com/arcklengroup/consultation';
+const bookingUrl = 'https://calendly.com/hello-arcklengroup/30min';
 // TODO: Replace with real Calendly booking link
 const formEndpoint = 'https://formspree.io/f/mykbkjdw';
 // TODO: Replace with real Formspree or backend endpoint
