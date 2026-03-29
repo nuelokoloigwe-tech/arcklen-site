@@ -399,7 +399,7 @@ function ContactFormCard() {
   );
 }
 
-function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
+function LandingPage() {
   return (
     <>
       <section className="relative overflow-hidden">
@@ -421,20 +421,18 @@ function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
               >
                 Book a Consultation
                 <ArrowRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              </a>
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Send an Enquiry
                 <ChevronRight className="h-4 w-4" />
-              </button>
+              </a>
             </div>
 
             <div className="mt-10 flex flex-wrap gap-3">
@@ -650,18 +648,16 @@ function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
               >
                 Book a Consultation
-              </button>
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              </a>
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Send an Enquiry
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -708,7 +704,7 @@ function AboutPage() {
   );
 }
 
-function ServicesPage({ navigateTo }: { navigateTo: (href: string) => void }) {
+function ServicesPage() {
   return (
     <>
       <PremiumPageHero page="services" />
@@ -754,18 +750,16 @@ function ServicesPage({ navigateTo }: { navigateTo: (href: string) => void }) {
               ))}
             </div>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
               >
                 Book a Consultation
-              </button>
-              <button
-                onClick={() => window.open(bookingUrl, '_blank')}
+              </a>
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
                 className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Send an Enquiry
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -916,7 +910,7 @@ export default function ArcklenConsultingWebsite() {
       case 'about':
         return <AboutPage />;
       case 'services':
-        return <ServicesPage navigateTo={navigateTo} />;
+        return <ServicesPage />;
       case 'case-studies':
         return <CaseStudiesPage />;
       case 'insights':
@@ -924,7 +918,7 @@ export default function ArcklenConsultingWebsite() {
       case 'contact':
         return <ContactPage />;
       default:
-        return <LandingPage navigateTo={navigateTo} />;
+        return <LandingPage />;
     }
   };
 
@@ -975,16 +969,18 @@ export default function ArcklenConsultingWebsite() {
                 {item.label}
               </button>
             ))}
-            <button
-              onClick={() => window.open(bookingUrl, '_blank')}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900"
             >
               Book a Consultation
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </a>
           </nav>
 
-          <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden" aria-label="Toggle menu">
+          <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden">
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -997,9 +993,9 @@ export default function ArcklenConsultingWebsite() {
                   {item.label}
                 </button>
               ))}
-              <button onClick={() => window.open(bookingUrl, '_blank')} className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
                 Book a Consultation
-              </button>
+              </a>
             </div>
           </div>
         )}
@@ -1039,10 +1035,10 @@ export default function ArcklenConsultingWebsite() {
               <p>United Kingdom</p>
               <p>{businessEmail}</p>
               <p>
-              <a href={`tel:${businessPhone}`} className="hover:underline">
-                {businessPhone}
-              </a>
-            </p>
+                <a href={`tel:${businessPhone}`} className="hover:underline">
+                  {businessPhone}
+                </a>
+              </p>
             </div>
           </div>
         </div>
