@@ -146,7 +146,7 @@ type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'co
 
 const businessEmail = 'hello@arcklengroup.com';
 const businessPhone = '+447425705787';
-const bookingUrl = '#';
+const bookingUrl = 'https://calendly.com/arcklengroup/consultation';
 // TODO: Replace with real Calendly booking link
 const formEndpoint = 'https://formspree.io/f/mykbkjdw';
 // TODO: Replace with real Formspree or backend endpoint
@@ -319,7 +319,7 @@ function BookingCard() {
           Book a Consultation
         </a>
         <a
-          href="/contact"
+          href={bookingUrl} target="_blank"
           className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Send an Enquiry
@@ -420,14 +420,14 @@ function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
 
             <div className="mt-10 flex flex-wrap gap-4">
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
               >
                 Book a Consultation
                 <ArrowRight className="h-4 w-4" />
               </button>
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Send an Enquiry
@@ -649,13 +649,13 @@ function LandingPage({ navigateTo }: { navigateTo: (href: string) => void }) {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
               >
                 Book a Consultation
               </button>
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Send an Enquiry
@@ -753,13 +753,13 @@ function ServicesPage({ navigateTo }: { navigateTo: (href: string) => void }) {
             </div>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
               >
                 Book a Consultation
               </button>
               <button
-                onClick={() => navigateTo('/contact')}
+                onClick={() => window.open(bookingUrl, '_blank')}
                 className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Send an Enquiry
@@ -974,7 +974,7 @@ export default function ArcklenConsultingWebsite() {
               </button>
             ))}
             <button
-              onClick={() => navigateTo('/contact')}
+              onClick={() => window.open(bookingUrl, '_blank')}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-[0_20px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5"
             >
               Book a Consultation
@@ -995,7 +995,7 @@ export default function ArcklenConsultingWebsite() {
                   {item.label}
                 </button>
               ))}
-              <button onClick={() => navigateTo('/contact')} className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
+              <button onClick={() => window.open(bookingUrl, '_blank')} className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
                 Book a Consultation
               </button>
             </div>
