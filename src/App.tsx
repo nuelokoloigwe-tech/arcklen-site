@@ -670,33 +670,258 @@ function AboutPage() {
   return (
     <>
       <PremiumPageHero page="about" />
+
+      {/* Meet Nuel */}
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Clarity for businesses delivering change</h2>
-            <p className="mt-5 leading-8 text-slate-300">
-              Arcklen Group Limited supports organisations that need clearer requirements, better processes, stronger documentation, and practical support delivering change.
+        <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
+          {/* Founder portrait */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative overflow-hidden rounded-[32px] border border-white/10 bg-slate-900 shadow-2xl"
+          >
+            <div className="aspect-[4/5] w-full lg:aspect-auto lg:h-full lg:min-h-[720px]">
+              <img
+                src="/nuel-profile.jpg"
+                alt="Nuel - Founder & Senior Business Analyst at Arcklen Group"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-6 pt-28">
+              <span className="inline-flex rounded-full border border-white/10 bg-slate-950/75 px-4 py-2 text-xs font-medium text-white backdrop-blur">
+                Founder, Arcklen Group
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Founder story */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8 shadow-xl lg:p-10"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-300">
+              <Sparkles className="h-4 w-4" />
+              The person behind Arcklen
+            </div>
+
+            <h2 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Meet Nuel
+            </h2>
+
+            <p className="mt-3 text-lg font-medium text-emerald-300">
+              Founder & Senior Business Analyst
             </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              We combine business analysis thinking with hands-on transformation support to help teams move from ambiguity to action.
+
+            <div className="mt-7 space-y-5 text-base leading-8 text-slate-300">
+              <p>
+                I’m Nuel, the founder of Arcklen Group and a Senior Business
+                Analyst with 10+ years of experience across banking, financial
+                services, business analysis, and transformation.
+              </p>
+
+              <p>
+                Throughout my career, I’ve worked at the intersection of
+                <span className="font-semibold text-white">
+                  {" "}
+                  people, processes, and technology
+                </span>
+                — helping organisations understand what needs to change, why it
+                matters, and how to turn that understanding into practical
+                delivery.
+              </p>
+
+              <p>
+                My experience spans requirements engineering, stakeholder
+                management, process improvement, digital product delivery,
+                business transformation, and structured delivery within
+                complex and regulated environments.
+              </p>
+
+              <p>
+                I created Arcklen because I saw a common challenge across
+                organisations: good ideas often struggle to become good
+                outcomes when requirements are unclear, processes are poorly
+                understood, or stakeholders aren’t aligned.
+              </p>
+
+              <p>
+                <span className="font-semibold text-white">
+                  Arcklen exists to close that gap
+                </span>{" "}
+                — bringing clarity, structure, and practical delivery support
+                to change.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Philosophy */}
+      <section className="border-y border-white/10 bg-white/[0.02]">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
+                My philosophy
+              </p>
+
+              <h3 className="mt-4 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+                Bring clarity to complexity.
+                <br />
+                <span className="text-emerald-300">
+                  Turn clarity into action.
+                </span>
+              </h3>
+
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+                Arcklen is built around a practical approach to consulting. The
+                goal is not to add more complexity, but to make problems easier
+                to understand, decisions easier to make, and change easier to
+                deliver.
+              </p>
+            </div>
+
+            <div className="rounded-[28px] border border-white/10 bg-slate-950/80 p-6 shadow-xl lg:p-7">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
+                What I bring
+              </p>
+
+              <div className="mt-4 space-y-3">
+                {[
+                  {
+                    title: "Clarity",
+                    desc: "Turning complex problems into something teams can understand and act on.",
+                  },
+                  {
+                    title: "Structure",
+                    desc: "Creating requirements, processes, and documentation people can actually use.",
+                  },
+                  {
+                    title: "Delivery",
+                    desc: "Keeping analysis connected to practical actions and real business outcomes.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 rounded-full bg-emerald-400/10 p-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                      </div>
+
+                      <div>
+                        <p className="font-semibold text-white">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-sm leading-6 text-slate-400">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How I Work */}
+      <section>
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
+              How I work
             </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              Led by a UK-based Business Analyst, Arcklen works with businesses that want structured thinking, clear documentation, and effective delivery support.
+
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Practical thinking. Clear structure. Better delivery.
+            </h2>
+
+            <p className="mt-5 text-lg leading-8 text-slate-300">
+              Whether I’m supporting a transformation initiative, improving a
+              business process, or helping teams turn complex requirements
+              into practical delivery, I keep the approach structured and
+              focused on outcomes.
             </p>
           </div>
 
-          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
-            <h3 className="text-2xl font-semibold text-white">Why businesses choose Arcklen</h3>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {whyChooseArcklen.map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </div>
-                  <p className="text-sm leading-7 text-slate-300">{item}</p>
-                </div>
-              ))}
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                number: "01",
+                title: "Understand",
+                desc: "Understand the business problem, the people involved, and the outcome that needs to be achieved.",
+              },
+              {
+                number: "02",
+                title: "Clarify",
+                desc: "Turn complexity into clear requirements, processes, decisions, documentation, and priorities.",
+              },
+              {
+                number: "03",
+                title: "Deliver",
+                desc: "Support teams in turning those decisions into practical actions and measurable outcomes.",
+              },
+            ].map((item) => (
+              <motion.div
+                key={item.number}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="rounded-[28px] border border-white/10 bg-slate-950/70 p-7"
+              >
+                <span className="text-sm font-semibold tracking-[0.2em] text-emerald-300">
+                  {item.number}
+                </span>
+
+                <h3 className="mt-5 text-2xl font-semibold text-white">
+                  {item.title}
+                </h3>
+
+                <p className="mt-4 leading-7 text-slate-300">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl lg:p-12">
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
+
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
+                Let’s work together
+              </p>
+
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                Have a project, process, or change challenge?
+              </h2>
+
+              <p className="mt-4 leading-7 text-slate-300">
+                Let’s have a conversation about where you need clarity,
+                structure, or delivery support.
+              </p>
             </div>
+
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+            >
+              Book a Consultation
+              <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </section>
