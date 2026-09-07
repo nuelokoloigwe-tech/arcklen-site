@@ -8,6 +8,7 @@ import {
   ChevronRight,
   FileText,
   Mail,
+  MessageCircle,
   MapPin,
   Menu,
   Phone,
@@ -1101,6 +1102,227 @@ function ContactPage() {
   );
 }
 
+
+function OdiChatbot() {
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<'welcome' | 'support' | 'result'>('welcome');
+  const [selection, setSelection] = useState('');
+  const [showNudge, setShowNudge] = useState(true);
+
+  const options = [
+    'Business Analysis',
+    'Process Improvement',
+    'Change & Transformation',
+    'BA Career Coaching',
+    "I'm not sure",
+  ];
+
+  const responses: Record<string, string> = {
+    'Business Analysis':
+      'Arcklen provides practical Business Analysis support across requirements discovery, stakeholder workshops, process modelling, user stories, acceptance criteria, and delivery support.',
+    'Process Improvement':
+      'Arcklen can help clarify workflows, map processes, develop SOPs, and create structured documentation that improves operational consistency and clarity.',
+    'Change & Transformation':
+      'Arcklen supports change initiatives through impact analysis, stakeholder alignment, governance structure, implementation readiness, and delivery-focused analysis.',
+    'BA Career Coaching':
+      'Arcklen offers focused BA coaching including interview preparation, CV positioning, mock interviews, and practical guidance for career progression.',
+    "I'm not sure":
+      'That’s completely fine. Tell us about the challenge you’re facing and we can help identify where structured analysis, process improvement, or change support could make the biggest difference.',
+  };
+
+  const startConversation = () => {
+    setStep('support');
+    setSelection('');
+    setShowNudge(false);
+  };
+
+  const chooseOption = (option: string) => {
+    setSelection(option);
+    setStep('result');
+  };
+
+  const reset = () => {
+    setStep('welcome');
+    setSelection('');
+  };
+
+  return (
+    <div className="fixed bottom-5 right-5 z-[60] sm:bottom-6 sm:right-6">
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: 18, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="mb-4 w-[calc(100vw-2.5rem)] max-w-[390px] overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/98 shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+          role="dialog"
+          aria-label="Odi, Arcklen Digital Assistant"
+        >
+          {/* Header */}
+          <div className="border-b border-white/10 bg-gradient-to-r from-white/[0.07] to-emerald-400/[0.05] px-5 py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10">
+                  <Sparkles className="h-5 w-5 text-emerald-300" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-slate-950 bg-emerald-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-white">Odi</p>
+                    <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-emerald-200">
+                      Online
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-slate-400">Arcklen Digital Assistant</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close Odi"
+                className="rounded-xl p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Conversation */}
+          <div className="max-h-[540px] overflow-y-auto p-5">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/10">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-300" />
+              </div>
+
+              <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-white/[0.06] p-4 text-sm leading-6 text-slate-200">
+                {step === 'welcome' && (
+                  <>
+                    <p className="font-medium text-white">Hi, I’m Odi 👋</p>
+                    <p className="mt-2">
+                      I can help you find the right Arcklen support for your business, project, or career goals.
+                    </p>
+                  </>
+                )}
+
+                {step === 'support' && (
+                  <>
+                    <p className="font-medium text-white">What can I help you with?</p>
+                    <p className="mt-1 text-slate-400">Choose an option and I’ll point you in the right direction.</p>
+                  </>
+                )}
+
+                {step === 'result' && (
+                  <>
+                    <p className="font-medium text-white">Here’s where Arcklen may be able to help.</p>
+                    <p className="mt-3">{responses[selection]}</p>
+                    <p className="mt-3 text-slate-300">
+                      If you’d like, you can discuss the details directly with Nuel.
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {step === 'support' && (
+              <div className="mt-4 space-y-2 pl-10">
+                {options.map((option) => (
+                  <motion.button
+                    key={option}
+                    whileHover={{ x: 2 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => chooseOption(option)}
+                    className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left text-sm font-medium text-slate-200 transition hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-white"
+                  >
+                    <span>{option}</span>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-slate-500" />
+                  </motion.button>
+                ))}
+              </div>
+            )}
+
+            {step === 'welcome' && (
+              <button
+                onClick={startConversation}
+                className="mt-4 ml-10 inline-flex w-[calc(100%-2.5rem)] items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100"
+              >
+                Tell Odi what you need
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            )}
+
+            {step === 'result' && (
+              <div className="mt-4 pl-10">
+                <a
+                  href={bookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100"
+                >
+                  Talk to Nuel
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setStep('support')}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-xs font-medium text-slate-300 transition hover:bg-white/[0.08] hover:text-white"
+                  >
+                    Explore another
+                  </button>
+                  <button
+                    onClick={reset}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-xs font-medium text-slate-300 transition hover:bg-white/[0.08] hover:text-white"
+                  >
+                    Start again
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/10 px-5 py-3">
+            <p className="text-center text-[11px] text-slate-500">
+              Odi provides guided information about Arcklen’s services.
+            </p>
+          </div>
+        </motion.div>
+      )}
+
+      {!open && showNudge && (
+        <motion.div
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8, duration: 0.35 }}
+          className="mb-3 mr-1 hidden max-w-[220px] rounded-2xl border border-white/10 bg-slate-950/95 px-4 py-3 text-sm text-slate-200 shadow-xl backdrop-blur-xl sm:block"
+        >
+          <button onClick={() => setShowNudge(false)} className="float-right ml-3 text-slate-500 hover:text-white" aria-label="Dismiss Odi message">
+            <X className="h-3 w-3" />
+          </button>
+          <p className="pr-2">
+            Need help finding the right Arcklen service? <span className="font-medium text-emerald-300">Ask Odi.</span>
+          </p>
+        </motion.div>
+      )}
+
+      <motion.button
+        onClick={() => {
+          setOpen((previous) => !previous);
+          setShowNudge(false);
+        }}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        aria-label={open ? 'Close Odi' : 'Open Odi'}
+        aria-expanded={open}
+        className="ml-auto flex items-center gap-3 rounded-full border border-emerald-400/20 bg-slate-950/95 px-4 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl transition hover:border-emerald-400/40"
+      >
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/10">
+          {open ? <X className="h-4 w-4 text-emerald-300" /> : <MessageCircle className="h-4 w-4 text-emerald-300" />}
+        </span>
+        <span>{open ? 'Close Odi' : 'Ask Odi'}</span>
+      </motion.button>
+    </div>
+  );
+}
+
 export default function ArcklenConsultingWebsite() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageKey>(getPageFromPath());
@@ -1150,6 +1372,7 @@ export default function ArcklenConsultingWebsite() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <SeoManager page={currentPage} />
+      <OdiChatbot />
 
       <div className="border-b border-white/10 bg-slate-950">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
