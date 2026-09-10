@@ -24,59 +24,28 @@ const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles];
 
 const services = [
   {
-    title: 'Business Analysis Consulting',
-    desc: 'Requirements gathering, stakeholder engagement, user stories, process mapping, and analysis support for projects and change initiatives.',
+    title: 'Business Analysis',
+    desc: 'Turn business needs into clear requirements, aligned stakeholders, and workable solutions.',
   },
   {
-    title: 'Process Improvement & Documentation',
-    desc: 'SOP creation, process mapping, requirement packs, and structured documentation that improves clarity and operational consistency.',
+    title: 'Process Improvement',
+    desc: 'Understand current processes, remove friction, and create clearer ways of working.',
   },
   {
-    title: 'Change & Transformation Support',
-    desc: 'Support for business change initiatives including impact analysis, delivery support, governance structure, and implementation readiness.',
-  },
-  {
-    title: 'BA Career Coaching',
-    desc: 'Interview preparation, CV positioning, mock interviews, and coaching for aspiring or experienced Business Analysts.',
+    title: 'Change & Transformation',
+    desc: 'Support people, processes, and technology through structured, delivery-focused change.',
   },
 ];
 
-const audienceCards = [
-  {
-    title: 'SMEs needing clearer processes',
-    desc: 'Support for growing businesses that need stronger process clarity, better documentation, and more structure around delivery.',
-  },
-  {
-    title: 'Financial services and change teams',
-    desc: 'Practical business analysis and transformation support for teams managing change, stakeholder alignment, and implementation readiness.',
-  },
-  {
-    title: 'BA professionals preparing for interviews',
-    desc: 'Focused coaching for aspiring and experienced Business Analysts who want stronger interview structure, confidence, and positioning.',
-  },
-];
 
-const caseStudies = [
-  {
-    title: 'Mortgage Process Improvement',
-    desc: 'Mapped workflows and clarified stakeholder requirements to improve alignment and reduce operational friction.',
-  },
-  {
-    title: 'Operations Documentation Pack',
-    desc: 'Developed structured SOPs and process documentation to improve consistency and operational readiness.',
-  },
-  {
-    title: 'BA Interview Coaching Programme',
-    desc: 'Helped candidates improve interview structure, confidence, and performance through targeted coaching.',
-  },
-];
+const caseStudies: { title: string; desc: string }[] = [];
 
 
 
 const blogPosts = [
   {
     title: 'How to Pass a Business Analyst Interview with Confidence',
-    category: 'BA Coaching',
+    category: 'Career Insight',
     readTime: '6 min read',
     desc: 'A practical framework for answering scenario questions, stakeholder questions, and delivery-focused interview prompts.',
   },
@@ -112,7 +81,6 @@ const blogPosts = [
   },
 ];
 
-const trustIndicators = ['UK Based', 'Business Analysis', 'Process Improvement', 'Change Support'];
 
 const whyChooseArcklen = [
   'Clear and practical business analysis',
@@ -121,11 +89,6 @@ const whyChooseArcklen = [
   'Professional guidance for business and career growth',
 ];
 
-const founderCredibility = [
-  'UK-based Business Analyst',
-  'Experience in structured delivery, stakeholder engagement, and process improvement',
-  'Practical, delivery-focused consulting approach',
-];
 
 const seoKeywords = [
   'Business Analysis Consulting UK',
@@ -136,12 +99,6 @@ const seoKeywords = [
   'Change Support UK',
 ];
 
-const metrics = [
-  { value: 'UK Based', label: 'Consulting Presence' },
-  { value: '4', label: 'Core Services' },
-  { value: 'SMEs & FS', label: 'Primary Audience' },
-  { value: 'Delivery-Focused', label: 'Approach' },
-];
 
 type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
 
@@ -160,7 +117,7 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
       'Arcklen Group helps organisations bring structure to change through clear requirements, stronger processes, practical documentation, and delivery-focused support.',
     seoTitle: 'Arcklen Group | Business Analysis & Transformation Consulting UK',
     seoDescription:
-      'Arcklen Group provides business analysis consulting, process improvement, documentation, transformation support, and BA coaching for UK businesses.',
+      'Arcklen Group provides business analysis, process improvement, and change & transformation support for UK businesses.',
   },
   about: {
     title: 'Clarity for businesses delivering change',
@@ -175,16 +132,16 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
     title: 'Focused support for business analysis, process improvement, and change delivery',
     eyebrow: 'Core Services',
     description:
-      'Explore Arcklen’s core offers across business analysis consulting, documentation, transformation support, and BA career coaching.',
+      'Explore Arcklen’s core offers across business analysis, process improvement, and change & transformation support.',
     seoTitle: 'Services | Business Analysis & Transformation Consulting UK',
     seoDescription:
-      'Explore Arcklen services: business analysis consulting, process improvement, change support, and BA career coaching.',
+      'Explore Arcklen services: business analysis, process improvement, and change & transformation support.',
   },
   'case-studies': {
     title: 'Examples of structured support and practical outcomes',
     eyebrow: 'Case Studies',
     description:
-      'See examples of how Arcklen supports process clarity, documentation, stakeholder alignment, and coaching outcomes.',
+      'Explore Arcklen’s approach to structured analysis, process clarity, stakeholder alignment, and transformation delivery.',
     seoTitle: 'Case Studies | Arcklen Group',
     seoDescription:
       'See practical examples of Arcklen’s work across process improvement, documentation, and BA coaching.',
@@ -193,7 +150,7 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
     title: 'Business analysis and change insights for growing organisations',
     eyebrow: 'Insights',
     description:
-      'Read practical content on business analysis, process improvement, stakeholder management, and BA career growth.',
+      'Read practical content on business analysis, process improvement, stakeholder management, and transformation delivery.',
     seoTitle: 'Insights | Arcklen Group',
     seoDescription:
       'Read Arcklen insights on business analysis, documentation, transformation support, and BA interview preparation.',
@@ -202,7 +159,7 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
     title: 'Need clarity on a project, process, or change initiative?',
     eyebrow: 'Contact',
     description:
-      'Whether you need business analysis support, stronger documentation, process improvement, or BA interview coaching, Arcklen can help bring structure and clarity to your next step.',
+      'Whether you need business analysis support, stronger documentation, process improvement, or transformation support, Arcklen can help bring structure and clarity to your next step.',
     seoTitle: 'Contact Arcklen Group | Business Analysis Consulting UK',
     seoDescription:
       'Book a consultation or send an enquiry to Arcklen Group for business analysis, change support, process improvement, and BA coaching.',
@@ -403,262 +360,430 @@ function ContactFormCard() {
 function LandingPage() {
   return (
     <>
-      <section className="relative overflow-hidden">
-        <LuxeBackground />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      {/* Hero */}
+<section className="relative min-h-[680px] overflow-hidden bg-slate-950">
+  {/* Full-width cinematic background */}
+  <img
+    src="/images/hero-visual-real.png"
+    alt=""
+    aria-hidden="true"
+    className="absolute inset-0 h-full w-full object-cover"
+  />
 
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-28 lg:pt-24">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
-              <Star className="h-4 w-4 text-emerald-300" />
-              Business Analysis & Transformation Consulting
-            </div>
+  {/* Dark left-to-right overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/20" />
 
-            <h1 className="mt-7 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Business Analysis & Transformation Support for Growing UK Businesses
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              Arcklen Group helps organisations bring structure to change through clear requirements, stronger processes, practical documentation, and delivery-focused support.
-            </p>
+  {/* Bottom fade */}
+  <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950/80 to-transparent" />
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-semibold text-slate-900 shadow-[0_30px_80px_rgba(255,255,255,0.18)] transition hover:-translate-y-0.5"
-              >
-                Book a Consultation
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
-              >
-                Send an Enquiry
-                <ChevronRight className="h-4 w-4" />
-              </a>
-            </div>
+  {/* Subtle teal glow */}
+  <div className="absolute left-[35%] top-1/4 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
 
-            <div className="mt-10 flex flex-wrap gap-3">
-              {trustIndicators.map((item) => (
-                <span key={item} className="rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 text-sm text-slate-200">
-                  {item}
-                </span>
-              ))}
-            </div>
-          </motion.div>
+  <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-6 py-20 lg:px-8">
+    <div className="grid w-full gap-12 lg:grid-cols-[1fr_0.85fr] lg:items-center">
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.08 }}
-            className="lg:pl-6"
+      {/* Hero content */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 max-w-3xl"
+      >
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+          Business Analysis & Transformation Consulting
+        </p>
+
+        <h1 className="mt-5 text-5xl font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
+          From complexity
+          <br />
+          <span className="text-emerald-300">to clarity.</span>
+        </h1>
+
+        <p className="mt-6 max-w-xl text-lg leading-8 text-slate-200 sm:text-xl">
+          We help organisations understand problems, improve processes and
+          deliver meaningful change.
+        </p>
+
+        <div className="mt-9 flex flex-wrap gap-4">
+          <button
+            onClick={() => {
+              window.history.pushState({}, '', '/services');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="inline-flex items-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200"
           >
-            <div className="rounded-[32px] border border-white/10 bg-white/[0.07] p-4 shadow-[0_40px_120px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
-              <div className="rounded-[26px] border border-white/10 bg-slate-950/90 p-6">
-                <div className="mb-6 flex items-center justify-between gap-4 border-b border-white/10 pb-5">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Focused Support</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-white">Built for clarity and delivery</h2>
-                  </div>
-                  <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
-                    UK Based
-                  </div>
-                </div>
+            Explore Our Services
+            <ArrowRight className="h-4 w-4" />
+          </button>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {services.map((service, index) => {
-                    const Icon = serviceIconMap[index % serviceIconMap.length];
-                    return (
-                      <div key={service.title} className="group rounded-[22px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.07]">
-                        <div className="mb-4 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
-                          <Icon className="h-5 w-5 text-emerald-300" />
-                        </div>
-                        <h3 className="text-base font-semibold text-white">{service.title}</h3>
-                        <p className="mt-2 text-sm leading-6 text-slate-300">{service.desc}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </motion.div>
+          <button
+            onClick={() => {
+              window.history.pushState({}, '', '/contact');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="inline-flex items-center gap-2 rounded-full border border-emerald-300/60 bg-slate-950/30 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+          >
+            Get in Touch
+            <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-3">
-          {audienceCards.map((item, index) => {
-            const Icon = serviceIconMap[index % serviceIconMap.length];
-            return (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.35, delay: index * 0.06 }}
-                className="rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-[0_20px_60px_rgba(15,23,42,0.22)]"
-              >
-                <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
-                  <Icon className="h-5 w-5 text-emerald-300" />
-                </div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">Who We Help</p>
-                <h3 className="mt-3 text-xl font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{item.desc}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-4 lg:px-8">
-        <div className="grid gap-4 lg:grid-cols-4">
-          {metrics.map((item) => (
-            <div key={item.label} className="rounded-[26px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-6 shadow-[0_15px_40px_rgba(15,23,42,0.22)]">
-              <p className="text-3xl font-semibold text-white">{item.value}</p>
-              <p className="mt-2 text-sm uppercase tracking-[0.22em] text-slate-400">{item.label}</p>
+        {/* Outcomes */}
+        <div className="mt-10 grid max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4">
+          {[
+            ['People aligned', 'People'],
+            ['Processes simplified', 'Process'],
+            ['Technology enabled', 'Technology'],
+            ['Better outcomes', 'Outcomes'],
+          ].map(([label]) => (
+            <div
+              key={label}
+              className="border-l border-white/20 pl-3"
+            >
+              <p className="text-xs leading-5 text-slate-300">
+                {label}
+              </p>
             </div>
           ))}
         </div>
-      </section>
+      </motion.div>
 
-      <section id="about" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-          <div className="rounded-[30px] border border-white/10 bg-white/[0.04] p-8 shadow-xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-300">About</p>
-            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">Clarity for businesses delivering change</h2>
-            <p className="mt-5 leading-8 text-slate-300">
-              Arcklen Group Limited supports organisations that need clearer requirements, better processes, stronger documentation, and practical support delivering change.
-            </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              We combine business analysis thinking with hands-on transformation support to help teams move from ambiguity to action.
-            </p>
-            <p className="mt-4 leading-8 text-slate-300">
-              Led by a UK-based Business Analyst, Arcklen works with businesses that want structured thinking, clear documentation, and effective delivery support.
-            </p>
-          </div>
-
-          <div className="rounded-[30px] border border-white/10 bg-slate-900/80 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.34)]">
-            <h3 className="text-2xl font-semibold text-white">Why businesses choose Arcklen</h3>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {whyChooseArcklen.map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <div className="mb-3 inline-flex rounded-full bg-emerald-400/10 p-2 text-emerald-300">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </div>
-                  <p className="text-sm leading-7 text-slate-300">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-white/[0.03]">
-        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">Focused Audience</p>
-              <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Supporting UK businesses, delivery teams, and BA professionals</h2>
-            </div>
-            <p className="max-w-2xl text-slate-300">
-              Arcklen is built for organisations that need structured business analysis, clearer process thinking, and practical support moving change work forward.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="mb-10 rounded-[32px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Founder Credibility</p>
-              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Credible, structured support grounded in practical delivery</h2>
-              <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-                Arcklen is led by a UK-based Business Analyst with a practical consulting style shaped by structured delivery, stakeholder engagement, and process improvement work.
-              </p>
-            </div>
-            <div className="space-y-4">
-              {founderCredibility.map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/75 p-4 text-slate-300">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Right-side messaging */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.7, delay: 0.15 }}
+        className="relative hidden min-h-[420px] lg:block"
+      >
+        <div className="absolute right-0 top-8 flex items-center gap-4 text-[11px] font-medium uppercase tracking-[0.28em] text-white/60">
+          <span className="h-px w-8 bg-emerald-300" />
+          <span>People</span>
+          <span>|</span>
+          <span>Processes</span>
+          <span>|</span>
+          <span>Progress</span>
         </div>
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Core Services</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Support built around business analysis, process improvement, and delivery clarity</h2>
-          </div>
-          <p className="max-w-2xl text-slate-300">
-            Arcklen’s services are shaped for organisations that need sharper requirements, stronger documentation, and delivery-focused support through change.
+        <div className="absolute bottom-12 right-0 max-w-[220px] border-l-2 border-emerald-300 pl-5">
+          <p className="text-xl font-medium uppercase leading-9 tracking-[0.16em] text-white">
+            Clearer
+            <br />
+            Processes.
+            <br />
+            Brighter
+            <br />
+            Tomorrow.
           </p>
         </div>
+      </motion.div>
+    </div>
+  </div>
+</section>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {services.map((service, index) => {
-            const Icon = serviceIconMap[index % serviceIconMap.length];
-            return (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.35, delay: index * 0.05 }}
-                whileHover={{ y: -8 }}
-                className="group rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.22)] transition"
-              >
-                <div className="mb-5 inline-flex rounded-2xl border border-white/10 bg-slate-900 p-3 shadow-lg">
-                  <Icon className="h-5 w-5 text-emerald-300" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">{service.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">{service.desc}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-white/[0.03]">
+      {/* Services */}
+      <section className="bg-white text-slate-950">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Case Studies</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Examples of structured support and practical outcomes</h2>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600">Our Services</p>
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Practical solutions for real change.</h2>
+            </div>
+            <p className="max-w-xl text-base leading-7 text-slate-600">We provide business analysis, process improvement and transformation support, with a people-focused approach that keeps delivery moving.</p>
           </div>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {caseStudies.map((item) => (
-              <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
-                <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-300">{item.desc}</p>
-              </div>
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            {services.map((service, index) => (
+              <motion.div key={service.title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.35, delay: index * 0.06 }} whileHover={{ y: -6 }} className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
+                <div className="relative h-52 overflow-hidden bg-slate-950">
+  {index === 0 ? (
+    <>
+      <img
+        src="/images/service-business-analysis.png"
+        alt="Business analysis workshop"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-slate-950/10" />
+
+      <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
+        Insight • Alignment • Solutions
+      </div>
+    </>
+  ) : index === 1 ? (
+    <>
+      <img
+        src="/images/service-process-improvement.png"
+        alt="Team collaborating on process improvement"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+
+      <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
+        Simplify • Improve • Deliver
+      </div>
+    </>
+) : (
+  <>
+    <img
+      src="/images/service-transformation.png"
+      alt="Business transformation and strategic change"
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+
+    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+
+    <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
+      Change • Transform • Grow
+    </div>
+  </>
+)}
+</div>
+                <div className="p-7"><h3 className="text-2xl font-semibold">{service.title}</h3><p className="mt-3 leading-7 text-slate-600">{service.desc}</p><button onClick={() => { window.history.pushState({}, '', '/services'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-950">Learn more <ArrowRight className="h-4 w-4 text-emerald-600" /></button></div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-300">Call to Action</p>
-              <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Need clarity on a project, process, or change initiative?</h2>
-              <p className="mt-4 max-w-2xl leading-8 text-slate-300">
-                Whether you need clearer requirements, stronger process documentation, change support, or BA interview coaching, Arcklen can help you move from uncertainty to a more structured next step.
-              </p>
+      {/* Odi */}
+      <section className="overflow-hidden bg-slate-950">
+        <div className="mx-auto grid max-w-7xl lg:grid-cols-2">
+          <div className="px-6 py-20 lg:px-8 lg:py-24">
+  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+    Meet Odi
+  </p>
+
+  <h2 className="mt-3 max-w-xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+    Meet Odi — Arcklen&apos;s AI Assistant.
+  </h2>
+
+  <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">
+    Analyse. Prepare. Progress. Odi helps Business Analysts make sense of
+    opportunities, improve their CVs, practise interview scenarios and build
+    confidence.
+  </p>
+
+  <div className="mt-7 flex flex-wrap gap-3">
+    {['CV Review', 'Interview Practice', 'Career Guidance'].map((item) => (
+      <div
+        key={item}
+        className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-medium text-slate-200 backdrop-blur-xl"
+      >
+        {item}
+      </div>
+    ))}
+  </div>
+
+  <button
+    onClick={() =>
+      document.querySelector<HTMLButtonElement>('[aria-label="Open Odi"]')?.click()
+    }
+    className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200"
+  >
+    Talk to Odi
+    <ArrowRight className="h-4 w-4" />
+  </button>
+</div>
+          <div className="relative min-h-[420px] overflow-hidden border-l border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 p-8">
+  {/* Ambient AI glow */}
+  <div className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-emerald-400/15 blur-3xl" />
+  <div className="absolute bottom-0 left-10 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl" />
+
+  {/* AI network lines */}
+  <div className="absolute inset-0 opacity-40">
+    <div className="absolute left-[18%] top-[28%] h-px w-[55%] rotate-[18deg] bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent" />
+    <div className="absolute left-[30%] top-[62%] h-px w-[60%] -rotate-[20deg] bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent" />
+    <div className="absolute right-[20%] top-[18%] h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.8)]" />
+    <div className="absolute left-[24%] top-[42%] h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(103,232,249,0.8)]" />
+    <div className="absolute right-[30%] bottom-[25%] h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.8)]" />
+  </div>
+
+  {/* Odi intelligence core */}
+  <div className="relative flex h-full min-h-[360px] items-center justify-center">
+    <motion.div
+      animate={{
+        scale: [1, 1.04, 1],
+        boxShadow: [
+          '0 0 50px rgba(52,211,153,0.12)',
+          '0 0 90px rgba(52,211,153,0.28)',
+          '0 0 50px rgba(52,211,153,0.12)',
+        ],
+      }}
+      transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      className="relative flex h-52 w-52 items-center justify-center rounded-full border border-emerald-300/30 bg-slate-950/80 backdrop-blur-xl"
+    >
+      <div className="absolute inset-4 rounded-full border border-emerald-300/10" />
+      <div className="absolute inset-8 rounded-full border border-cyan-300/10" />
+
+      <div className="text-center">
+        <Sparkles className="mx-auto h-8 w-8 text-emerald-300" />
+        <p className="mt-3 text-4xl font-semibold text-white">Odi</p>
+        <p className="mt-1 text-xs uppercase tracking-[0.24em] text-emerald-300">
+          AI Assistant
+        </p>
+      </div>
+    </motion.div>
+
+    {/* Floating capability cards */}
+    <div className="absolute left-0 top-8 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+      <div className="flex items-center gap-3">
+        <FileText className="h-5 w-5 text-emerald-300" />
+        <div>
+          <p className="text-xs font-semibold text-white">CV Review</p>
+          <p className="text-[11px] text-slate-400">Stronger applications</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="absolute right-0 top-20 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+      <div className="flex items-center gap-3">
+        <MessageCircle className="h-5 w-5 text-cyan-300" />
+        <div>
+          <p className="text-xs font-semibold text-white">Interview Practice</p>
+          <p className="text-[11px] text-slate-400">Build confidence</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="absolute bottom-8 left-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+      <div className="flex items-center gap-3">
+        <TrendingUp className="h-5 w-5 text-emerald-300" />
+        <div>
+          <p className="text-xs font-semibold text-white">Job Insights</p>
+          <p className="text-[11px] text-slate-400">Find better opportunities</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="absolute bottom-16 right-0 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+      <div className="flex items-center gap-3">
+        <Sparkles className="h-5 w-5 text-cyan-300" />
+        <div>
+          <p className="text-xs font-semibold text-white">Career Guidance</p>
+          <p className="text-[11px] text-slate-400">Your next step</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+      </section>
+
+      {/* Insights */}
+      <section className="bg-white text-slate-950">
+        <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600">Latest Insights</p><h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Ideas, perspectives and practical advice.</h2></div><p className="max-w-xl text-slate-600">Practical perspectives on business analysis, transformation, process improvement and delivery.</p></div>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+  {blogPosts.slice(0, 3).map((post, index) => {
+    const insightImages = [
+      '/images/insight-ba-coaching.png',
+      '/images/insight-business-analysis.png',
+      '/images/insight-process-improvement.png',
+    ];
+
+    return (
+      <motion.article
+        key={post.title}
+        whileHover={{ y: -6 }}
+        transition={{ duration: 0.2 }}
+        className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.07)]"
+      >
+        <div className="relative h-52 overflow-hidden">
+          <img
+            src={insightImages[index]}
+            alt=""
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+
+          <div className="absolute bottom-4 left-4">
+            <span className="rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-xl">
+              {post.category}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col p-6">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+              Insight
+            </span>
+
+            <span className="text-xs text-slate-400">
+              {post.readTime}
+            </span>
+          </div>
+
+          <h3 className="mt-4 text-xl font-semibold leading-7 text-slate-950">
+            {post.title}
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            {post.desc}
+          </p>
+
+          <button
+            onClick={() => {
+              window.history.pushState({}, '', '/insights');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-slate-950 transition group-hover:text-emerald-600"
+          >
+            Read more
+            <ArrowRight className="h-4 w-4 text-emerald-600 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      </motion.article>
+    );
+  })}
+</div>
+</div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative overflow-hidden bg-slate-950">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(16,185,129,0.16),transparent_34%)]" />
+        <div className="absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full border border-emerald-300/10" />
+        <div className="absolute -right-10 top-1/2 h-52 w-52 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-24">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Let’s work together</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">Create better outcomes.</h2>
+              <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">Have a project, process, or change challenge? Let’s bring clarity to the problem and structure to the next step.</p>
+              <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200">Book a Consultation <ArrowRight className="h-4 w-4" /></a>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
-                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
-              >
-                Book a Consultation
-              </a>
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
-                className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Send an Enquiry
-              </a>
+            <div className="relative min-h-[300px]">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative h-56 w-56 rounded-full border border-emerald-300/20 bg-white/[0.03] shadow-[0_0_80px_rgba(16,185,129,0.12)] backdrop-blur-xl">
+                  <div className="absolute inset-6 rounded-full border border-white/10" />
+                  <div className="absolute inset-12 rounded-full border border-emerald-300/10" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">Arcklen</p>
+                      <p className="mt-2 text-2xl font-semibold text-white">Clarity</p>
+                      <p className="mt-1 text-sm text-slate-400">→ Action → Outcomes</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute left-0 top-8 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">People</p>
+                  <p className="mt-1 text-sm text-slate-300">Aligned teams</p>
+                </div>
+                <div className="absolute right-0 top-10 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Processes</p>
+                  <p className="mt-1 text-sm text-slate-300">Clearer ways of working</p>
+                </div>
+                <div className="absolute bottom-6 left-10 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">Progress</p>
+                  <p className="mt-1 text-sm text-slate-300">Meaningful outcomes</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -940,7 +1065,7 @@ function ServicesPage() {
           <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Support built around business analysis, process improvement, and change delivery</h2>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {services.map((service, index) => {
             const Icon = serviceIconMap[index % serviceIconMap.length];
             return (
@@ -981,7 +1106,8 @@ function ServicesPage() {
               >
                 Book a Consultation
               </a>
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer"
+              <a
+                href={`mailto:${businessEmail}`}
                 className="rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Send an Enquiry
@@ -998,15 +1124,11 @@ function CaseStudiesPage() {
   return (
     <>
       <PremiumPageHero page="case-studies" />
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-3">
-          {caseStudies.map((item) => (
-            <div key={item.title} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-[0_24px_80px_rgba(15,23,42,0.24)]">
-              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-              <p className="mt-4 text-sm leading-7 text-slate-300">{item.desc}</p>
-            </div>
-          ))}
-        </div>
+      <section className="mx-auto max-w-4xl px-6 py-20 text-center lg:px-8">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Coming next</p>
+        <h2 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">Real challenges. Real work. Real outcomes.</h2>
+        <p className="mt-5 text-lg leading-8 text-slate-300">We’re building Arcklen’s case studies from real project experience so every example reflects genuine work, contribution, and outcomes.</p>
+        <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-900">Discuss a project <ArrowRight className="h-4 w-4" /></a>
       </section>
     </>
   );
@@ -1102,6 +1224,38 @@ function ContactPage() {
   );
 }
 
+
+function AnimatedServiceStrip() {
+  const items = [
+    'Business Analysis & Transformation Consulting',
+    'Business Analysis',
+    'Process Improvement',
+    'Change & Transformation',
+    'Clearer Processes',
+    'Better Outcomes',
+  ];
+
+  const trackItems = [...items, ...items];
+
+  return (
+    <div className="overflow-hidden border-b border-white/10 bg-slate-900/80">
+      <motion.div
+        className="flex w-max items-center py-2.5"
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+      >
+        {trackItems.map((item, index) => (
+          <div key={`${item}-${index}`} className="flex items-center whitespace-nowrap">
+            <span className="px-5 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 sm:text-[11px]">
+              {item}
+            </span>
+            <span className="text-emerald-300/70">•</span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 function OdiChatbot() {
   const [open, setOpen] = useState(false);
@@ -1397,6 +1551,8 @@ export default function ArcklenConsultingWebsite() {
         </div>
       </div>
 
+      <AnimatedServiceStrip />
+
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <button onClick={() => navigateTo('/')} className="flex items-center gap-4 text-left">
@@ -1452,7 +1608,7 @@ export default function ArcklenConsultingWebsite() {
       {renderPage()}
 
       <footer className="border-t border-white/10 bg-slate-950">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-4 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 pb-28 lg:grid-cols-4 lg:px-8 lg:pb-12">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4">
               <img src="/logo.png" alt="Arcklen Group Logo" className="h-12 w-auto rounded-xl" />
@@ -1462,7 +1618,7 @@ export default function ArcklenConsultingWebsite() {
               </div>
             </div>
             <p className="mt-4 max-w-lg text-sm leading-7 text-slate-400">
-              Arcklen supports UK businesses with business analysis consulting, process improvement, documentation, transformation support, and BA coaching.
+              Arcklen supports UK businesses with business analysis, process improvement, documentation, and change & transformation support.
             </p>
           </div>
 
