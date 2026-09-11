@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+﻿import type { FormEvent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -557,7 +557,7 @@ function LandingPage() {
   </p>
 
   <h2 className="mt-3 max-w-xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-    Meet Odi — Arcklen&apos;s AI Assistant.
+    Odi — Arcklen&apos;s AI Assistant.
   </h2>
 
   <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">
@@ -576,16 +576,6 @@ function LandingPage() {
       </div>
     ))}
   </div>
-
-  <button
-    onClick={() =>
-      document.querySelector<HTMLButtonElement>('[aria-label="Open Odi"]')?.click()
-    }
-    className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200"
-  >
-    Talk to Odi
-    <ArrowRight className="h-4 w-4" />
-  </button>
 </div>
           <div className="relative min-h-[420px] overflow-hidden border-l border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 p-8">
   {/* Ambient AI glow */}
@@ -1257,7 +1247,7 @@ function AnimatedServiceStrip() {
   );
 }
 
-function OdiChatbot() {
+function RobChatbot() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<'welcome' | 'support' | 'result'>('welcome');
   const [selection, setSelection] = useState('');
@@ -1309,7 +1299,7 @@ function OdiChatbot() {
           transition={{ duration: 0.22, ease: 'easeOut' }}
           className="mb-4 w-[calc(100vw-2.5rem)] max-w-[390px] overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/98 shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
           role="dialog"
-          aria-label="Odi, Arcklen Digital Assistant"
+          aria-label="Rob, Arcklen Website Assistant"
         >
           {/* Header */}
           <div className="border-b border-white/10 bg-gradient-to-r from-white/[0.07] to-emerald-400/[0.05] px-5 py-4">
@@ -1321,18 +1311,18 @@ function OdiChatbot() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-white">Odi</p>
+                    <p className="font-semibold text-white">Rob</p>
                     <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-emerald-200">
                       Online
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-slate-400">Arcklen Digital Assistant</p>
+                  <p className="mt-0.5 text-xs text-slate-400">Arcklen Website Assistant</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Close Odi"
+                aria-label="Close Rob"
                 className="rounded-xl p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
               >
                 <X className="h-4 w-4" />
@@ -1350,7 +1340,7 @@ function OdiChatbot() {
               <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-white/[0.06] p-4 text-sm leading-6 text-slate-200">
                 {step === 'welcome' && (
                   <>
-                    <p className="font-medium text-white">Hi, I’m Odi 👋</p>
+                    <p className="font-medium text-white">Hi, I’m Rob 👋</p>
                     <p className="mt-2">
                       I can help you find the right Arcklen support for your business, project, or career goals.
                     </p>
@@ -1398,7 +1388,7 @@ function OdiChatbot() {
                 onClick={startConversation}
                 className="mt-4 ml-10 inline-flex w-[calc(100%-2.5rem)] items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:bg-slate-100"
               >
-                Tell Odi what you need
+                Tell Rob what you need
                 <ArrowRight className="h-4 w-4" />
               </button>
             )}
@@ -1435,7 +1425,7 @@ function OdiChatbot() {
 
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-center text-[11px] text-slate-500">
-              Odi provides guided information about Arcklen’s services.
+              Rob provides guided information about Arcklen’s services.
             </p>
           </div>
         </motion.div>
@@ -1448,11 +1438,11 @@ function OdiChatbot() {
           transition={{ delay: 0.8, duration: 0.35 }}
           className="mb-3 mr-1 hidden max-w-[220px] rounded-2xl border border-white/10 bg-slate-950/95 px-4 py-3 text-sm text-slate-200 shadow-xl backdrop-blur-xl sm:block"
         >
-          <button onClick={() => setShowNudge(false)} className="float-right ml-3 text-slate-500 hover:text-white" aria-label="Dismiss Odi message">
+          <button onClick={() => setShowNudge(false)} className="float-right ml-3 text-slate-500 hover:text-white" aria-label="Dismiss Rob message">
             <X className="h-3 w-3" />
           </button>
           <p className="pr-2">
-            Need help finding the right Arcklen service? <span className="font-medium text-emerald-300">Ask Odi.</span>
+            Need help finding the right Arcklen service? <span className="font-medium text-emerald-300">Ask Rob.</span>
           </p>
         </motion.div>
       )}
@@ -1464,14 +1454,14 @@ function OdiChatbot() {
         }}
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.97 }}
-        aria-label={open ? 'Close Odi' : 'Open Odi'}
+        aria-label={open ? 'Close Rob' : 'Open Rob'}
         aria-expanded={open}
         className="ml-auto flex items-center gap-3 rounded-full border border-emerald-400/20 bg-slate-950/95 px-4 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl transition hover:border-emerald-400/40"
       >
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/10">
           {open ? <X className="h-4 w-4 text-emerald-300" /> : <MessageCircle className="h-4 w-4 text-emerald-300" />}
         </span>
-        <span>{open ? 'Close Odi' : 'Ask Odi'}</span>
+        <span>{open ? 'Close Rob' : 'Ask Rob'}</span>
       </motion.button>
     </div>
   );
@@ -1526,7 +1516,7 @@ export default function ArcklenConsultingWebsite() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <SeoManager page={currentPage} />
-      <OdiChatbot />
+      <RobChatbot />
 
       <div className="border-b border-white/10 bg-slate-950">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
@@ -1657,3 +1647,7 @@ export const __sanityChecks = {
   caseStudyCount: caseStudies.length,
   blogPostCount: blogPosts.length,
 };
+
+
+
+
