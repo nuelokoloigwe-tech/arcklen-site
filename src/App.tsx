@@ -100,7 +100,7 @@ const seoKeywords = [
 ];
 
 
-type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact';
+type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact' | 'odi';
 
 const businessEmail = 'hello@arcklengroup.com';
 const businessPhone = '+447425705787';
@@ -155,7 +155,15 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
     seoDescription:
       'Read Arcklen insights on business analysis, documentation, transformation support, and BA interview preparation.',
   },
-  contact: {
+  odi: {
+    title: 'Odi — AI Business Analysis & Career Assistant',
+    eyebrow: 'Odi AI Assistant',
+    description:
+      'Odi helps Business Analysts analyse opportunities, strengthen applications, prepare for interviews, and navigate their next career move.',
+    seoTitle: 'Odi | AI Business Analysis & Career Assistant | Arcklen Group',
+    seoDescription:
+      'Odi is Arcklen Group’s AI Business Analysis & Career Assistant for CV review, job analysis, interview practice, and career preparation.',
+  },  contact: {
     title: 'Need clarity on a project, process, or change initiative?',
     eyebrow: 'Contact',
     description:
@@ -174,6 +182,7 @@ const getPageFromPath = (): PageKey => {
   if (path.includes('/case-studies')) return 'case-studies';
   if (path.includes('/insights')) return 'insights';
   if (path.includes('/contact')) return 'contact';
+  if (path.includes('/odi')) return 'odi';
   return 'home';
 };
 
@@ -577,7 +586,7 @@ function LandingPage() {
     ))}
   </div>
 </div>
-          <div className="relative min-h-[420px] overflow-hidden border-l border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 p-8">
+          <div onClick={() => (window.location.href = "/odi")} role="link" tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") window.location.href = "/odi"; }} className="relative min-h-[420px] overflow-hidden border-l border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 p-8 cursor-pointer transition hover:border-emerald-300/30">
   {/* Ambient AI glow */}
   <div className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-emerald-400/15 blur-3xl" />
   <div className="absolute bottom-0 left-10 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl" />
@@ -1467,6 +1476,272 @@ function RobChatbot() {
   );
 }
 
+function OdiPage() {
+  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [cvText, setCvText] = useState('');
+  const [cvFileName, setCvFileName] = useState('');
+
+  const tools = [
+    {
+      title: 'Review my CV',
+      description: 'Identify strengths, gaps, clarity issues, and opportunities to improve your CV.',
+      icon: FileText,
+      active: true,
+    },
+    {
+      title: 'Analyse a job',
+      description: 'Break down a job description and understand what the employer is really looking for.',
+      icon: TrendingUp,
+      active: false,
+    },
+    {
+      title: 'Match CV to role',
+      description: 'Compare your CV against a role and see where you are strong and where you need work.',
+      icon: CheckCircle2,
+      active: false,
+    },
+    {
+      title: 'Practise an interview',
+      description: 'Practise realistic Business Analyst interview questions with structured feedback.',
+      icon: MessageCircle,
+      active: false,
+    },
+  ];
+
+  const handleCvFile = (event: FormEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+
+    if (!file) return;
+
+    setCvFileName(file.name);
+
+    if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setCvText(String(reader.result ?? ''));
+      };
+
+      reader.readAsText(file);
+    }
+  };
+
+  return (
+    <main className="bg-slate-950 text-white">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <LuxeBackground />
+
+        <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-28">
+          <div className="max-w-4xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/5 px-4 py-2 text-sm text-emerald-200">
+              <Sparkles className="h-4 w-4" />
+              Odi AI Assistant
+            </div>
+
+            <h1 className="mt-6 text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
+              Your AI Business Analysis & Career Assistant.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+              Analyse roles, strengthen your CV, understand your match, and prepare for interviews with a dedicated assistant built for Business Analysts.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              {['CV Review', 'Job Analysis', 'CV Matching', 'Interview Practice'].map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+            Start with Odi
+          </p>
+
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+            Choose what you want to work on.
+          </h2>
+
+          <p className="mt-4 text-slate-400">
+            Odi is being built around the tasks that matter most when you are preparing for your next opportunity.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {tools.map((tool) => {
+            const Icon = tool.icon;
+
+            return (
+              <button
+                key={tool.title}
+                type="button"
+                disabled={!tool.active}
+                onClick={() => tool.active && setActiveTool('cv-review')}
+                className={`group rounded-3xl border p-7 text-left transition ${
+                  tool.active
+                    ? 'border-emerald-300/20 bg-emerald-300/[0.04] hover:-translate-y-1 hover:border-emerald-300/40 hover:bg-emerald-300/[0.07]'
+                    : 'cursor-default border-white/10 bg-white/[0.04]'
+                }`}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300/10 text-emerald-300">
+                  <Icon className="h-6 w-6" />
+                </div>
+
+                <h3 className="mt-6 text-xl font-semibold text-white">
+                  {tool.title}
+                </h3>
+
+                <p className="mt-3 leading-7 text-slate-400">
+                  {tool.description}
+                </p>
+
+                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-emerald-300">
+                  {tool.active ? 'Start review' : 'Coming next'}
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {activeTool === 'cv-review' && (
+        <section className="border-t border-white/10 bg-white/[0.02]">
+          <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8">
+            <div className="rounded-3xl border border-emerald-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                    CV Review
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Give Odi your CV.
+                  </h2>
+
+                  <p className="mt-4 max-w-2xl leading-7 text-slate-400">
+                    Upload your CV or paste the text below. Odi will use this information to review your experience and help you strengthen your application.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTool(null)}
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-10 grid gap-6 lg:grid-cols-2">
+                <label className="flex min-h-64 cursor-pointer flex-col justify-between rounded-2xl border border-dashed border-emerald-300/30 bg-emerald-300/[0.03] p-6 transition hover:border-emerald-300/50 hover:bg-emerald-300/[0.05]">
+                  <div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300/10 text-emerald-300">
+                      <FileText className="h-6 w-6" />
+                    </div>
+
+                    <h3 className="mt-5 text-lg font-semibold">
+                      Upload your CV
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-400">
+                      Choose a PDF, Word document, or text file.
+                    </p>
+                  </div>
+
+                  <div className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950">
+                    Choose file
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleCvFile}
+                    className="hidden"
+                  />
+                </label>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-200">
+                    Or paste your CV
+                  </label>
+
+                  <textarea
+                    value={cvText}
+                    onChange={(event) => setCvText(event.target.value)}
+                    placeholder="Paste the text from your CV here..."
+                    className="mt-3 min-h-64 w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-5 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+                </div>
+              </div>
+
+              {cvFileName && (
+                <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-slate-300">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                  Selected: {cvFileName}
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-slate-500">
+                  Your CV stays in this local prototype for now.
+                </p>
+
+                <button
+                  type="button"
+                  disabled={!cvText.trim() && !cvFileName}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Start CV Review
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="border-t border-white/10 bg-white/[0.02]">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+          <div className="rounded-3xl border border-emerald-300/10 bg-emerald-300/[0.03] p-8 sm:p-10">
+            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                  Built for real applications
+                </p>
+
+                <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
+                  Odi will become your personal career workspace.
+                </h2>
+
+                <p className="mt-3 max-w-2xl leading-7 text-slate-400">
+                  Start with CV and job analysis. Then build towards interview simulation, job tracking, and smarter career preparation.
+                </p>
+              </div>
+
+              <a
+                href="/"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200"
+              >
+                Back to Arcklen
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
 export default function ArcklenConsultingWebsite() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageKey>(getPageFromPath());
@@ -1508,6 +1783,8 @@ export default function ArcklenConsultingWebsite() {
         return <InsightsPage />;
       case 'contact':
         return <ContactPage />;
+      case 'odi':
+        return <OdiPage />;
       default:
         return <LandingPage />;
     }
@@ -1647,6 +1924,13 @@ export const __sanityChecks = {
   caseStudyCount: caseStudies.length,
   blogPostCount: blogPosts.length,
 };
+
+
+
+
+
+
+
 
 
 
