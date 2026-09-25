@@ -19,7 +19,6 @@ import {
   TrendingUp,
   X,
 } from 'lucide-react';
-
 const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles];
 
 const services = [
@@ -1480,7 +1479,38 @@ function OdiPage() {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [cvText, setCvText] = useState('');
   const [cvFileName, setCvFileName] = useState('');
+  const [isDraggingCv, setIsDraggingCv] = useState(false);
+const [cvReview, setCvReview] = useState('');
+const [isReviewing, setIsReviewing] = useState(false);
+const [reviewMessageIndex, setReviewMessageIndex] = useState(0);
 
+const reviewMessages = [
+  'Reading your CV…',
+  'Identifying your strongest experience…',
+  'Looking for evidence of impact…',
+  'Assessing your Business Analysis capabilities…',
+  'Checking your career positioning…',
+  'Building your recommendations…',
+  'Almost there…',
+];
+useEffect(() => {
+  if (!isReviewing) {
+    setReviewMessageIndex(0);
+    return;
+  }
+
+  const interval = window.setInterval(() => {
+    setReviewMessageIndex((current) =>
+      (current + 1) % reviewMessages.length,
+    );
+  }, 2200);
+
+  return () => {
+    window.clearInterval(interval);
+  };
+}, [isReviewing]);
+const [reviewError, setReviewError] = useState('');
+const [copiedRewrite, setCopiedRewrite] = useState<number | null>(null);
   const tools = [
     {
       title: 'Review my CV',
@@ -1492,7 +1522,7 @@ function OdiPage() {
       title: 'Analyse a job',
       description: 'Break down a job description and understand what the employer is really looking for.',
       icon: TrendingUp,
-      active: false,
+      active: true,
     },
     {
       title: 'Match CV to role',
@@ -1508,24 +1538,381 @@ function OdiPage() {
     },
   ];
 
-  const handleCvFile = (event: FormEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
+  const handleCvFile = async (event: FormEvent<HTMLInputElement>) => {
+  const file = event.currentTarget.files?.[0];
 
-    if (!file) return;
+if (!file) return;
 
-    setCvFileName(file.name);
+const maxFileSize = 5 * 1024 * 1024;
 
-    if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
-      const reader = new FileReader();
+if (file.size > maxFileSize) {
+  setCvFileName('');
+  setCvText('');
+  setReviewError('Your CV file is too large. Please upload a file smaller than 5 MB.');
+  return;
+}
 
-      reader.onload = () => {
-        setCvText(String(reader.result ?? ''));
-      };
+setCvFileName(file.name);
+  setCvText('');
+  setReviewError('');
 
-      reader.readAsText(file);
+  const fileName = file.name.toLowerCase();
+
+  if (file.type === 'text/plain' || fileName.endsWith('.txt')) {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setCvText(String(reader.result ?? ''));
+    };
+
+    reader.readAsText(file);
+    return;
+  }
+
+  if (file.type === 'application/pdf' || fileName.endsWith('.pdf')) {
+  try {
+    const pdfjsLib = await import('pdfjs-dist');
+    const pdfWorker = await import(
+      'pdfjs-dist/build/pdf.worker.min.mjs?url'
+    );
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker.default;
+
+    const arrayBuffer = await file.arrayBuffer();
+
+    const pdf = await pdfjsLib.getDocument({
+      data: arrayBuffer,
+    }).promise;
+      const pageTexts: string[] = [];
+
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+
+        const text = content.items
+          .map((item) => ('str' in item ? item.str : ''))
+          .join(' ');
+
+        pageTexts.push(text);
+      }
+
+      setCvText(pageTexts.join('\n\n'));
+    } catch (error) {
+      console.error('PDF extraction error:', error);
+      setReviewError(
+        'Odi could not read this PDF. Please try another PDF or paste your CV text instead.',
+      );
+    }
+
+    return;
+  }
+
+  if (
+  file.type ===
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+  fileName.endsWith('.docx')
+) {
+  try {
+    const mammoth = await import('mammoth');
+    const arrayBuffer = await file.arrayBuffer();
+
+    const result = await mammoth.extractRawText({
+      arrayBuffer,
+    });
+
+      setCvText(result.value);
+    } catch (error) {
+      console.error('DOCX extraction error:', error);
+      setReviewError(
+        'Odi could not read this Word document. Please try another DOCX file or paste your CV text instead.',
+      );
+    }
+
+    return;
+  }
+
+  setReviewError(
+    'This file type is not supported yet. Please upload a PDF, DOCX or TXT file, or paste your CV text.',
+  );
+};
+const handleCvDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
+  event.preventDefault();
+  setIsDraggingCv(true);
+};
+
+const handleCvDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
+  event.preventDefault();
+  setIsDraggingCv(false);
+};
+
+const handleCvDrop = async (event: React.DragEvent<HTMLLabelElement>) => {
+  event.preventDefault();
+  setIsDraggingCv(false);
+
+  const file = event.dataTransfer.files?.[0];
+
+  if (!file) return;
+
+  const input = event.currentTarget.querySelector('input[type="file"]');
+
+  if (input instanceof HTMLInputElement) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    input.files = dataTransfer.files;
+
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+};
+const handleCopyRewrite = async (rewrite: string, index: number) => {
+  try {
+    await navigator.clipboard.writeText(
+      rewrite.replace(/^>\s*/gm, '').replace(/\*\*/g, '').trim(),
+    );
+
+    setCopiedRewrite(index);
+
+    window.setTimeout(() => {
+      setCopiedRewrite(null);
+    }, 2000);
+  } catch (error) {
+    console.error('Copy rewrite error:', error);
+    setReviewError('Odi could not copy this rewrite. Please select and copy the text manually.');
+  }
+};
+  const handleCvReview = async () => {
+    if (!cvText.trim()) {
+      setReviewError('Please paste your CV text before starting the review.');
+      return;
+    }
+
+    setIsReviewing(true);
+    setReviewError('');
+    setCvReview('');
+
+    try {
+      const response = await fetch('/api/review-cv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cvText: cvText.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Odi could not review the CV.');
+      }
+
+      setCvReview(data.review || '');
+    } catch (error) {
+      console.error('CV review error:', error);
+      setReviewError(
+        error instanceof Error
+          ? error.message
+          : 'Odi could not review the CV right now. Please try again.',
+      );
+    } finally {
+      setIsReviewing(false);
     }
   };
+  const renderCvRewrites = (review: string) => {
+  const rewriteSectionMatch = review.match(
+    /(?:#{2,4}\s*)?8\.\s*Suggested CV rewrites([\s\S]*)/i,
+  );
 
+  if (!rewriteSectionMatch) return null;
+
+  const rewriteSection = rewriteSectionMatch[1];
+
+  const rewrites = rewriteSection
+    .split(/(?:#{2,4}\s*)?Rewrite\s+\d+\s*:?\s*/i)
+    .slice(1)
+    .map((block) => {
+      const currentMatch = block.match(
+        /Current CV statement\s*([\s\S]*?)(?=What could be improved|Stronger version)/i,
+      );
+
+      const improvementMatch = block.match(
+        /What could be improved\s*([\s\S]*?)(?=Stronger version)/i,
+      );
+
+      const strongerMatch = block.match(
+        /Stronger version\s*([\s\S]*)/i,
+      );
+
+      return {
+        current: currentMatch?.[1]?.trim() || '',
+        improvement: improvementMatch?.[1]?.trim() || '',
+        stronger: strongerMatch?.[1]?.trim() || '',
+      };
+    })
+    .filter(
+      (rewrite) =>
+        rewrite.current ||
+        rewrite.improvement ||
+        rewrite.stronger,
+    );
+
+  if (!rewrites.length) return null;
+
+  return (
+    <div className="mt-8">
+      <div className="mb-5">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+          Suggested CV rewrites
+        </p>
+
+        <h4 className="mt-2 text-xl font-semibold text-white">
+          Stronger versions of your CV statements
+        </h4>
+
+        <p className="mt-2 text-sm leading-6 text-slate-400">
+          Odi has identified areas where your existing experience can be
+          presented more clearly and effectively.
+        </p>
+      </div>
+
+      <div className="space-y-5">
+        {rewrites.map((rewrite, index) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-300/10 text-sm font-semibold text-emerald-300">
+                {index + 1}
+              </div>
+
+              <h5 className="text-base font-semibold text-white">
+                CV rewrite
+              </h5>
+            </div>
+
+            {rewrite.current && (
+              <div className="mt-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  Current CV statement
+                </p>
+
+                <p className="mt-2 rounded-xl border border-white/10 bg-slate-950/60 p-4 text-sm leading-6 text-slate-400">
+                  {rewrite.current
+                    .replace(/^>\s*/gm, '')
+                    .replace(/\*\*/g, '')}
+                </p>
+              </div>
+            )}
+
+            {rewrite.improvement && (
+              <div className="mt-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  What could be improved
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  {rewrite.improvement
+                    .replace(/^>\s*/gm, '')
+                    .replace(/\*\*/g, '')}
+                </p>
+              </div>
+            )}
+
+            {rewrite.stronger && (
+              <div className="mt-4 rounded-xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                  Stronger version
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-slate-200">
+                  {rewrite.stronger
+                    .replace(/^>\s*/gm, '')
+                    .replace(/\*\*/g, '')}
+                </p>
+
+                
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCopyRewrite(rewrite.stronger, index)
+                  }
+                  className="mt-4 inline-flex items-center rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-300/15"
+                >
+                  {copiedRewrite === index
+                    ? 'Copied'
+                    : 'Copy rewrite'}
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const renderCvReview = (review: string) => {
+    return review.split('\n').map((line, index) => {
+      const trimmedLine = line.trim();
+
+      if (!trimmedLine) {
+        return <div key={index} className="h-3" />;
+      }
+
+      if (trimmedLine === '---') {
+        return <div key={index} className="my-5 border-t border-white/10" />;
+      }
+
+      if (trimmedLine.startsWith('### ')) {
+        return (
+          <h4
+            key={index}
+            className="mt-6 text-lg font-semibold text-white first:mt-0"
+          >
+            {trimmedLine.replace(/^### /, '').replace(/\*\*/g, '')}
+          </h4>
+        );
+      }
+
+      if (trimmedLine.startsWith('## ')) {
+        return (
+          <h4
+            key={index}
+            className="mt-7 text-xl font-semibold text-emerald-200 first:mt-0"
+          >
+            {trimmedLine.replace(/^## /, '').replace(/\*\*/g, '')}
+          </h4>
+        );
+      }
+
+      if (trimmedLine.startsWith('- ')) {
+        return (
+          <div key={index} className="flex gap-3 py-1.5 text-slate-300">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
+            <span>{trimmedLine.slice(2).replace(/\*\*/g, '')}</span>
+          </div>
+        );
+      }
+
+      if (trimmedLine.startsWith('> ')) {
+        return (
+          <blockquote
+            key={index}
+            className="my-4 border-l-2 border-emerald-300/40 pl-4 italic text-slate-400"
+          >
+            {trimmedLine.slice(2).replace(/\*\*/g, '')}
+          </blockquote>
+        );
+      }
+
+      return (
+        <p key={index} className="py-1 leading-7 text-slate-300">
+          {trimmedLine.replace(/\*\*/g, '')}
+        </p>
+      );
+    });
+  };
   return (
     <main className="bg-slate-950 text-white">
       <section className="relative overflow-hidden border-b border-white/10">
@@ -1584,7 +1971,25 @@ function OdiPage() {
                 key={tool.title}
                 type="button"
                 disabled={!tool.active}
-                onClick={() => tool.active && setActiveTool('cv-review')}
+                onClick={() => {
+  if (!tool.active) return;
+
+  const toolKey =
+    tool.title === 'Review my CV' ? 'cv-review' : 'job-analysis';
+
+  const sectionId =
+    tool.title === 'Review my CV'
+      ? 'cv-review-section'
+      : 'job-analysis-section';
+
+  setActiveTool(toolKey);
+
+  window.setTimeout(() => {
+    document
+      .getElementById(sectionId)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}}
                 className={`group rounded-3xl border p-7 text-left transition ${
                   tool.active
                     ? 'border-emerald-300/20 bg-emerald-300/[0.04] hover:-translate-y-1 hover:border-emerald-300/40 hover:bg-emerald-300/[0.07]'
@@ -1614,7 +2019,10 @@ function OdiPage() {
       </section>
 
       {activeTool === 'cv-review' && (
-        <section className="border-t border-white/10 bg-white/[0.02]">
+        <section
+  id="cv-review-section"
+  className="border-t border-white/10 bg-white/[0.02]"
+>
           <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8">
             <div className="rounded-3xl border border-emerald-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
               <div className="flex items-start justify-between gap-6">
@@ -1642,7 +2050,16 @@ function OdiPage() {
               </div>
 
               <div className="mt-10 grid gap-6 lg:grid-cols-2">
-                <label className="flex min-h-64 cursor-pointer flex-col justify-between rounded-2xl border border-dashed border-emerald-300/30 bg-emerald-300/[0.03] p-6 transition hover:border-emerald-300/50 hover:bg-emerald-300/[0.05]">
+                <label
+  onDragOver={handleCvDragOver}
+  onDragLeave={handleCvDragLeave}
+  onDrop={handleCvDrop}
+  className={`flex min-h-64 cursor-pointer flex-col justify-between rounded-2xl border border-dashed p-6 transition ${
+    isDraggingCv
+      ? 'border-emerald-300 bg-emerald-300/[0.08] scale-[1.01]'
+      : 'border-emerald-300/30 bg-emerald-300/[0.03] hover:border-emerald-300/50 hover:bg-emerald-300/[0.05]'
+  }`}
+>
                   <div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300/10 text-emerald-300">
                       <FileText className="h-6 w-6" />
@@ -1653,7 +2070,7 @@ function OdiPage() {
                     </h3>
 
                     <p className="mt-2 text-sm leading-6 text-slate-400">
-                      Choose a PDF, Word document, or text file.
+                      PDF, DOCX or TXT · Maximum 5 MB
                     </p>
                   </div>
 
@@ -1698,13 +2115,64 @@ function OdiPage() {
 
                 <button
                   type="button"
-                  disabled={!cvText.trim() && !cvFileName}
+                  onClick={handleCvReview}
+                  disabled={(!cvText.trim() && !cvFileName) || isReviewing}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Start CV Review
-                  <ArrowRight className="h-4 w-4" />
+                  {isReviewing ? (
+  <>
+    <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-slate-950" />
+    Odi is analysing your CV...
+  </>
+) : (
+  <>
+    Start CV Review
+    <ArrowRight className="h-4 w-4" />
+  </>
+)}
                 </button>
               </div>
+              {isReviewing && (
+  <div className="mt-6 rounded-2xl border border-emerald-300/10 bg-emerald-300/[0.03] p-5">
+    <div className="flex items-center gap-3">
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-emerald-300/20 border-t-emerald-300" />
+      <div>
+        <p className="font-semibold text-white">
+          Odi is analysing your CV
+        </p>
+        <p className="mt-1 text-sm text-slate-400">
+  {reviewMessages[reviewMessageIndex]}
+</p>
+      </div>
+    </div>
+  </div>
+)}
+                            {reviewError && (
+                <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/[0.05] p-5 text-sm leading-6 text-red-200">
+                  {reviewError}
+                </div>
+              )}
+
+              {cvReview && (
+                <div className="mt-8 rounded-3xl border border-emerald-300/20 bg-slate-950/70 p-6 sm:p-8">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                    <div>
+  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+    Odi analysis
+  </p>
+  <h3 className="mt-2 text-2xl font-semibold text-white">
+    Your CV Review
+  </h3>
+</div>
+                  </div>
+
+                  <div className="mt-6 text-sm">
+  {renderCvReview(cvReview)}
+</div>
+{renderCvRewrites(cvReview)}
+                </div>
+              )}
             </div>
           </div>
         </section>
