@@ -2110,7 +2110,7 @@ const renderCvReview = (review: string) => {
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-slate-500">
-                  Your CV stays in this local prototype for now.
+                  Your CV is sent to our AI service to generate your Odi review.
                 </p>
 
                 <button
@@ -2392,6 +2392,7 @@ export const __sanityChecks = {
   caseStudyCount: caseStudies.length,
   blogPostCount: blogPosts.length,
 };
+
 
 
 
