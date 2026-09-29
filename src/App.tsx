@@ -155,13 +155,13 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
       'Read Arcklen insights on business analysis, documentation, transformation support, and BA interview preparation.',
   },
   odi: {
-    title: 'Odi — AI Business Analysis & Career Assistant',
+    title: 'Odi — AI Business Analysis Assistant',
     eyebrow: 'Odi AI Assistant',
     description:
-      'Odi helps Business Analysts analyse opportunities, strengthen applications, prepare for interviews, and navigate their next career move.',
-    seoTitle: 'Odi | AI Business Analysis & Career Assistant | Arcklen Group',
+      'Odi helps Business Analysts analyse requirements, understand roles, improve documentation, and prepare for delivery.',
+    seoTitle: 'Odi | AI Business Analysis Assistant | Arcklen Group',
     seoDescription:
-      'Odi is Arcklen Group’s AI Business Analysis & Career Assistant for CV review, job analysis, interview practice, and career preparation.',
+      'Odi is Arcklen Group’s AI Business Analysis Assistant for CV review, BA job analysis, requirements thinking, and delivery preparation.',
   },  contact: {
     title: 'Need clarity on a project, process, or change initiative?',
     eyebrow: 'Contact',
@@ -575,7 +575,7 @@ function LandingPage() {
   </p>
 
   <div className="mt-7 flex flex-wrap gap-3">
-    {['CV Review', 'Interview Practice', 'Career Guidance'].map((item) => (
+    {['CV Review', 'BA Job Analysis', 'Requirements Thinking'].map((item) => (
       <div
         key={item}
         className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-medium text-slate-200 backdrop-blur-xl"
@@ -640,8 +640,8 @@ function LandingPage() {
       <div className="flex items-center gap-3">
         <MessageCircle className="h-5 w-5 text-cyan-300" />
         <div>
-          <p className="text-xs font-semibold text-white">Interview Practice</p>
-          <p className="text-[11px] text-slate-400">Build confidence</p>
+          <p className="text-xs font-semibold text-white">BA Job Analysis</p>
+          <p className="text-[11px] text-slate-400">Understand the role</p>
         </div>
       </div>
     </div>
@@ -650,8 +650,8 @@ function LandingPage() {
       <div className="flex items-center gap-3">
         <TrendingUp className="h-5 w-5 text-emerald-300" />
         <div>
-          <p className="text-xs font-semibold text-white">Job Insights</p>
-          <p className="text-[11px] text-slate-400">Find better opportunities</p>
+          <p className="text-xs font-semibold text-white">Requirements</p>
+          <p className="text-[11px] text-slate-400">Think more clearly</p>
         </div>
       </div>
     </div>
@@ -660,8 +660,8 @@ function LandingPage() {
       <div className="flex items-center gap-3">
         <Sparkles className="h-5 w-5 text-cyan-300" />
         <div>
-          <p className="text-xs font-semibold text-white">Career Guidance</p>
-          <p className="text-[11px] text-slate-400">Your next step</p>
+          <p className="text-xs font-semibold text-white">Delivery Focus</p>
+          <p className="text-[11px] text-slate-400">Prepare for action</p>
         </div>
       </div>
     </div>
@@ -1475,6 +1475,134 @@ function RobChatbot() {
   );
 }
 
+function renderJobAnalysis(analysis: string) {
+  const sections = [
+    'Role summary',
+    'What the employer is really looking for',
+    'Core Business Analysis requirements',
+    'Key responsibilities',
+    'Required skills and capabilities',
+    'Tools, technologies and methodologies',
+    'Important keywords',
+    'Potential interview areas',
+    'Evidence a strong candidate should demonstrate',
+    'Application focus areas',
+    'Questions the candidate should consider before applying',
+  ];
+
+  const lines = analysis.split(/\r?\n/);
+  const parsed: { title: string; body: string[] }[] = [];
+  let current: { title: string; body: string[] } | null = null;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      if (current) current.body.push('');
+      continue;
+    }
+
+    const headingMatch = line.match(/^(?:#{1,4}\s*)?(\d+)\.\s*(.+)$/);
+    if (headingMatch) {
+      const title = headingMatch[2]
+  .replace(/^#{1,6}\s*/, '')
+  .replace(/\*\*/g, '')
+  .trim();
+      const matched = sections.find((section) =>
+        title.toLowerCase().startsWith(section.toLowerCase()),
+      );
+
+      if (matched) {
+        current = { title: matched, body: [] };
+        parsed.push(current);
+        continue;
+      }
+    }
+
+    if (current) current.body.push(line);
+  }
+
+  if (!parsed.length) {
+    return (
+      <div className="whitespace-pre-wrap text-sm leading-7 text-slate-300">
+        {analysis}
+      </div>
+    );
+  }
+
+  const clean = (value: string) =>
+    value
+  .replace(/^#{1,6}\s*/, '')
+  .replace(/^[-•]\s*/, '')
+  .replace(/^>\s*/, '')
+  .replace(/^--+\s*$/, '')
+  .replace(/\*\*/g, '')
+  .trim();
+
+  const renderBody = (body: string[]) => {
+    const groups: React.ReactNode[] = [];
+    let bullets: string[] = [];
+
+    const flushBullets = () => {
+      if (!bullets.length) return;
+      groups.push(
+        <ul key={`bullets-${groups.length}`} className="mt-2 space-y-2">
+          {bullets.map((item, index) => (
+            <li key={`${item}-${index}`} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
+              <span>{clean(item)}</span>
+            </li>
+          ))}
+        </ul>,
+      );
+      bullets = [];
+    };
+
+    body.forEach((line, index) => {
+      if (/^[-•]\\s+/.test(line)) {
+        bullets.push(line);
+        return;
+      }
+
+      flushBullets();
+      if (!line) return;
+
+      groups.push(
+        <p key={`paragraph-${index}`} className="mt-2 text-sm leading-7 text-slate-300">
+          {clean(line)}
+        </p>,
+      );
+    });
+
+    flushBullets();
+    return groups;
+  };
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {parsed.map((section, index) => (
+        <article
+          key={section.title}
+          className={`rounded-2xl border border-white/10 bg-slate-950/55 p-5 sm:p-6 ${
+            index === 0 ? 'lg:col-span-2' : ''
+          }`}
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-300/10 text-sm font-semibold text-emerald-300">
+              {String(index + 1).padStart(2, '0')}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h4 className="text-base font-semibold leading-6 text-white sm:text-lg">
+                {section.title}
+              </h4>
+              <div className="mt-2">{renderBody(section.body)}</div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function OdiPage() {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [cvText, setCvText] = useState('');
@@ -1511,6 +1639,83 @@ useEffect(() => {
 }, [isReviewing]);
 const [reviewError, setReviewError] = useState('');
 const [copiedRewrite, setCopiedRewrite] = useState<number | null>(null);
+const [jobText, setJobText] = useState('');
+const [jobAnalysis, setJobAnalysis] = useState('');
+const [isAnalysingJob, setIsAnalysingJob] = useState(false);
+const [jobAnalysisError, setJobAnalysisError] = useState('');
+const [jobMessageIndex, setJobMessageIndex] = useState(0);
+const handleAnalyseJob = async () => {
+  if (jobText.trim().length < 100) {
+    setJobAnalysisError(
+      'Please paste at least 100 characters of job description.',
+    );
+    return;
+  }
+
+  setIsAnalysingJob(true);
+  setJobAnalysis('');
+  setJobAnalysisError('');
+  setJobMessageIndex(0);
+
+  try {
+    const response = await fetch('/api/analyse-job', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jobText: jobText.trim(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error || 'Odi could not analyse the job description.',
+      );
+    }
+
+    setJobAnalysis(data.analysis || '');
+  } catch (error) {
+    console.error('Odi Job Analysis error:', error);
+
+    setJobAnalysisError(
+      error instanceof Error
+        ? error.message
+        : 'Odi could not analyse the job description right now. Please try again.',
+    );
+  } finally {
+    setIsAnalysingJob(false);
+  }
+};
+
+const jobAnalysisMessages = [
+  'Reading the job description…',
+  'Identifying the core requirements…',
+  'Breaking down the responsibilities…',
+  'Identifying the Business Analysis capabilities being sought…',
+  'Extracting important keywords…',
+  'Looking at potential interview areas…',
+  'Building your application focus…',
+  'Almost there…',
+];
+  useEffect(() => {
+    if (!isAnalysingJob) {
+      setJobMessageIndex(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setJobMessageIndex((current) =>
+        (current + 1) % jobAnalysisMessages.length,
+      );
+    }, 2200);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [isAnalysingJob]);
   const tools = [
     {
       title: 'Review my CV',
@@ -1926,15 +2131,15 @@ const renderCvReview = (review: string) => {
             </div>
 
             <h1 className="mt-6 text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-              Your AI Business Analysis & Career Assistant.
+              Your AI Business Analysis Assistant.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Analyse roles, strengthen your CV, understand your match, and prepare for interviews with a dedicated assistant built for Business Analysts.
+              Analyse roles, strengthen your CV, understand requirements, and prepare for delivery with an assistant built specifically for Business Analysts.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
-              {['CV Review', 'Job Analysis', 'CV Matching', 'Interview Practice'].map((item) => (
+              {['CV Review', 'BA Job Analysis', 'Requirements Analysis', 'Process Thinking'].map((item) => (
                 <span
                   key={item}
                   className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200"
@@ -1958,7 +2163,7 @@ const renderCvReview = (review: string) => {
           </h2>
 
           <p className="mt-4 text-slate-400">
-            Odi is being built around the tasks that matter most when you are preparing for your next opportunity.
+            Odi is being built around the practical tasks Business Analysts use to understand problems, create clarity, and support delivery.
           </p>
         </div>
 
@@ -2009,7 +2214,11 @@ const renderCvReview = (review: string) => {
                 </p>
 
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-emerald-300">
-                  {tool.active ? 'Start review' : 'Coming next'}
+                  {tool.active
+                    ? tool.title === 'Review my CV'
+                      ? 'Start review'
+                      : 'Start analysis'
+                    : 'Coming next'}
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                 </div>
               </button>
@@ -2178,6 +2387,178 @@ const renderCvReview = (review: string) => {
         </section>
       )}
 
+      {activeTool === 'job-analysis' && (
+        <section
+          id="job-analysis-section"
+          className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]"
+        >
+          <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8">
+            <div className="rounded-3xl border border-emerald-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                    BA Job Analysis
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Give Odi the job description.
+                  </h2>
+
+                  <p className="mt-4 max-w-2xl leading-7 text-slate-400">
+                    Odi will break down a Business Analyst role, identify the
+                    key requirements, responsibilities, capabilities and
+                    keywords, and help you understand what the employer is
+                    looking for.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTool(null)}
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+                  <div className="mb-5 flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">
+                        Job description
+                      </h3>
+                      <p className="mt-1 text-sm text-slate-400">
+                        Paste the full Business Analyst job description below.
+                      </p>
+                    </div>
+
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-slate-400">
+                      BA roles
+                    </span>
+                  </div>
+
+                  <textarea
+                    value={jobText}
+                    onChange={(event) => {
+                      setJobText(event.target.value);
+                      setJobAnalysisError('');
+                    }}
+                    placeholder="Paste the job description here..."
+                    className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs leading-5 text-slate-500">
+                      For best results, include the responsibilities,
+                      requirements and skills sections.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setJobText('');
+                        setJobAnalysis('');
+                        setJobAnalysisError('');
+                      }}
+                      className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-white/20 hover:bg-white/[0.04]"
+                    >
+                      Clear
+                    </button>
+                  </div>
+
+                  {jobAnalysisError && (
+                    <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
+                      {jobAnalysisError}
+                    </div>
+                  )}
+
+                  <button
+  type="button"
+  onClick={handleAnalyseJob}
+  disabled={isAnalysingJob || jobText.trim().length < 100}
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {isAnalysingJob ? 'Analysing role…' : 'Analyse BA Job'}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                  <div className="mb-6">
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                      Odi analysis
+                    </p>
+
+                    <h3 className="mt-2 text-xl font-semibold text-white">
+                      What Odi will look for
+                    </h3>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      'Core Business Analysis requirements',
+                      'Key responsibilities',
+                      'Skills and capabilities',
+                      'Important tools and technologies',
+                      'Keywords worth understanding',
+                      'Potential interview areas',
+                      'What the employer is really asking for',
+                      'Application focus areas',
+                    ].map((item) => (
+                      <div
+                        key={item}
+                        className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3"
+                      >
+                        <CheckCircle2
+                          size={18}
+                          className="mt-0.5 shrink-0 text-emerald-300"
+                        />
+
+                        <span className="text-sm leading-6 text-slate-300">
+                          {item}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {isAnalysingJob && (
+                <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-300" />
+                    <p className="text-sm font-medium text-emerald-200">
+                      {jobAnalysisMessages[jobMessageIndex]}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {jobAnalysis && (
+                <div className="mt-8 rounded-3xl border border-emerald-300/15 bg-white/[0.035] p-6 sm:p-8">
+                  <div className="mb-7 flex flex-col gap-3 border-b border-white/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                        Analysis complete
+                      </p>
+                      <h3 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
+                        Odi's breakdown of the role
+                      </h3>
+                    </div>
+                    <span className="inline-flex w-fit rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-slate-400">
+                      11 analysis areas
+                    </span>
+                  </div>
+
+                  {renderJobAnalysis(jobAnalysis)}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="border-t border-white/10 bg-white/[0.02]">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
           <div className="rounded-3xl border border-emerald-300/10 bg-emerald-300/[0.03] p-8 sm:p-10">
@@ -2188,11 +2569,11 @@ const renderCvReview = (review: string) => {
                 </p>
 
                 <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
-                  Odi will become your personal career workspace.
+                  Odi will become your personal BA workspace.
                 </h2>
 
                 <p className="mt-3 max-w-2xl leading-7 text-slate-400">
-                  Start with CV and job analysis. Then build towards interview simulation, job tracking, and smarter career preparation.
+                  Start with CV and BA job analysis. Then build towards requirements analysis, user stories, process analysis, and delivery support.
                 </p>
               </div>
 
