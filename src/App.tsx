@@ -1644,6 +1644,22 @@ const [jobAnalysis, setJobAnalysis] = useState('');
 const [isAnalysingJob, setIsAnalysingJob] = useState(false);
 const [jobAnalysisError, setJobAnalysisError] = useState('');
 const [jobMessageIndex, setJobMessageIndex] = useState(0);
+const [matchCvText, setMatchCvText] = useState('');
+const [matchJobText, setMatchJobText] = useState('');
+const [matchAnalysis, setMatchAnalysis] = useState('');
+const [isMatchingCv, setIsMatchingCv] = useState(false);
+const [matchError, setMatchError] = useState('');
+const [matchMessageIndex, setMatchMessageIndex] = useState(0);
+const matchMessages = [
+  'Reading your CV…',
+  'Reading the job description…',
+  'Extracting the role requirements…',
+  'Finding evidence in your CV…',
+  'Comparing your experience against the role…',
+  'Identifying strengths and evidence gaps…',
+  'Building your recommendations…',
+  'Almost there…',
+];
 const handleAnalyseJob = async () => {
   if (jobText.trim().length < 100) {
     setJobAnalysisError(
@@ -1689,6 +1705,75 @@ const handleAnalyseJob = async () => {
     setIsAnalysingJob(false);
   }
 };
+const handleMatchCvRole = async () => {
+  if (matchCvText.trim().length < 100) {
+    setMatchError(
+      'Please provide at least 100 characters of CV text.',
+    );
+    return;
+  }
+
+  if (matchJobText.trim().length < 100) {
+    setMatchError(
+      'Please provide at least 100 characters of job description.',
+    );
+    return;
+  }
+
+  setIsMatchingCv(true);
+  setMatchAnalysis('');
+  setMatchError('');
+  setMatchMessageIndex(0);
+
+  try {
+    const response = await fetch('/api/match-cv-role', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cvText: matchCvText.trim(),
+        jobText: matchJobText.trim(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error || 'Odi could not compare the CV against the role.',
+      );
+    }
+
+    setMatchAnalysis(data.analysis || '');
+  } catch (error) {
+    console.error('Odi CV-to-role matching error:', error);
+
+    setMatchError(
+      error instanceof Error
+        ? error.message
+        : 'Odi could not compare the CV against the role right now. Please try again.',
+    );
+  } finally {
+    setIsMatchingCv(false);
+  }
+};
+useEffect(() => {
+  if (!isMatchingCv) {
+    setMatchMessageIndex(0);
+    return;
+  }
+
+  const interval = window.setInterval(() => {
+    setMatchMessageIndex((current) =>
+      (current + 1) % matchMessages.length,
+    );
+  }, 2200);
+
+  return () => {
+    window.clearInterval(interval);
+  };
+}, [isMatchingCv]);
 
 const jobAnalysisMessages = [
   'Reading the job description…',
@@ -1733,7 +1818,7 @@ const jobAnalysisMessages = [
       title: 'Match CV to role',
       description: 'Compare your CV against a role and see where you are strong and where you need work.',
       icon: CheckCircle2,
-      active: false,
+      active: true,
     },
     {
       title: 'Practise an interview',
@@ -2069,6 +2154,17 @@ const renderCvReview = (review: string) => {
         return <div key={index} className="my-5 border-t border-white/10" />;
       }
 
+      if (trimmedLine.startsWith('#### ')) {
+        return (
+          <h5
+            key={index}
+            className="mt-5 text-base font-semibold text-white first:mt-0"
+          >
+            {trimmedLine.replace(/^#### /, '').replace(/\*\*/g, '')}
+          </h5>
+        );
+      }
+
       if (trimmedLine.startsWith('### ')) {
         return (
           <h4
@@ -2180,12 +2276,18 @@ const renderCvReview = (review: string) => {
   if (!tool.active) return;
 
   const toolKey =
-    tool.title === 'Review my CV' ? 'cv-review' : 'job-analysis';
+  tool.title === 'Review my CV'
+    ? 'cv-review'
+    : tool.title === 'Analyse a job'
+      ? 'job-analysis'
+      : 'cv-role-match';
 
   const sectionId =
-    tool.title === 'Review my CV'
-      ? 'cv-review-section'
-      : 'job-analysis-section';
+  tool.title === 'Review my CV'
+    ? 'cv-review-section'
+    : tool.title === 'Analyse a job'
+      ? 'job-analysis-section'
+      : 'cv-role-match-section';
 
   setActiveTool(toolKey);
 
@@ -2217,7 +2319,9 @@ const renderCvReview = (review: string) => {
                   {tool.active
                     ? tool.title === 'Review my CV'
                       ? 'Start review'
-                      : 'Start analysis'
+                      : tool.title === 'Match CV to role'
+                        ? 'Start matching'
+                        : 'Start analysis'
                     : 'Coming next'}
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                 </div>
@@ -2552,6 +2656,154 @@ const renderCvReview = (review: string) => {
                   </div>
 
                   {renderJobAnalysis(jobAnalysis)}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {activeTool === 'cv-role-match' && (
+        <section
+          id="cv-role-match-section"
+          className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]"
+        >
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+            <div className="rounded-3xl border border-emerald-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                    CV ↔ Role Matching
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                    See how your CV aligns with the role.
+                  </h2>
+
+                  <p className="mt-4 max-w-3xl leading-7 text-slate-400">
+                    Give Odi your CV and the Business Analyst job description.
+                    Odi will compare the role requirements against the evidence
+                    in your CV and identify strengths, partial matches and
+                    evidence gaps.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTool(null)}
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-10 grid gap-6 lg:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-semibold text-white">
+                      Your CV
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-6 text-slate-400">
+                      Paste the CV text you want Odi to compare against the
+                      role.
+                    </p>
+                  </div>
+
+                  <textarea
+                    value={matchCvText}
+                    onChange={(event) => {
+                      setMatchCvText(event.target.value);
+                      setMatchError('');
+                    }}
+                    placeholder="Paste your CV text here..."
+                    className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+
+                  <p className="mt-3 text-xs leading-5 text-slate-500">
+                    For the first version, paste the text from your CV.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-semibold text-white">
+                      Job description
+                    </h3>
+
+                    <p className="mt-1 text-sm leading-6 text-slate-400">
+                      Paste the full Business Analyst role you want to compare
+                      against.
+                    </p>
+                  </div>
+
+                  <textarea
+                    value={matchJobText}
+                    onChange={(event) => {
+                      setMatchJobText(event.target.value);
+                      setMatchError('');
+                    }}
+                    placeholder="Paste the job description here..."
+                    className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+
+                  <p className="mt-3 text-xs leading-5 text-slate-500">
+                    Include the responsibilities, requirements and skills
+                    sections where available.
+                  </p>
+                </div>
+              </div>
+
+              {matchError && (
+                <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
+                  {matchError}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleMatchCvRole}
+                disabled={
+                  isMatchingCv ||
+                  matchCvText.trim().length < 100 ||
+                  matchJobText.trim().length < 100
+                }
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isMatchingCv
+                  ? 'Comparing CV with role…'
+                  : 'Match CV to Role'}
+
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              {isMatchingCv && (
+                <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-300" />
+
+                    <p className="text-sm font-medium text-emerald-200">
+                      {matchMessages[matchMessageIndex]}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {matchAnalysis && (
+                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                  <div className="mb-6">
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                      Odi analysis
+                    </p>
+
+                    <h3 className="mt-2 text-2xl font-semibold text-white">
+                      Your CV ↔ Role Analysis
+                    </h3>
+                  </div>
+
+                  <div className="text-sm">
+                    {renderCvReview(matchAnalysis)}
+                  </div>
                 </div>
               )}
             </div>
