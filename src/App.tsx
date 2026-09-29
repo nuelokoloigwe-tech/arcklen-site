@@ -2196,7 +2196,7 @@ const renderCvReview = (review: string) => {
         );
       }
 
-      if (trimmedLine.startsWith('> ')) {
+            if (trimmedLine.startsWith('> ')) {
         return (
           <blockquote
             key={index}
@@ -2204,6 +2204,30 @@ const renderCvReview = (review: string) => {
           >
             {trimmedLine.slice(2).replace(/\*\*/g, '')}
           </blockquote>
+        );
+      }
+
+      if (/^#\s+Evidence summary$/i.test(trimmedLine)) {
+        return (
+          <h4
+            key={index}
+            className="mt-6 text-lg font-semibold text-white first:mt-0"
+          >
+            Evidence summary
+          </h4>
+        );
+      }
+
+      if (/^\d+\.\s+/.test(trimmedLine)) {
+        return (
+          <h4
+            key={index}
+            className="mt-6 text-lg font-semibold text-white first:mt-0"
+          >
+            {trimmedLine
+              .replace(/^\d+\.\s+/, '')
+              .replace(/\*\*/g, '')}
+          </h4>
         );
       }
 
