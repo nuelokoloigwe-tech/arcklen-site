@@ -1659,6 +1659,22 @@ const [tailorCopied, setTailorCopied] = useState(false);
 const [isTailoringCv, setIsTailoringCv] = useState(false);
 const [tailorError, setTailorError] = useState('');
 const [tailorMessageIndex, setTailorMessageIndex] = useState(0);
+const [interviewType, setInterviewType] = useState('Job-specific Business Analyst interview');
+const [interviewJobText, setInterviewJobText] = useState('');
+const [interviewCvText, setInterviewCvText] = useState('');
+const [interviewQuestion, setInterviewQuestion] = useState('');
+const [interviewQuestionType, setInterviewQuestionType] = useState('');
+const [interviewWhatItTests, setInterviewWhatItTests] = useState('');
+const [interviewAnswer, setInterviewAnswer] = useState('');
+const [interviewFeedback, setInterviewFeedback] = useState<any>(null);
+const [interviewHistory, setInterviewHistory] = useState<any[]>([]);
+const [interviewSummary, setInterviewSummary] = useState<any>(null);
+const [isStartingInterview, setIsStartingInterview] = useState(false);
+const [isEvaluatingInterview, setIsEvaluatingInterview] = useState(false);
+const [isFinishingInterview, setIsFinishingInterview] = useState(false);
+const [interviewError, setInterviewError] = useState('');
+const [interviewLoadingIndex, setInterviewLoadingIndex] = useState(0);
+const [interviewFinishLoadingIndex, setInterviewFinishLoadingIndex] = useState(0);
 const matchMessages = [
   'Reading your CV…',
   'Reading the job description…',
@@ -1675,6 +1691,80 @@ const tailorMessages = [
   'Odi is tailoring your experience to the role...',
   'Odi is refining the CV for clarity and impact...',
 ];
+const interviewLoadingMessages = [
+  'Reviewing your answer…',
+  'Checking how clearly you have structured your response…',
+  'Looking for relevant Business Analysis evidence…',
+  'Comparing your answer with the role requirements…',
+  'Assessing relevance, clarity and evidence…',
+  'Identifying areas you could strengthen…',
+  'Preparing your feedback…',
+  'Almost there…',
+];
+const interviewFinishMessages = [
+  'Reviewing your interview…',
+  'Looking across your answers…',
+  'Identifying your strongest responses…',
+  'Looking for recurring improvement areas…',
+  'Assessing your preparation priorities…',
+  'Building your interview summary…',
+  'Almost there…',
+];
+useEffect(() => {
+  if (!isEvaluatingInterview) {
+    setInterviewLoadingIndex(0);
+    return;
+  }
+  const interval = window.setInterval(() => {
+    setInterviewLoadingIndex((current) => (current + 1) % interviewLoadingMessages.length);
+  }, 1800);
+  return () => window.clearInterval(interval);
+}, [isEvaluatingInterview]);
+useEffect(() => {
+  if (!isFinishingInterview) {
+    setInterviewFinishLoadingIndex(0);
+    return;
+  }
+  const interval = window.setInterval(() => {
+    setInterviewFinishLoadingIndex((current) => (current + 1) % interviewFinishMessages.length);
+  }, 1800);
+  return () => window.clearInterval(interval);
+}, [isFinishingInterview]);
+const handleStartInterview = async () => {
+  if (interviewJobText.trim().length < 100) { setInterviewError('Please provide at least 100 characters of job description.'); return; }
+  setIsStartingInterview(true); setInterviewError(''); setInterviewQuestion(''); setInterviewAnswer(''); setInterviewFeedback(null); setInterviewHistory([]); setInterviewSummary(null);
+  try {
+    const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim() }) });
+    const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not start the interview practice.');
+    setInterviewQuestion(data.question || ''); setInterviewQuestionType(data.questionType || ''); setInterviewWhatItTests(data.whatItTests || '');
+  } catch (error) { console.error('Odi Interview Practice start error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not start the interview practice right now. Please try again.'); }
+  finally { setIsStartingInterview(false); }
+};
+
+const handleSubmitInterviewAnswer = async () => {
+  if (!interviewQuestion) return; if (interviewAnswer.trim().length < 10) { setInterviewError('Please provide an interview answer of at least 10 characters.'); return; }
+  setIsEvaluatingInterview(true); setInterviewError('');
+  try {
+    const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'answer', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim(), history: interviewHistory, question: interviewQuestion, answer: interviewAnswer.trim() }) });
+    const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not evaluate your answer.');
+    setInterviewHistory((current) => [...current, { question: interviewQuestion, answer: interviewAnswer.trim(), feedback: data.feedback?.overall || '' }]);
+    setInterviewFeedback(data.feedback || null); setInterviewQuestion(data.nextQuestion || ''); setInterviewQuestionType(data.nextQuestionType || ''); setInterviewWhatItTests(data.nextQuestionReason || ''); setInterviewAnswer('');
+  } catch (error) { console.error('Odi Interview Practice answer error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not evaluate your answer right now. Please try again.'); }
+  finally { setIsEvaluatingInterview(false); }
+};
+
+const handleFinishInterview = async () => {
+  const history = interviewQuestion && interviewAnswer.trim() ? [...interviewHistory, { question: interviewQuestion, answer: interviewAnswer.trim() }] : interviewHistory;
+  if (!history.length) { setInterviewError('Complete at least one interview question before finishing.'); return; }
+  setIsFinishingInterview(true); setInterviewError('');
+  try {
+    const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'finish', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim(), history }) });
+    const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not finish the interview summary.');
+    setInterviewHistory(history); setInterviewSummary(data); setInterviewQuestion(''); setInterviewAnswer('');
+  } catch (error) { console.error('Odi Interview Practice finish error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not finish the interview summary right now. Please try again.'); }
+  finally { setIsFinishingInterview(false); }
+};
+
 const handleAnalyseJob = async () => {
   if (jobText.trim().length < 100) {
     setJobAnalysisError(
@@ -1928,7 +2018,7 @@ const jobAnalysisMessages = [
       title: 'Practise an interview',
       description: 'Practise realistic Business Analyst interview questions with structured feedback.',
       icon: MessageCircle,
-      active: false,
+      active: true,
     },
   ];
 
@@ -2385,18 +2475,22 @@ const renderCvReview = (review: string) => {
     ? 'cv-review'
     : tool.title === 'Analyse a job'
       ? 'job-analysis'
-      : tool.title === 'Tailor my CV'
-        ? 'cv-tailor'
-        : 'cv-role-match';
+      : tool.title === 'Match CV to role'
+        ? 'cv-role-match'
+        : tool.title === 'Tailor my CV'
+          ? 'cv-tailor'
+          : 'interview-practice';
 
   const sectionId =
   tool.title === 'Review my CV'
     ? 'cv-review-section'
     : tool.title === 'Analyse a job'
       ? 'job-analysis-section'
-      : tool.title === 'Tailor my CV'
-        ? 'cv-tailor-section'
-        : 'cv-role-match-section';
+      : tool.title === 'Match CV to role'
+        ? 'cv-role-match-section'
+        : tool.title === 'Tailor my CV'
+          ? 'cv-tailor-section'
+          : 'interview-practice-section';
 
   setActiveTool(toolKey);
 
@@ -2432,7 +2526,9 @@ const renderCvReview = (review: string) => {
                         ? 'Start analysis'
                         : tool.title === 'Match CV to role'
                           ? 'Start matching'
-                          : 'Start tailoring'
+                          : tool.title === 'Tailor my CV'
+                            ? 'Start tailoring'
+                            : 'Start interview practice'
                     : 'Coming next'}
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                 </div>
@@ -3035,6 +3131,62 @@ const renderCvReview = (review: string) => {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {activeTool === 'interview-practice' && (
+        <section id="interview-practice-section" className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]">
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+            <div className="rounded-3xl border border-cyan-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div><p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">Interview Practice</p><h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Practise a realistic Business Analyst interview.</h2><p className="mt-4 max-w-3xl leading-7 text-slate-400">Odi will ask one question at a time, evaluate your answer against the role, probe where useful, and finish with a practical preparation summary.</p></div>
+                <button type="button" onClick={() => setActiveTool(null)} className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5">Close</button>
+              </div>
+              {!interviewQuestion && !interviewSummary && (
+                <div className="mt-10 space-y-6">
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6"><label className="text-sm font-semibold text-white" htmlFor="interview-type">Interview focus</label><select id="interview-type" value={interviewType} onChange={(event) => setInterviewType(event.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-emerald-300/40"><option>Job-specific Business Analyst interview</option><option>General Business Analyst interview</option><option>Requirements & Stakeholder Management</option><option>Agile & Delivery Business Analyst</option><option>Change & Transformation Business Analyst</option></select></div>
+                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6"><h3 className="text-sm font-semibold text-white">Optional CV context</h3><p className="mt-2 text-sm leading-6 text-slate-400">Add your CV if you want Odi to challenge you using your actual experience.</p><textarea value={interviewCvText} onChange={(event) => { setInterviewCvText(event.target.value); setInterviewError(''); }} placeholder="Paste your CV here (optional)..." className="mt-4 min-h-[180px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40" /></div>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6"><h3 className="text-lg font-semibold text-white">Target role</h3><p className="mt-1 text-sm leading-6 text-slate-400">Paste the job description so the interview reflects the role you are preparing for.</p><textarea value={interviewJobText} onChange={(event) => { setInterviewJobText(event.target.value); setInterviewError(''); }} placeholder="Paste the full job description here..." className="mt-5 min-h-[320px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40" /></div>
+                  {interviewError && <div className="rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">{interviewError}</div>}
+                  <button type="button" onClick={handleStartInterview} disabled={isStartingInterview || interviewJobText.trim().length < 100} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40">{isStartingInterview ? 'Preparing your interview…' : 'Start Interview Practice'}<ArrowRight className="h-4 w-4" /></button>
+                </div>
+              )}
+              {interviewQuestion && !interviewSummary && (
+                <div className="mt-10 space-y-6">
+                  <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em]"><span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-cyan-200">Question {interviewHistory.length + 1}</span>{interviewQuestionType && <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-slate-400">{interviewQuestionType}</span>}</div>
+                  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.04] p-7 sm:p-9"><p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">Odi asks</p><h3 className="mt-4 text-2xl font-semibold leading-9 text-white sm:text-3xl">{interviewQuestion}</h3>{interviewWhatItTests && <p className="mt-5 text-sm leading-7 text-slate-400"><span className="font-semibold text-slate-300">What this tests:</span>{' '}{interviewWhatItTests}</p>}</div>
+                  {interviewFeedback && <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7 sm:p-9"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-300">Feedback on your last answer</p><p className="mt-4 leading-7 text-slate-300">{interviewFeedback.overall}</p><div className="mt-6 grid gap-6 lg:grid-cols-2"><div><h4 className="font-semibold text-white">What worked</h4><div className="mt-3 space-y-2">{(interviewFeedback.strengths || []).map((item: string, index: number) => <div key={index} className="flex gap-3 text-sm leading-6 text-slate-300"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" /><span>{item}</span></div>)}</div></div><div><h4 className="font-semibold text-white">What to improve</h4><div className="mt-3 space-y-2">{(interviewFeedback.improvements || []).map((item: string, index: number) => <div key={index} className="flex gap-3 text-sm leading-6 text-slate-300"><ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-300" /><span>{item}</span></div>)}</div></div></div><div className="mt-6 grid gap-4 sm:grid-cols-3">{[['Evidence', interviewFeedback.evidenceUse], ['Structure & clarity', interviewFeedback.structureAndClarity], ['Role relevance', interviewFeedback.relevance]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p><p className="mt-2 text-sm leading-6 text-slate-300">{value}</p></div>)}</div></div>}
+                  <div><label className="text-sm font-semibold text-white" htmlFor="interview-answer">Your answer</label><textarea id="interview-answer" value={interviewAnswer} onChange={(event) => { setInterviewAnswer(event.target.value); setInterviewError(''); }} placeholder="Answer as if you were in the interview. Use a real example where appropriate..." className="mt-4 min-h-[260px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-5 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40" /></div>
+                  {interviewError && <div className="rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">{interviewError}</div>}
+                  <div className="space-y-4">
+                    {(isEvaluatingInterview || isFinishingInterview) && (
+                      <motion.div
+                        key={isFinishingInterview ? `finish-${interviewFinishLoadingIndex}` : `answer-${interviewLoadingIndex}`}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        className="flex items-center gap-3 rounded-2xl border border-cyan-300/10 bg-cyan-300/[0.04] px-4 py-3"
+                      >
+                        <span className="flex items-center gap-1" aria-hidden="true">
+                          <motion.span animate={{ opacity: [0.35, 1, 0.35], y: [0, -2, 0] }} transition={{ duration: 1.1, repeat: Infinity, delay: 0 }} className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+                          <motion.span animate={{ opacity: [0.35, 1, 0.35], y: [0, -2, 0] }} transition={{ duration: 1.1, repeat: Infinity, delay: 0.18 }} className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+                          <motion.span animate={{ opacity: [0.35, 1, 0.35], y: [0, -2, 0] }} transition={{ duration: 1.1, repeat: Infinity, delay: 0.36 }} className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+                        </span>
+                        <span className="text-sm text-slate-300">{isFinishingInterview ? interviewFinishMessages[interviewFinishLoadingIndex] : interviewLoadingMessages[interviewLoadingIndex]}</span>
+                      </motion.div>
+                    )}
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <button type="button" onClick={handleSubmitInterviewAnswer} disabled={isEvaluatingInterview || isFinishingInterview || interviewAnswer.trim().length < 10} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40">{isEvaluatingInterview ? 'Odi is reviewing your answer…' : 'Submit Answer'}<ArrowRight className="h-4 w-4" /></button>
+                      <button type="button" onClick={handleFinishInterview} disabled={isFinishingInterview || isEvaluatingInterview || !interviewHistory.length} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40">{isFinishingInterview ? 'Odi is preparing your summary…' : 'Finish Practice'}</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {interviewSummary && <div className="mt-10 space-y-6"><div className="rounded-3xl border border-emerald-300/20 bg-emerald-300/[0.04] p-7 sm:p-9"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-300">Practice summary</p><h3 className="mt-3 text-2xl font-semibold text-white">What to prepare next</h3><p className="mt-4 leading-7 text-slate-300">{interviewSummary.summary}</p></div><div className="grid gap-6 lg:grid-cols-2">{[['Strengths demonstrated', interviewSummary.strengths, 'text-emerald-300'], ['Improvement areas', interviewSummary.improvementAreas, 'text-cyan-300'], ['Role-specific preparation', interviewSummary.preparationAreas, 'text-emerald-300'], ['Next practice steps', interviewSummary.nextSteps, 'text-cyan-300']].map(([title, items, iconClass]) => <div key={title as string} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"><h4 className="text-lg font-semibold text-white">{title as string}</h4><div className="mt-4 space-y-3">{((items as string[]) || []).map((item, index) => <div key={index} className="flex gap-3 text-sm leading-6 text-slate-300"><CheckCircle2 className={`mt-1 h-4 w-4 shrink-0 ${iconClass}`} /><span>{item}</span></div>)}</div></div>)}</div><button type="button" onClick={() => { setInterviewSummary(null); setInterviewHistory([]); setInterviewQuestion(''); setInterviewAnswer(''); setInterviewFeedback(null); setInterviewError(''); }} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08]">Practise another interview<ArrowRight className="h-4 w-4" /></button></div>}
             </div>
           </div>
         </section>
