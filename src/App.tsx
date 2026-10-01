@@ -1,5 +1,5 @@
 ﻿import type { FormEvent } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -12,16 +12,20 @@ import {
   MessageCircle,
   MapPin,
   Menu,
+  Mic,
+  MicOff,
   Phone,
   Send,
   ShieldCheck,
   Sparkles,
   Star,
   TrendingUp,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react';
 const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles];
-
+ 
 const services = [
   {
     title: 'Business Analysis',
@@ -36,12 +40,12 @@ const services = [
     desc: 'Support people, processes, and technology through structured, delivery-focused change.',
   },
 ];
-
-
+ 
+ 
 const caseStudies: { title: string; desc: string }[] = [];
-
-
-
+ 
+ 
+ 
 const blogPosts = [
   {
     title: 'How to Pass a Business Analyst Interview with Confidence',
@@ -80,16 +84,16 @@ const blogPosts = [
     desc: 'A practical guide to turning conversations into useful requirements and clearer action points.',
   },
 ];
-
-
+ 
+ 
 const whyChooseArcklen = [
   'Clear and practical business analysis',
   'Strong documentation and process thinking',
   'Delivery-focused support, not just theory',
   'Professional guidance for business and career growth',
 ];
-
-
+ 
+ 
 const seoKeywords = [
   'Business Analysis Consulting UK',
   'Transformation Support',
@@ -98,17 +102,17 @@ const seoKeywords = [
   'Requirements Gathering',
   'Change Support UK',
 ];
-
-
+ 
+ 
 type PageKey = 'home' | 'about' | 'services' | 'case-studies' | 'insights' | 'contact' | 'odi';
-
+ 
 const businessEmail = 'hello@arcklengroup.com';
 const businessPhone = '+447425705787';
 const bookingUrl = 'https://calendly.com/hello-arcklengroup/30min';
 // TODO: Replace with real Calendly booking link
 const formEndpoint = 'https://formspree.io/f/mykbkjdw';
 // TODO: Replace with real Formspree or backend endpoint
-
+ 
 const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: string; seoTitle: string; seoDescription: string }> = {
   home: {
     title: 'Business Analysis & Transformation Support for Growing UK Businesses',
@@ -173,7 +177,7 @@ const pageMeta: Record<PageKey, { title: string; eyebrow: string; description: s
       'Book a consultation or send an enquiry to Arcklen Group for business analysis, change support, process improvement, and BA coaching.',
   },
 };
-
+ 
 const getPageFromPath = (): PageKey => {
   if (typeof window === 'undefined') return 'home';
   const path = window.location.pathname.toLowerCase();
@@ -185,12 +189,12 @@ const getPageFromPath = (): PageKey => {
   if (path.includes('/odi')) return 'odi';
   return 'home';
 };
-
+ 
 function SeoManager({ page }: { page: PageKey }) {
   useEffect(() => {
     const meta = pageMeta[page];
     document.title = meta.seoTitle;
-
+ 
     const ensureMeta = (name: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
       if (!tag) {
@@ -200,7 +204,7 @@ function SeoManager({ page }: { page: PageKey }) {
       }
       return tag;
     };
-
+ 
     const ensurePropertyMeta = (property: string) => {
       let tag = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null;
       if (!tag) {
@@ -210,17 +214,17 @@ function SeoManager({ page }: { page: PageKey }) {
       }
       return tag;
     };
-
+ 
     ensureMeta('description').content = meta.seoDescription;
     ensureMeta('keywords').content = seoKeywords.join(', ');
     ensurePropertyMeta('og:title').content = meta.seoTitle;
     ensurePropertyMeta('og:description').content = meta.seoDescription;
     ensurePropertyMeta('og:type').content = 'website';
   }, [page]);
-
+ 
   return null;
 }
-
+ 
 function LuxeBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -243,15 +247,15 @@ function LuxeBackground() {
     </div>
   );
 }
-
+ 
 function PremiumPageHero({ page }: { page: PageKey }) {
   const meta = pageMeta[page];
-
+ 
   return (
     <section className="relative overflow-hidden border-b border-white/10">
       <LuxeBackground />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
+ 
       <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-16 lg:px-8 lg:pb-20 lg:pt-20">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 backdrop-blur">
@@ -267,7 +271,7 @@ function PremiumPageHero({ page }: { page: PageKey }) {
     </section>
   );
 }
-
+ 
 function BookingCard() {
   return (
     <div className="rounded-[32px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl backdrop-blur-xl">
@@ -297,16 +301,16 @@ function BookingCard() {
     </div>
   );
 }
-
+ 
 function ContactFormCard() {
   const [submitted, setSubmitted] = useState(false);
-
+ 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+ 
     const form = event.currentTarget;
     const data = new FormData(form);
-
+ 
     const response = await fetch(formEndpoint, {
       method: 'POST',
       body: data,
@@ -314,7 +318,7 @@ function ContactFormCard() {
         Accept: 'application/json',
       },
     });
-
+ 
     if (response.ok) {
       setSubmitted(true);
       form.reset();
@@ -322,7 +326,7 @@ function ContactFormCard() {
       alert('Something went wrong. Please try again.');
     }
   };
-
+ 
   return (
     <div className="rounded-[32px] border border-white/10 bg-slate-950/80 p-8 shadow-2xl">
       <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Send an Enquiry</p>
@@ -365,7 +369,7 @@ function ContactFormCard() {
     </div>
   );
 }
-
+ 
 function LandingPage() {
   return (
     <>
@@ -378,19 +382,19 @@ function LandingPage() {
     aria-hidden="true"
     className="absolute inset-0 h-full w-full object-cover"
   />
-
+ 
   {/* Dark left-to-right overlay */}
   <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/20" />
-
+ 
   {/* Bottom fade */}
   <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950/80 to-transparent" />
-
+ 
   {/* Subtle teal glow */}
   <div className="absolute left-[35%] top-1/4 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
-
+ 
   <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-6 py-20 lg:px-8">
     <div className="grid w-full gap-12 lg:grid-cols-[1fr_0.85fr] lg:items-center">
-
+ 
       {/* Hero content */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -401,18 +405,18 @@ function LandingPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
           Business Analysis & Transformation Consulting
         </p>
-
+ 
         <h1 className="mt-5 text-5xl font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
           From complexity
           <br />
           <span className="text-emerald-300">to clarity.</span>
         </h1>
-
+ 
         <p className="mt-6 max-w-xl text-lg leading-8 text-slate-200 sm:text-xl">
           We help organisations understand problems, improve processes and
           deliver meaningful change.
         </p>
-
+ 
         <div className="mt-9 flex flex-wrap gap-4">
           <button
             onClick={() => {
@@ -425,7 +429,7 @@ function LandingPage() {
             Explore Our Services
             <ArrowRight className="h-4 w-4" />
           </button>
-
+ 
           <button
             onClick={() => {
               window.history.pushState({}, '', '/contact');
@@ -438,7 +442,7 @@ function LandingPage() {
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
-
+ 
         {/* Outcomes */}
         <div className="mt-10 grid max-w-3xl grid-cols-2 gap-5 sm:grid-cols-4">
           {[
@@ -458,7 +462,7 @@ function LandingPage() {
           ))}
         </div>
       </motion.div>
-
+ 
       {/* Right-side messaging */}
       <motion.div
         initial={{ opacity: 0, x: 30 }}
@@ -474,7 +478,7 @@ function LandingPage() {
           <span>|</span>
           <span>Progress</span>
         </div>
-
+ 
         <div className="absolute bottom-12 right-0 max-w-[220px] border-l-2 border-emerald-300 pl-5">
           <p className="text-xl font-medium uppercase leading-9 tracking-[0.16em] text-white">
             Clearer
@@ -490,7 +494,7 @@ function LandingPage() {
     </div>
   </div>
 </section>
-
+ 
       {/* Services */}
       <section className="bg-white text-slate-950">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
@@ -501,7 +505,7 @@ function LandingPage() {
             </div>
             <p className="max-w-xl text-base leading-7 text-slate-600">We provide business analysis, process improvement and transformation support, with a people-focused approach that keeps delivery moving.</p>
           </div>
-
+ 
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
             {services.map((service, index) => (
               <motion.div key={service.title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.35, delay: index * 0.06 }} whileHover={{ y: -6 }} className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
@@ -513,9 +517,9 @@ function LandingPage() {
         alt="Business analysis workshop"
         className="absolute inset-0 h-full w-full object-cover"
       />
-
+ 
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-slate-950/10" />
-
+ 
       <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
         Insight • Alignment • Solutions
       </div>
@@ -527,9 +531,9 @@ function LandingPage() {
         alt="Team collaborating on process improvement"
         className="absolute inset-0 h-full w-full object-cover"
       />
-
+ 
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-
+ 
       <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
         Simplify • Improve • Deliver
       </div>
@@ -541,9 +545,9 @@ function LandingPage() {
       alt="Business transformation and strategic change"
       className="absolute inset-0 h-full w-full object-cover"
     />
-
+ 
     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-
+ 
     <div className="absolute bottom-4 left-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-xl">
       Change • Transform • Grow
     </div>
@@ -556,7 +560,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
-
+ 
       {/* Odi */}
       <section className="overflow-hidden bg-slate-950">
         <div className="mx-auto grid max-w-7xl lg:grid-cols-2">
@@ -564,17 +568,17 @@ function LandingPage() {
   <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
     Meet Odi
   </p>
-
+ 
   <h2 className="mt-3 max-w-xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
     Odi — Arcklen&apos;s AI Assistant.
   </h2>
-
+ 
   <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">
     Analyse. Prepare. Progress. Odi helps Business Analysts make sense of
     opportunities, improve their CVs, practise interview scenarios and build
     confidence.
   </p>
-
+ 
   <div className="mt-7 flex flex-wrap gap-3">
     {['CV Review', 'BA Job Analysis', 'Requirements Thinking'].map((item) => (
       <div
@@ -590,7 +594,7 @@ function LandingPage() {
   {/* Ambient AI glow */}
   <div className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-emerald-400/15 blur-3xl" />
   <div className="absolute bottom-0 left-10 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl" />
-
+ 
   {/* AI network lines */}
   <div className="absolute inset-0 opacity-40">
     <div className="absolute left-[18%] top-[28%] h-px w-[55%] rotate-[18deg] bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent" />
@@ -599,7 +603,7 @@ function LandingPage() {
     <div className="absolute left-[24%] top-[42%] h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(103,232,249,0.8)]" />
     <div className="absolute right-[30%] bottom-[25%] h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.8)]" />
   </div>
-
+ 
   {/* Odi intelligence core */}
   <div className="relative flex h-full min-h-[360px] items-center justify-center">
     <motion.div
@@ -616,7 +620,7 @@ function LandingPage() {
     >
       <div className="absolute inset-4 rounded-full border border-emerald-300/10" />
       <div className="absolute inset-8 rounded-full border border-cyan-300/10" />
-
+ 
       <div className="text-center">
         <Sparkles className="mx-auto h-8 w-8 text-emerald-300" />
         <p className="mt-3 text-4xl font-semibold text-white">Odi</p>
@@ -625,7 +629,7 @@ function LandingPage() {
         </p>
       </div>
     </motion.div>
-
+ 
     {/* Floating capability cards */}
     <div className="absolute left-0 top-8 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
       <div className="flex items-center gap-3">
@@ -636,7 +640,7 @@ function LandingPage() {
         </div>
       </div>
     </div>
-
+ 
     <div className="absolute right-0 top-20 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <MessageCircle className="h-5 w-5 text-cyan-300" />
@@ -646,7 +650,7 @@ function LandingPage() {
         </div>
       </div>
     </div>
-
+ 
     <div className="absolute bottom-8 left-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <TrendingUp className="h-5 w-5 text-emerald-300" />
@@ -656,7 +660,7 @@ function LandingPage() {
         </div>
       </div>
     </div>
-
+ 
     <div className="absolute bottom-16 right-0 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <Sparkles className="h-5 w-5 text-cyan-300" />
@@ -670,7 +674,7 @@ function LandingPage() {
 </div>
         </div>
       </section>
-
+ 
       {/* Insights */}
       <section className="bg-white text-slate-950">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
@@ -682,7 +686,7 @@ function LandingPage() {
       '/images/insight-business-analysis.png',
       '/images/insight-process-improvement.png',
     ];
-
+ 
     return (
       <motion.article
         key={post.title}
@@ -696,35 +700,35 @@ function LandingPage() {
             alt=""
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
-
+ 
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-
+ 
           <div className="absolute bottom-4 left-4">
             <span className="rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-xl">
               {post.category}
             </span>
           </div>
         </div>
-
+ 
         <div className="flex flex-1 flex-col p-6">
           <div className="flex items-center justify-between gap-4">
             <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
               Insight
             </span>
-
+ 
             <span className="text-xs text-slate-400">
               {post.readTime}
             </span>
           </div>
-
+ 
           <h3 className="mt-4 text-xl font-semibold leading-7 text-slate-950">
             {post.title}
           </h3>
-
+ 
           <p className="mt-3 text-sm leading-6 text-slate-600">
             {post.desc}
           </p>
-
+ 
           <button
             onClick={() => {
               window.history.pushState({}, '', '/insights');
@@ -743,7 +747,7 @@ function LandingPage() {
 </div>
 </div>
       </section>
-
+ 
       {/* CTA */}
       <section className="relative overflow-hidden bg-slate-950">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(16,185,129,0.16),transparent_34%)]" />
@@ -790,12 +794,12 @@ function LandingPage() {
     </>
   );
 }
-
+ 
 function AboutPage() {
   return (
     <>
       <PremiumPageHero page="about" />
-
+ 
       {/* Meet Nuel */}
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
@@ -813,14 +817,14 @@ function AboutPage() {
                 className="h-full w-full object-cover object-center"
               />
             </div>
-
+ 
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-6 pt-28">
               <span className="inline-flex rounded-full border border-white/10 bg-slate-950/75 px-4 py-2 text-xs font-medium text-white backdrop-blur">
                 Founder, Arcklen Group
               </span>
             </div>
           </motion.div>
-
+ 
           {/* Founder story */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -832,22 +836,22 @@ function AboutPage() {
               <Sparkles className="h-4 w-4" />
               The person behind Arcklen
             </div>
-
+ 
             <h2 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
               Meet Nuel
             </h2>
-
+ 
             <p className="mt-3 text-lg font-medium text-emerald-300">
               Founder & Senior Business Analyst
             </p>
-
+ 
             <div className="mt-7 space-y-5 text-base leading-8 text-slate-300">
               <p>
                 I’m Nuel, the founder of Arcklen Group and a Senior Business
                 Analyst with 10+ years of experience across banking, financial
                 services, business analysis, and transformation.
               </p>
-
+ 
               <p>
                 Throughout my career, I’ve worked at the intersection of
                 <span className="font-semibold text-white">
@@ -858,21 +862,21 @@ function AboutPage() {
                 matters, and how to turn that understanding into practical
                 delivery.
               </p>
-
+ 
               <p>
                 My experience spans requirements engineering, stakeholder
                 management, process improvement, digital product delivery,
                 business transformation, and structured delivery within
                 complex and regulated environments.
               </p>
-
+ 
               <p>
                 I created Arcklen because I saw a common challenge across
                 organisations: good ideas often struggle to become good
                 outcomes when requirements are unclear, processes are poorly
                 understood, or stakeholders aren’t aligned.
               </p>
-
+ 
               <p>
                 <span className="font-semibold text-white">
                   Arcklen exists to close that gap
@@ -884,7 +888,7 @@ function AboutPage() {
           </motion.div>
         </div>
       </section>
-
+ 
       {/* Philosophy */}
       <section className="border-y border-white/10 bg-white/[0.02]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
@@ -893,7 +897,7 @@ function AboutPage() {
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
                 My philosophy
               </p>
-
+ 
               <h3 className="mt-4 text-4xl font-semibold leading-tight text-white sm:text-5xl">
                 Bring clarity to complexity.
                 <br />
@@ -901,7 +905,7 @@ function AboutPage() {
                   Turn clarity into action.
                 </span>
               </h3>
-
+ 
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
                 Arcklen is built around a practical approach to consulting. The
                 goal is not to add more complexity, but to make problems easier
@@ -909,12 +913,12 @@ function AboutPage() {
                 deliver.
               </p>
             </div>
-
+ 
             <div className="rounded-[28px] border border-white/10 bg-slate-950/80 p-6 shadow-xl lg:p-7">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
                 What I bring
               </p>
-
+ 
               <div className="mt-4 space-y-3">
                 {[
                   {
@@ -938,7 +942,7 @@ function AboutPage() {
                       <div className="mt-0.5 rounded-full bg-emerald-400/10 p-2">
                         <CheckCircle2 className="h-4 w-4 text-emerald-300" />
                       </div>
-
+ 
                       <div>
                         <p className="font-semibold text-white">
                           {item.title}
@@ -955,7 +959,7 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
+ 
       {/* How I Work */}
       <section>
         <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
@@ -963,11 +967,11 @@ function AboutPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
               How I work
             </p>
-
+ 
             <h2 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
               Practical thinking. Clear structure. Better delivery.
             </h2>
-
+ 
             <p className="mt-5 text-lg leading-8 text-slate-300">
               Whether I’m supporting a transformation initiative, improving a
               business process, or helping teams turn complex requirements
@@ -975,7 +979,7 @@ function AboutPage() {
               focused on outcomes.
             </p>
           </div>
-
+ 
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {[
               {
@@ -1003,11 +1007,11 @@ function AboutPage() {
                 <span className="text-sm font-semibold tracking-[0.2em] text-emerald-300">
                   {item.number}
                 </span>
-
+ 
                 <h3 className="mt-5 text-2xl font-semibold text-white">
                   {item.title}
                 </h3>
-
+ 
                 <p className="mt-4 leading-7 text-slate-300">
                   {item.desc}
                 </p>
@@ -1016,28 +1020,28 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
+ 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.05] p-8 shadow-2xl lg:p-12">
           <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
-
+ 
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
                 Let’s work together
               </p>
-
+ 
               <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 Have a project, process, or change challenge?
               </h2>
-
+ 
               <p className="mt-4 leading-7 text-slate-300">
                 Let’s have a conversation about where you need clarity,
                 structure, or delivery support.
               </p>
             </div>
-
+ 
             <a
               href={bookingUrl}
               target="_blank"
@@ -1053,7 +1057,7 @@ function AboutPage() {
     </>
   );
 }
-
+ 
 function ServicesPage() {
   return (
     <>
@@ -1063,7 +1067,7 @@ function ServicesPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Core Services</p>
           <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">Support built around business analysis, process improvement, and change delivery</h2>
         </div>
-
+ 
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {services.map((service, index) => {
             const Icon = serviceIconMap[index % serviceIconMap.length];
@@ -1086,7 +1090,7 @@ function ServicesPage() {
             );
           })}
         </div>
-
+ 
         <div className="mt-14 grid gap-8 lg:grid-cols-2">
           <BookingCard />
           <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-8 shadow-2xl">
@@ -1118,7 +1122,7 @@ function ServicesPage() {
     </>
   );
 }
-
+ 
 function CaseStudiesPage() {
   return (
     <>
@@ -1132,7 +1136,7 @@ function CaseStudiesPage() {
     </>
   );
 }
-
+ 
 function InsightsPage() {
   return (
     <>
@@ -1157,7 +1161,7 @@ function InsightsPage() {
     </>
   );
 }
-
+ 
 function ContactPage() {
   return (
     <>
@@ -1172,7 +1176,7 @@ function ContactPage() {
                 Whether you need clearer requirements, stronger process documentation, change support, or BA interview coaching, Arcklen can help you move from uncertainty to a more structured next step.
               </p>
             </div>
-
+ 
             <div className="mt-8 rounded-[28px] border border-white/10 bg-slate-950/80 p-7 shadow-xl">
               <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
                 <div>
@@ -1183,7 +1187,7 @@ function ContactPage() {
                   UK Based
                 </div>
               </div>
-
+ 
               <div className="mt-6 space-y-5 text-slate-300">
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-emerald-300" />
@@ -1200,11 +1204,11 @@ function ContactPage() {
                   </a>
                 </div>
               </div>
-
+ 
               <p className="mt-6 text-sm leading-7 text-slate-400">
                 Best for project enquiries, consulting support, process improvement work, and BA coaching discussions.
               </p>
-
+ 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5">
                   Book a Consultation
@@ -1215,15 +1219,15 @@ function ContactPage() {
               </div>
             </div>
           </div>
-
+ 
           <ContactFormCard />
         </div>
       </section>
     </>
   );
 }
-
-
+ 
+ 
 function AnimatedServiceStrip() {
   const items = [
     'Business Analysis & Transformation Consulting',
@@ -1233,9 +1237,9 @@ function AnimatedServiceStrip() {
     'Clearer Processes',
     'Better Outcomes',
   ];
-
+ 
   const trackItems = [...items, ...items];
-
+ 
   return (
     <div className="overflow-hidden border-b border-white/10 bg-slate-900/80">
       <motion.div
@@ -1255,13 +1259,13 @@ function AnimatedServiceStrip() {
     </div>
   );
 }
-
+ 
 function RobChatbot() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<'welcome' | 'support' | 'result'>('welcome');
   const [selection, setSelection] = useState('');
   const [showNudge, setShowNudge] = useState(true);
-
+ 
   const options = [
     'Business Analysis',
     'Process Improvement',
@@ -1269,7 +1273,7 @@ function RobChatbot() {
     'BA Career Coaching',
     "I'm not sure",
   ];
-
+ 
   const responses: Record<string, string> = {
     'Business Analysis':
       'Arcklen provides practical Business Analysis support across requirements discovery, stakeholder workshops, process modelling, user stories, acceptance criteria, and delivery support.',
@@ -1282,23 +1286,23 @@ function RobChatbot() {
     "I'm not sure":
       'That’s completely fine. Tell us about the challenge you’re facing and we can help identify where structured analysis, process improvement, or change support could make the biggest difference.',
   };
-
+ 
   const startConversation = () => {
     setStep('support');
     setSelection('');
     setShowNudge(false);
   };
-
+ 
   const chooseOption = (option: string) => {
     setSelection(option);
     setStep('result');
   };
-
+ 
   const reset = () => {
     setStep('welcome');
     setSelection('');
   };
-
+ 
   return (
     <div className="fixed bottom-5 right-5 z-[60] sm:bottom-6 sm:right-6">
       {open && (
@@ -1328,7 +1332,7 @@ function RobChatbot() {
                   <p className="mt-0.5 text-xs text-slate-400">Arcklen Website Assistant</p>
                 </div>
               </div>
-
+ 
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close Rob"
@@ -1338,14 +1342,14 @@ function RobChatbot() {
               </button>
             </div>
           </div>
-
+ 
           {/* Conversation */}
           <div className="max-h-[540px] overflow-y-auto p-5">
             <div className="flex items-start gap-3">
               <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/10">
                 <Sparkles className="h-3.5 w-3.5 text-emerald-300" />
               </div>
-
+ 
               <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md bg-white/[0.06] p-4 text-sm leading-6 text-slate-200">
                 {step === 'welcome' && (
                   <>
@@ -1355,14 +1359,14 @@ function RobChatbot() {
                     </p>
                   </>
                 )}
-
+ 
                 {step === 'support' && (
                   <>
                     <p className="font-medium text-white">What can I help you with?</p>
                     <p className="mt-1 text-slate-400">Choose an option and I’ll point you in the right direction.</p>
                   </>
                 )}
-
+ 
                 {step === 'result' && (
                   <>
                     <p className="font-medium text-white">Here’s where Arcklen may be able to help.</p>
@@ -1374,7 +1378,7 @@ function RobChatbot() {
                 )}
               </div>
             </div>
-
+ 
             {step === 'support' && (
               <div className="mt-4 space-y-2 pl-10">
                 {options.map((option) => (
@@ -1391,7 +1395,7 @@ function RobChatbot() {
                 ))}
               </div>
             )}
-
+ 
             {step === 'welcome' && (
               <button
                 onClick={startConversation}
@@ -1401,7 +1405,7 @@ function RobChatbot() {
                 <ArrowRight className="h-4 w-4" />
               </button>
             )}
-
+ 
             {step === 'result' && (
               <div className="mt-4 pl-10">
                 <a
@@ -1413,7 +1417,7 @@ function RobChatbot() {
                   Talk to Nuel
                   <ArrowRight className="h-4 w-4" />
                 </a>
-
+ 
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setStep('support')}
@@ -1431,7 +1435,7 @@ function RobChatbot() {
               </div>
             )}
           </div>
-
+ 
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-center text-[11px] text-slate-500">
               Rob provides guided information about Arcklen’s services.
@@ -1439,7 +1443,7 @@ function RobChatbot() {
           </div>
         </motion.div>
       )}
-
+ 
       {!open && showNudge && (
         <motion.div
           initial={{ opacity: 0, x: 10 }}
@@ -1455,7 +1459,7 @@ function RobChatbot() {
           </p>
         </motion.div>
       )}
-
+ 
       <motion.button
         onClick={() => {
           setOpen((previous) => !previous);
@@ -1475,7 +1479,7 @@ function RobChatbot() {
     </div>
   );
 }
-
+ 
 function renderJobAnalysis(analysis: string) {
   const sections = [
     'Role summary',
@@ -1490,18 +1494,18 @@ function renderJobAnalysis(analysis: string) {
     'Application focus areas',
     'Questions the candidate should consider before applying',
   ];
-
+ 
   const lines = analysis.split(/\r?\n/);
   const parsed: { title: string; body: string[] }[] = [];
   let current: { title: string; body: string[] } | null = null;
-
+ 
   for (const rawLine of lines) {
     const line = rawLine.trim();
     if (!line) {
       if (current) current.body.push('');
       continue;
     }
-
+ 
     const headingMatch = line.match(/^(?:#{1,4}\s*)?(\d+)\.\s*(.+)$/);
     if (headingMatch) {
       const title = headingMatch[2]
@@ -1511,17 +1515,17 @@ function renderJobAnalysis(analysis: string) {
       const matched = sections.find((section) =>
         title.toLowerCase().startsWith(section.toLowerCase()),
       );
-
+ 
       if (matched) {
         current = { title: matched, body: [] };
         parsed.push(current);
         continue;
       }
     }
-
+ 
     if (current) current.body.push(line);
   }
-
+ 
   if (!parsed.length) {
     return (
       <div className="whitespace-pre-wrap text-sm leading-7 text-slate-300">
@@ -1529,7 +1533,7 @@ function renderJobAnalysis(analysis: string) {
       </div>
     );
   }
-
+ 
   const clean = (value: string) =>
     value
   .replace(/^#{1,6}\s*/, '')
@@ -1538,11 +1542,11 @@ function renderJobAnalysis(analysis: string) {
   .replace(/^--+\s*$/, '')
   .replace(/\*\*/g, '')
   .trim();
-
+ 
   const renderBody = (body: string[]) => {
     const groups: React.ReactNode[] = [];
     let bullets: string[] = [];
-
+ 
     const flushBullets = () => {
       if (!bullets.length) return;
       groups.push(
@@ -1557,27 +1561,27 @@ function renderJobAnalysis(analysis: string) {
       );
       bullets = [];
     };
-
+ 
     body.forEach((line, index) => {
       if (/^[-•]\\s+/.test(line)) {
         bullets.push(line);
         return;
       }
-
+ 
       flushBullets();
       if (!line) return;
-
+ 
       groups.push(
         <p key={`paragraph-${index}`} className="mt-2 text-sm leading-7 text-slate-300">
           {clean(line)}
         </p>,
       );
     });
-
+ 
     flushBullets();
     return groups;
   };
-
+ 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       {parsed.map((section, index) => (
@@ -1603,7 +1607,30 @@ function renderJobAnalysis(analysis: string) {
     </div>
   );
 }
-
+ 
+type InterviewFeedback = {
+  overall: string;
+  strengths: string[];
+  improvements: string[];
+  evidenceUse: string;
+  structureAndClarity: string;
+  relevance: string;
+};
+ 
+type InterviewHistoryItem = {
+  question: string;
+  answer?: string;
+  feedback?: InterviewFeedback;
+};
+ 
+type InterviewSummary = {
+  summary: string;
+  strengths: string[];
+  improvementAreas: string[];
+  preparationAreas: string[];
+  nextSteps: string[];
+};
+ 
 function OdiPage() {
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [cvText, setCvText] = useState('');
@@ -1612,7 +1639,7 @@ function OdiPage() {
 const [cvReview, setCvReview] = useState('');
 const [isReviewing, setIsReviewing] = useState(false);
 const [reviewMessageIndex, setReviewMessageIndex] = useState(0);
-
+ 
 const reviewMessages = [
   'Reading your CV…',
   'Identifying your strongest experience…',
@@ -1627,13 +1654,13 @@ useEffect(() => {
     setReviewMessageIndex(0);
     return;
   }
-
+ 
   const interval = window.setInterval(() => {
     setReviewMessageIndex((current) =>
       (current + 1) % reviewMessages.length,
     );
   }, 2200);
-
+ 
   return () => {
     window.clearInterval(interval);
   };
@@ -1645,7 +1672,7 @@ const [jobAnalysis, setJobAnalysis] = useState('');
 const [isAnalysingJob, setIsAnalysingJob] = useState(false);
 const [jobAnalysisError, setJobAnalysisError] = useState('');
 const [jobMessageIndex, setJobMessageIndex] = useState(0);
-
+ 
 const [matchCvText, setMatchCvText] = useState('');
 const [matchJobText, setMatchJobText] = useState('');
 const [matchAnalysis, setMatchAnalysis] = useState('');
@@ -1666,15 +1693,26 @@ const [interviewQuestion, setInterviewQuestion] = useState('');
 const [interviewQuestionType, setInterviewQuestionType] = useState('');
 const [interviewWhatItTests, setInterviewWhatItTests] = useState('');
 const [interviewAnswer, setInterviewAnswer] = useState('');
-const [interviewFeedback, setInterviewFeedback] = useState<any>(null);
-const [interviewHistory, setInterviewHistory] = useState<any[]>([]);
-const [interviewSummary, setInterviewSummary] = useState<any>(null);
+const [interviewFeedback, setInterviewFeedback] = useState<InterviewFeedback | null>(null);
+const [interviewHistory, setInterviewHistory] = useState<InterviewHistoryItem[]>([]);
+const [interviewSummary, setInterviewSummary] = useState<InterviewSummary | null>(null);
 const [isStartingInterview, setIsStartingInterview] = useState(false);
 const [isEvaluatingInterview, setIsEvaluatingInterview] = useState(false);
 const [isFinishingInterview, setIsFinishingInterview] = useState(false);
 const [interviewError, setInterviewError] = useState('');
 const [interviewLoadingIndex, setInterviewLoadingIndex] = useState(0);
 const [interviewFinishLoadingIndex, setInterviewFinishLoadingIndex] = useState(0);
+  const [interviewMode, setInterviewMode] = useState<'text' | 'voice'>('text');
+  const [isRecordingInterview, setIsRecordingInterview] = useState(false);
+  const [isTranscribingInterview, setIsTranscribingInterview] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState('');
+  const [isOdiSpeaking, setIsOdiSpeaking] = useState(false);
+  const [voiceMuted, setVoiceMuted] = useState(false);
+ 
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimeoutRef = useRef<number | null>(null);
+  const speechTimeoutRef = useRef<number | null>(null);
 const matchMessages = [
   'Reading your CV…',
   'Reading the job description…',
@@ -1730,29 +1768,428 @@ useEffect(() => {
   }, 1800);
   return () => window.clearInterval(interval);
 }, [isFinishingInterview]);
+  const speakOdi = (
+    text: string,
+    onEnd?: () => void
+  ) => {
+    if (voiceMuted || !text.trim() || typeof window === 'undefined') {
+      onEnd?.();
+      return;
+    }
+ 
+    if (!('speechSynthesis' in window)) {
+      onEnd?.();
+      return;
+    }
+ 
+    window.speechSynthesis.cancel();
+ 
+    const utterance = new SpeechSynthesisUtterance(text);
+ 
+    const voices = window.speechSynthesis.getVoices();
+ 
+    const preferredVoice =
+      voices.find((voice) =>
+        voice.lang.toLowerCase().startsWith('en-gb')
+      ) ??
+      voices.find((voice) =>
+        voice.lang.toLowerCase().startsWith('en')
+      );
+ 
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+ 
+    utterance.lang = preferredVoice?.lang ?? 'en-GB';
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+ 
+    utterance.onstart = () => {
+      setIsOdiSpeaking(true);
+    };
+ 
+    utterance.onend = () => {
+      setIsOdiSpeaking(false);
+      onEnd?.();
+    };
+ 
+    utterance.onerror = () => {
+      setIsOdiSpeaking(false);
+      onEnd?.();
+    };
+ 
+    window.speechSynthesis.speak(utterance);
+  };
+ 
+  const stopOdiSpeaking = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+ 
+    setIsOdiSpeaking(false);
+  };
+  const getSupportedRecordingMimeType = () => {
+    if (typeof MediaRecorder === 'undefined') return '';
+ 
+    const candidates = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4',
+      'audio/ogg;codecs=opus',
+      'audio/ogg',
+    ];
+ 
+    return candidates.find((type) => MediaRecorder.isTypeSupported(type)) ?? '';
+  };
+ 
+  const clearRecordingTimeout = () => {
+    if (recordingTimeoutRef.current !== null) {
+      window.clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
+  };
+ 
+  const clearSpeechTimeout = () => {
+    if (speechTimeoutRef.current !== null) {
+      window.clearTimeout(speechTimeoutRef.current);
+      speechTimeoutRef.current = null;
+    }
+  };
+ 
+  const handleStartVoiceRecording = async () => {
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setInterviewError('Your browser does not support microphone recording.');
+        return;
+      }
+ 
+      if (!('MediaRecorder' in window)) {
+        setInterviewError('Your browser does not support voice recording.');
+        return;
+      }
+ 
+      if (isRecordingInterview || isTranscribingInterview) return;
+ 
+      stopOdiSpeaking();
+      setInterviewError('');
+      setVoiceTranscript('');
+      setInterviewAnswer('');
+ 
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = getSupportedRecordingMimeType();
+ 
+      if (!mimeType) {
+        stream.getTracks().forEach((track) => track.stop());
+        setInterviewError('Your browser does not support a compatible audio recording format.');
+        return;
+      }
+ 
+      const recorder = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+ 
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+ 
+      recorder.onerror = () => {
+        clearRecordingTimeout();
+        stream.getTracks().forEach((track) => track.stop());
+        setIsRecordingInterview(false);
+        setInterviewError('Odi could not record your answer. Please try again.');
+      };
+ 
+      recorder.onstop = async () => {
+        clearRecordingTimeout();
+        stream.getTracks().forEach((track) => track.stop());
+        mediaRecorderRef.current = null;
+        setIsRecordingInterview(false);
+ 
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || mimeType,
+        });
+        audioChunksRef.current = [];
+ 
+        if (!audioBlob.size) {
+          setInterviewError('No audio was captured. Please try recording again.');
+          return;
+        }
+ 
+        // Keep the browser payload comfortably below typical serverless request limits.
+        if (audioBlob.size > 7 * 1024 * 1024) {
+          setInterviewError('That recording is too large. Please keep your answer under 90 seconds and try again.');
+          return;
+        }
+ 
+        try {
+          setIsTranscribingInterview(true);
+          setInterviewError('');
+ 
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            try {
+              const result = reader.result;
+              if (typeof result !== 'string') throw new Error('Could not read the recording.');
+ 
+              const base64Audio = result.split(',')[1] ?? '';
+              if (!base64Audio) throw new Error('Could not read the recording.');
+ 
+              const response = await fetch('/api/transcribe-interview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  audio: base64Audio,
+                  mimeType: audioBlob.type || mimeType,
+                }),
+              });
+ 
+              const data = await response.json();
+              if (!response.ok) {
+                throw new Error(data?.error || 'Odi could not transcribe your answer.');
+              }
+ 
+              const transcript = typeof data.transcript === 'string' ? data.transcript.trim() : '';
+              if (!transcript) {
+                throw new Error('Odi could not hear a clear answer. Please try again.');
+              }
+ 
+              setVoiceTranscript(transcript);
+              setInterviewAnswer(transcript);
+            } catch (error) {
+              console.error('Voice transcription error:', error);
+              setInterviewError(
+                error instanceof Error
+                  ? error.message
+                  : 'Odi could not transcribe your answer. Please try again.',
+              );
+            } finally {
+              setIsTranscribingInterview(false);
+            }
+          };
+ 
+          reader.readAsDataURL(audioBlob);
+        } catch (error) {
+          console.error('Recording processing error:', error);
+          setIsTranscribingInterview(false);
+          setInterviewError('Odi could not process your recording. Please try again.');
+        }
+      };
+ 
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setIsRecordingInterview(true);
+ 
+      // Safety cap: stop recording automatically after 90 seconds.
+      recordingTimeoutRef.current = window.setTimeout(() => {
+        if (mediaRecorderRef.current?.state === 'recording') {
+          mediaRecorderRef.current.stop();
+        }
+      }, 90_000);
+    } catch (error) {
+      console.error('Microphone access error:', error);
+      setInterviewError(
+        error instanceof Error && error.name === 'NotAllowedError'
+          ? 'Microphone access was blocked. Please allow microphone access and try again.'
+          : 'Microphone access was not available. Please allow microphone access and try again.',
+      );
+    }
+  };
+ 
+  const handleStopVoiceRecording = () => {
+    clearRecordingTimeout();
+    const recorder = mediaRecorderRef.current;
+ 
+    if (!recorder) {
+      setIsRecordingInterview(false);
+      return;
+    }
+ 
+    if (recorder.state !== 'inactive') {
+      recorder.stop();
+    } else {
+      setIsRecordingInterview(false);
+    }
+  };
+ 
+  const resetVoiceInterview = () => {
+    clearRecordingTimeout();
+    clearSpeechTimeout();
+    stopOdiSpeaking();
+ 
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== 'inactive') {
+      recorder.stop();
+    }
+ 
+    mediaRecorderRef.current = null;
+    audioChunksRef.current = [];
+    setIsRecordingInterview(false);
+    setIsTranscribingInterview(false);
+    setVoiceTranscript('');
+    setIsOdiSpeaking(false);
+  };
+ 
+  const handleCloseInterview = () => {
+    resetVoiceInterview();
+    setActiveTool(null);
+  };
+ 
+  const handleInterviewModeChange = (mode: 'text' | 'voice') => {
+    resetVoiceInterview();
+    setInterviewMode(mode);
+  };
+ 
+  useEffect(() => {
+    return () => {
+      clearRecordingTimeout();
+      clearSpeechTimeout();
+      stopOdiSpeaking();
+ 
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== 'inactive') {
+        recorder.stop();
+      }
+    };
+  }, []);
+ 
+  useEffect(() => {
+    if (activeTool !== 'interview-practice') {
+      resetVoiceInterview();
+    }
+  }, [activeTool]);
+ 
 const handleStartInterview = async () => {
   if (interviewJobText.trim().length < 100) { setInterviewError('Please provide at least 100 characters of job description.'); return; }
   setIsStartingInterview(true); setInterviewError(''); setInterviewQuestion(''); setInterviewAnswer(''); setInterviewFeedback(null); setInterviewHistory([]); setInterviewSummary(null);
   try {
     const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim() }) });
     const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not start the interview practice.');
-    setInterviewQuestion(data.question || ''); setInterviewQuestionType(data.questionType || ''); setInterviewWhatItTests(data.whatItTests || '');
+    const question = data.question || '';
+ 
+setInterviewQuestion(question);
+setInterviewQuestionType(data.questionType || '');
+setInterviewWhatItTests(data.whatItTests || '');
+ 
+if (interviewMode === 'voice' && question && !voiceMuted) {
+  clearSpeechTimeout();
+  speechTimeoutRef.current = window.setTimeout(() => {
+    speechTimeoutRef.current = null;
+    speakOdi(question);
+  }, 300);
+}
   } catch (error) { console.error('Odi Interview Practice start error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not start the interview practice right now. Please try again.'); }
   finally { setIsStartingInterview(false); }
 };
-
-const handleSubmitInterviewAnswer = async () => {
-  if (!interviewQuestion) return; if (interviewAnswer.trim().length < 10) { setInterviewError('Please provide an interview answer of at least 10 characters.'); return; }
-  setIsEvaluatingInterview(true); setInterviewError('');
+ 
+const handleSubmitInterviewAnswer = async (
+  answerOverride?: string
+) => {
+  if (!interviewQuestion) return;
+ 
+  const answer = (
+    answerOverride ?? interviewAnswer
+  ).trim();
+ 
+  if (answer.length < 10) {
+    setInterviewError(
+      'Please provide an interview answer of at least 10 characters.'
+    );
+    return;
+  }
+ 
+  setInterviewAnswer(answer);
+  setIsEvaluatingInterview(true);
+  setInterviewError('');
+ 
   try {
-    const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'answer', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim(), history: interviewHistory, question: interviewQuestion, answer: interviewAnswer.trim() }) });
-    const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not evaluate your answer.');
-    setInterviewHistory((current) => [...current, { question: interviewQuestion, answer: interviewAnswer.trim(), feedback: data.feedback?.overall || '' }]);
-    setInterviewFeedback(data.feedback || null); setInterviewQuestion(data.nextQuestion || ''); setInterviewQuestionType(data.nextQuestionType || ''); setInterviewWhatItTests(data.nextQuestionReason || ''); setInterviewAnswer('');
-  } catch (error) { console.error('Odi Interview Practice answer error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not evaluate your answer right now. Please try again.'); }
-  finally { setIsEvaluatingInterview(false); }
+    const response = await fetch('/api/interview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'answer',
+        interviewType,
+        jobText: interviewJobText,
+        cvText: interviewCvText,
+        history: interviewHistory,
+        question: interviewQuestion,
+        answer,
+      }),
+    });
+ 
+    const data = await response.json();
+ 
+    if (!response.ok) {
+      throw new Error(
+        data?.error ||
+          'Odi could not evaluate your answer.'
+      );
+    }
+ 
+    setInterviewHistory((current) => [
+      ...current,
+      {
+        question: interviewQuestion,
+        answer,
+        feedback: data.feedback,
+      },
+    ]);
+ 
+    setInterviewFeedback(data.feedback || null);
+ 
+    const nextQuestion = data.nextQuestion || '';
+ 
+    setInterviewQuestion(nextQuestion);
+    setInterviewQuestionType(
+      data.nextQuestionType || ''
+    );
+ 
+    setInterviewWhatItTests(
+      data.nextQuestionReason || ''
+    );
+ 
+    setInterviewAnswer('');
+    setVoiceTranscript('');
+ 
+    // In Voice Interview mode, Odi speaks the feedback
+    // and then asks the next question.
+    if (interviewMode === 'voice') {
+      const feedbackText =
+        data.feedback?.overall?.trim() || '';
+ 
+      if (feedbackText) {
+        speakOdi(feedbackText, () => {
+          if (nextQuestion) {
+            setTimeout(() => {
+              speakOdi(nextQuestion);
+            }, 500);
+          }
+        });
+      } else if (nextQuestion) {
+        setTimeout(() => {
+          speakOdi(nextQuestion);
+        }, 500);
+      }
+    }
+  } catch (error) {
+    console.error(
+      'Odi Interview Practice answer error:',
+      error
+    );
+ 
+    setInterviewError(
+      error instanceof Error
+        ? error.message
+        : 'Odi could not evaluate your answer. Please try again.'
+    );
+  } finally {
+    setIsEvaluatingInterview(false);
+  }
 };
-
+ 
 const handleFinishInterview = async () => {
   const history = interviewQuestion && interviewAnswer.trim() ? [...interviewHistory, { question: interviewQuestion, answer: interviewAnswer.trim() }] : interviewHistory;
   if (!history.length) { setInterviewError('Complete at least one interview question before finishing.'); return; }
@@ -1760,11 +2197,25 @@ const handleFinishInterview = async () => {
   try {
     const response = await fetch('/api/interview', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'finish', interviewType, jobText: interviewJobText.trim(), cvText: interviewCvText.trim(), history }) });
     const data = await response.json(); if (!response.ok) throw new Error(data?.error || 'Odi could not finish the interview summary.');
-    setInterviewHistory(history); setInterviewSummary(data); setInterviewQuestion(''); setInterviewAnswer('');
+    setInterviewHistory(history);
+    setInterviewSummary(data);
+    setInterviewQuestion('');
+    setInterviewAnswer('');
+ 
+    if (interviewMode === 'voice' && !voiceMuted && typeof data.summary === 'string') {
+      const spokenSummary = data.summary.trim();
+      if (spokenSummary) {
+        clearSpeechTimeout();
+        speechTimeoutRef.current = window.setTimeout(() => {
+          speechTimeoutRef.current = null;
+          speakOdi(spokenSummary);
+        }, 250);
+      }
+    }
   } catch (error) { console.error('Odi Interview Practice finish error:', error); setInterviewError(error instanceof Error ? error.message : 'Odi could not finish the interview summary right now. Please try again.'); }
   finally { setIsFinishingInterview(false); }
 };
-
+ 
 const handleAnalyseJob = async () => {
   if (jobText.trim().length < 100) {
     setJobAnalysisError(
@@ -1772,12 +2223,12 @@ const handleAnalyseJob = async () => {
     );
     return;
   }
-
+ 
   setIsAnalysingJob(true);
   setJobAnalysis('');
   setJobAnalysisError('');
   setJobMessageIndex(0);
-
+ 
   try {
     const response = await fetch('/api/analyse-job', {
       method: 'POST',
@@ -1788,19 +2239,19 @@ const handleAnalyseJob = async () => {
         jobText: jobText.trim(),
       }),
     });
-
+ 
     const data = await response.json();
-
+ 
     if (!response.ok) {
       throw new Error(
         data?.error || 'Odi could not analyse the job description.',
       );
     }
-
+ 
     setJobAnalysis(data.analysis || '');
   } catch (error) {
     console.error('Odi Job Analysis error:', error);
-
+ 
     setJobAnalysisError(
       error instanceof Error
         ? error.message
@@ -1817,19 +2268,19 @@ const handleMatchCvRole = async () => {
     );
     return;
   }
-
+ 
   if (matchJobText.trim().length < 100) {
     setMatchError(
       'Please provide at least 100 characters of job description.',
     );
     return;
   }
-
+ 
   setIsMatchingCv(true);
   setMatchAnalysis('');
   setMatchError('');
   setMatchMessageIndex(0);
-
+ 
   try {
     const response = await fetch('/api/match-cv-role', {
       method: 'POST',
@@ -1841,19 +2292,19 @@ const handleMatchCvRole = async () => {
         jobText: matchJobText.trim(),
       }),
     });
-
+ 
     const data = await response.json();
-
+ 
     if (!response.ok) {
       throw new Error(
         data?.error || 'Odi could not compare the CV against the role.',
       );
     }
-
+ 
     setMatchAnalysis(data.analysis || '');
   } catch (error) {
     console.error('Odi CV-to-role matching error:', error);
-
+ 
     setMatchError(
       error instanceof Error
         ? error.message
@@ -1868,21 +2319,21 @@ useEffect(() => {
     setMatchMessageIndex(0);
     return;
   }
-
+ 
   const interval = window.setInterval(() => {
     setMatchMessageIndex((current) =>
       (current + 1) % matchMessages.length,
     );
   }, 2200);
-
+ 
   return () => {
     window.clearInterval(interval);
   };
 }, [isMatchingCv]);
-
+ 
 const handleCopyTailoredCv = async () => {
   if (!tailoredCv) return;
-
+ 
   try {
     await navigator.clipboard.writeText(tailoredCv);
     setTailorCopied(true);
@@ -1891,7 +2342,7 @@ const handleCopyTailoredCv = async () => {
     console.error('Odi CV copy error:', error);
   }
 };
-
+ 
 const handleTailorCv = async () => {
   if (tailorCvText.trim().length < 100) {
     setTailorError(
@@ -1899,19 +2350,19 @@ const handleTailorCv = async () => {
     );
     return;
   }
-
+ 
   if (tailorJobText.trim().length < 100) {
     setTailorError(
       'Please provide at least 100 characters of job description.',
     );
     return;
   }
-
+ 
   setIsTailoringCv(true);
   setTailoredCv('');
   setTailorError('');
   setTailorMessageIndex(0);
-
+ 
   try {
     const response = await fetch('/api/tailor-cv', {
       method: 'POST',
@@ -1923,19 +2374,19 @@ const handleTailorCv = async () => {
         jobText: tailorJobText.trim(),
       }),
     });
-
+ 
     const data = await response.json();
-
+ 
     if (!response.ok) {
       throw new Error(
         data?.error || 'Odi could not tailor the CV for this role.',
       );
     }
-
+ 
     setTailoredCv(data.tailoredCv || '');
   } catch (error) {
     console.error('Odi CV tailoring error:', error);
-
+ 
     setTailorError(
       error instanceof Error
         ? error.message
@@ -1945,24 +2396,24 @@ const handleTailorCv = async () => {
     setIsTailoringCv(false);
   }
 };
-
+ 
 useEffect(() => {
   if (!isTailoringCv) {
     setTailorMessageIndex(0);
     return;
   }
-
+ 
   const interval = window.setInterval(() => {
     setTailorMessageIndex((current) =>
       (current + 1) % tailorMessages.length,
     );
   }, 2200);
-
+ 
   return () => {
     window.clearInterval(interval);
   };
 }, [isTailoringCv]);
-
+ 
 const jobAnalysisMessages = [
   'Reading the job description…',
   'Identifying the core requirements…',
@@ -1978,13 +2429,13 @@ const jobAnalysisMessages = [
       setJobMessageIndex(0);
       return;
     }
-
+ 
     const interval = window.setInterval(() => {
       setJobMessageIndex((current) =>
         (current + 1) % jobAnalysisMessages.length,
       );
     }, 2200);
-
+ 
     return () => {
       window.clearInterval(interval);
     };
@@ -2021,65 +2472,65 @@ const jobAnalysisMessages = [
       active: true,
     },
   ];
-
+ 
   const handleCvFile = async (event: FormEvent<HTMLInputElement>) => {
   const file = event.currentTarget.files?.[0];
-
+ 
 if (!file) return;
-
+ 
 const maxFileSize = 5 * 1024 * 1024;
-
+ 
 if (file.size > maxFileSize) {
   setCvFileName('');
   setCvText('');
   setReviewError('Your CV file is too large. Please upload a file smaller than 5 MB.');
   return;
 }
-
+ 
 setCvFileName(file.name);
   setCvText('');
   setReviewError('');
-
+ 
   const fileName = file.name.toLowerCase();
-
+ 
   if (file.type === 'text/plain' || fileName.endsWith('.txt')) {
     const reader = new FileReader();
-
+ 
     reader.onload = () => {
       setCvText(String(reader.result ?? ''));
     };
-
+ 
     reader.readAsText(file);
     return;
   }
-
+ 
   if (file.type === 'application/pdf' || fileName.endsWith('.pdf')) {
   try {
     const pdfjsLib = await import('pdfjs-dist');
     const pdfWorker = await import(
       'pdfjs-dist/build/pdf.worker.min.mjs?url'
     );
-
+ 
     pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker.default;
-
+ 
     const arrayBuffer = await file.arrayBuffer();
-
+ 
     const pdf = await pdfjsLib.getDocument({
       data: arrayBuffer,
     }).promise;
       const pageTexts: string[] = [];
-
+ 
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
         const page = await pdf.getPage(pageNumber);
         const content = await page.getTextContent();
-
+ 
         const text = content.items
           .map((item) => ('str' in item ? item.str : ''))
           .join(' ');
-
+ 
         pageTexts.push(text);
       }
-
+ 
       setCvText(pageTexts.join('\n\n'));
     } catch (error) {
       console.error('PDF extraction error:', error);
@@ -2087,10 +2538,10 @@ setCvFileName(file.name);
         'Odi could not read this PDF. Please try another PDF or paste your CV text instead.',
       );
     }
-
+ 
     return;
   }
-
+ 
   if (
   file.type ===
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
@@ -2099,11 +2550,11 @@ setCvFileName(file.name);
   try {
     const mammoth = await import('mammoth');
     const arrayBuffer = await file.arrayBuffer();
-
+ 
     const result = await mammoth.extractRawText({
       arrayBuffer,
     });
-
+ 
       setCvText(result.value);
     } catch (error) {
       console.error('DOCX extraction error:', error);
@@ -2111,10 +2562,10 @@ setCvFileName(file.name);
         'Odi could not read this Word document. Please try another DOCX file or paste your CV text instead.',
       );
     }
-
+ 
     return;
   }
-
+ 
   setReviewError(
     'This file type is not supported yet. Please upload a PDF, DOCX or TXT file, or paste your CV text.',
   );
@@ -2123,27 +2574,27 @@ const handleCvDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
   event.preventDefault();
   setIsDraggingCv(true);
 };
-
+ 
 const handleCvDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
   event.preventDefault();
   setIsDraggingCv(false);
 };
-
+ 
 const handleCvDrop = async (event: React.DragEvent<HTMLLabelElement>) => {
   event.preventDefault();
   setIsDraggingCv(false);
-
+ 
   const file = event.dataTransfer.files?.[0];
-
+ 
   if (!file) return;
-
+ 
   const input = event.currentTarget.querySelector('input[type="file"]');
-
+ 
   if (input instanceof HTMLInputElement) {
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
     input.files = dataTransfer.files;
-
+ 
     input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 };
@@ -2152,9 +2603,9 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
     await navigator.clipboard.writeText(
       rewrite.replace(/^>\s*/gm, '').replace(/\*\*/g, '').trim(),
     );
-
+ 
     setCopiedRewrite(index);
-
+ 
     window.setTimeout(() => {
       setCopiedRewrite(null);
     }, 2000);
@@ -2168,11 +2619,11 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
       setReviewError('Please paste your CV text before starting the review.');
       return;
     }
-
+ 
     setIsReviewing(true);
     setReviewError('');
     setCvReview('');
-
+ 
     try {
       const response = await fetch('/api/review-cv', {
         method: 'POST',
@@ -2183,13 +2634,13 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
           cvText: cvText.trim(),
         }),
       });
-
+ 
       const data = await response.json();
-
+ 
       if (!response.ok) {
         throw new Error(data.error || 'Odi could not review the CV.');
       }
-
+ 
       setCvReview(data.review || '');
     } catch (error) {
       console.error('CV review error:', error);
@@ -2206,11 +2657,11 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
   const rewriteSectionMatch = review.match(
     /(?:#{2,4}\s*)?8\.\s*Suggested CV rewrites([\s\S]*)/i,
   );
-
+ 
   if (!rewriteSectionMatch) return null;
-
+ 
   const rewriteSection = rewriteSectionMatch[1];
-
+ 
   const rewrites = rewriteSection
     .split(/(?:#{2,4}\s*)?Rewrite\s+\d+\s*:?\s*/i)
     .slice(1)
@@ -2218,15 +2669,15 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
       const currentMatch = block.match(
         /Current CV statement\s*([\s\S]*?)(?=What could be improved|Stronger version)/i,
       );
-
+ 
       const improvementMatch = block.match(
         /What could be improved\s*([\s\S]*?)(?=Stronger version)/i,
       );
-
+ 
       const strongerMatch = block.match(
         /Stronger version\s*([\s\S]*)/i,
       );
-
+ 
       return {
         current: currentMatch?.[1]?.trim() || '',
         improvement: improvementMatch?.[1]?.trim() || '',
@@ -2239,26 +2690,26 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
         rewrite.improvement ||
         rewrite.stronger,
     );
-
+ 
   if (!rewrites.length) return null;
-
+ 
   return (
     <div className="mt-8">
       <div className="mb-5">
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
           Suggested CV rewrites
         </p>
-
+ 
         <h4 className="mt-2 text-xl font-semibold text-white">
           Stronger versions of your CV statements
         </h4>
-
+ 
         <p className="mt-2 text-sm leading-6 text-slate-400">
           Odi has identified areas where your existing experience can be
           presented more clearly and effectively.
         </p>
       </div>
-
+ 
       <div className="space-y-5">
         {rewrites.map((rewrite, index) => (
           <div
@@ -2269,18 +2720,18 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-300/10 text-sm font-semibold text-emerald-300">
                 {index + 1}
               </div>
-
+ 
               <h5 className="text-base font-semibold text-white">
                 CV rewrite
               </h5>
             </div>
-
+ 
             {rewrite.current && (
               <div className="mt-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   Current CV statement
                 </p>
-
+ 
                 <p className="mt-2 rounded-xl border border-white/10 bg-slate-950/60 p-4 text-sm leading-6 text-slate-400">
                   {rewrite.current
                     .replace(/^>\s*/gm, '')
@@ -2288,13 +2739,13 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
                 </p>
               </div>
             )}
-
+ 
             {rewrite.improvement && (
               <div className="mt-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   What could be improved
                 </p>
-
+ 
                 <p className="mt-2 text-sm leading-6 text-slate-300">
                   {rewrite.improvement
                     .replace(/^>\s*/gm, '')
@@ -2302,19 +2753,19 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
                 </p>
               </div>
             )}
-
+ 
             {rewrite.stronger && (
               <div className="mt-4 rounded-xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
                   Stronger version
                 </p>
-
+ 
                 <p className="mt-2 text-sm leading-6 text-slate-200">
                   {rewrite.stronger
                     .replace(/^>\s*/gm, '')
                     .replace(/\*\*/g, '')}
                 </p>
-
+ 
                 
                 <button
                   type="button"
@@ -2335,7 +2786,7 @@ const handleCopyRewrite = async (rewrite: string, index: number) => {
     </div>
   );
 };
-
+ 
 const renderCvReview = (review: string) => {
     return review.split('\n').map((line, index) => {
       const trimmedLine = line.trim();
@@ -2346,19 +2797,19 @@ const renderCvReview = (review: string) => {
           .replace(/^0\.\s*/, '')
           .replace(/\*\*/g, '')
           .trim();
-
+ 
       if (!trimmedLine) {
         return <div key={index} className="h-3" />;
       }
-
+ 
       if (trimmedLine === '---') {
         return <div key={index} className="my-5 border-t border-white/10" />;
       }
-
+ 
       const headingMatch = trimmedLine.match(/^(#{1,6}\s*)?(\d+\.\s*)?(.+)$/);
       const isNumberedHeading = /^\d+\.\s+/.test(trimmedLine);
       const isMarkdownHeading = /^#{1,6}\s+/.test(trimmedLine);
-
+ 
       if (isNumberedHeading || isMarkdownHeading) {
         const heading = cleanHeading(trimmedLine);
         return (
@@ -2370,7 +2821,7 @@ const renderCvReview = (review: string) => {
           </h4>
         );
       }
-
+ 
       if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
         return (
           <div key={index} className="flex gap-3 py-1.5 text-slate-300">
@@ -2379,7 +2830,7 @@ const renderCvReview = (review: string) => {
           </div>
         );
       }
-
+ 
       if (trimmedLine.startsWith('> ')) {
         return (
           <blockquote
@@ -2390,7 +2841,7 @@ const renderCvReview = (review: string) => {
           </blockquote>
         );
       }
-
+ 
       if (headingMatch && headingMatch[2]) {
         return (
           <h4
@@ -2401,7 +2852,7 @@ const renderCvReview = (review: string) => {
           </h4>
         );
       }
-
+ 
       return (
         <p key={index} className="py-1 leading-7 text-slate-300">
           {trimmedLine.replace(/^0\.\s*/, '').replace(/\*\*/g, '')}
@@ -2413,22 +2864,22 @@ const renderCvReview = (review: string) => {
     <main className="bg-slate-950 text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <LuxeBackground />
-
+ 
         <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-28">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/5 px-4 py-2 text-sm text-emerald-200">
               <Sparkles className="h-4 w-4" />
               Odi AI Assistant
             </div>
-
+ 
             <h1 className="mt-6 text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
               Your AI Business Analysis Assistant.
             </h1>
-
+ 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
               Analyse roles, strengthen your CV, understand requirements, and prepare for delivery with an assistant built specifically for Business Analysts.
             </p>
-
+ 
             <div className="mt-10 flex flex-wrap gap-3">
               {['CV Review', 'BA Job Analysis', 'Requirements Analysis', 'Process Thinking'].map((item) => (
                 <span
@@ -2442,26 +2893,26 @@ const renderCvReview = (review: string) => {
           </div>
         </div>
       </section>
-
+ 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
             Start with Odi
           </p>
-
+ 
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
             Choose what you want to work on.
           </h2>
-
+ 
           <p className="mt-4 text-slate-400">
             Odi is being built around the practical tasks Business Analysts use to understand problems, create clarity, and support delivery.
           </p>
         </div>
-
+ 
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {tools.map((tool) => {
             const Icon = tool.icon;
-
+ 
             return (
               <button
                 key={tool.title}
@@ -2469,7 +2920,7 @@ const renderCvReview = (review: string) => {
                 disabled={!tool.active}
                 onClick={() => {
   if (!tool.active) return;
-
+ 
   const toolKey =
   tool.title === 'Review my CV'
     ? 'cv-review'
@@ -2480,7 +2931,7 @@ const renderCvReview = (review: string) => {
         : tool.title === 'Tailor my CV'
           ? 'cv-tailor'
           : 'interview-practice';
-
+ 
   const sectionId =
   tool.title === 'Review my CV'
     ? 'cv-review-section'
@@ -2491,9 +2942,14 @@ const renderCvReview = (review: string) => {
         : tool.title === 'Tailor my CV'
           ? 'cv-tailor-section'
           : 'interview-practice-section';
-
+ 
+  if (activeTool === 'interview-practice' && toolKey !== 'interview-practice') {
+    // The voice cleanup is handled inside OdiPage when its interview controls change or unmount.
+    // Changing tools also clears the active interview state below.
+  }
+ 
   setActiveTool(toolKey);
-
+ 
   window.setTimeout(() => {
     document
       .getElementById(sectionId)
@@ -2509,15 +2965,15 @@ const renderCvReview = (review: string) => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300/10 text-emerald-300">
                   <Icon className="h-6 w-6" />
                 </div>
-
+ 
                 <h3 className="mt-6 text-xl font-semibold text-white">
                   {tool.title}
                 </h3>
-
+ 
                 <p className="mt-3 leading-7 text-slate-400">
                   {tool.description}
                 </p>
-
+ 
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-emerald-300">
                   {tool.active
                     ? tool.title === 'Review my CV'
@@ -2537,7 +2993,7 @@ const renderCvReview = (review: string) => {
           })}
         </div>
       </section>
-
+ 
       {activeTool === 'cv-review' && (
         <section
   id="cv-review-section"
@@ -2550,16 +3006,16 @@ const renderCvReview = (review: string) => {
                   <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
                     CV Review
                   </p>
-
+ 
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
                     Give Odi your CV.
                   </h2>
-
+ 
                   <p className="mt-4 max-w-2xl leading-7 text-slate-400">
                     Upload your CV or paste the text below. Odi will use this information to review your experience and help you strengthen your application.
                   </p>
                 </div>
-
+ 
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
@@ -2568,7 +3024,7 @@ const renderCvReview = (review: string) => {
                   Close
                 </button>
               </div>
-
+ 
               <div className="mt-10 grid gap-6 lg:grid-cols-2">
                 <label
   onDragOver={handleCvDragOver}
@@ -2584,21 +3040,21 @@ const renderCvReview = (review: string) => {
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-300/10 text-emerald-300">
                       <FileText className="h-6 w-6" />
                     </div>
-
+ 
                     <h3 className="mt-5 text-lg font-semibold">
                       Upload your CV
                     </h3>
-
+ 
                     <p className="mt-2 text-sm leading-6 text-slate-400">
                       PDF, DOCX or TXT · Maximum 5 MB
                     </p>
                   </div>
-
+ 
                   <div className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950">
                     Choose file
                     <ArrowRight className="h-4 w-4" />
                   </div>
-
+ 
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx,.txt"
@@ -2606,12 +3062,12 @@ const renderCvReview = (review: string) => {
                     className="hidden"
                   />
                 </label>
-
+ 
                 <div>
                   <label className="text-sm font-semibold text-slate-200">
                     Or paste your CV
                   </label>
-
+ 
                   <textarea
                     value={cvText}
                     onChange={(event) => setCvText(event.target.value)}
@@ -2620,19 +3076,19 @@ const renderCvReview = (review: string) => {
                   />
                 </div>
               </div>
-
+ 
               {cvFileName && (
                 <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-slate-300">
                   <CheckCircle2 className="h-5 w-5 text-emerald-300" />
                   Selected: {cvFileName}
                 </div>
               )}
-
+ 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-slate-500">
                   Your CV is sent to our AI service to generate your Odi review.
                 </p>
-
+ 
                 <button
                   type="button"
                   onClick={handleCvReview}
@@ -2672,7 +3128,7 @@ const renderCvReview = (review: string) => {
                   {reviewError}
                 </div>
               )}
-
+ 
               {cvReview && (
                 <div className="mt-8 rounded-3xl border border-emerald-300/20 bg-slate-950/70 p-6 sm:p-8">
                   <div className="flex items-center gap-3">
@@ -2686,7 +3142,7 @@ const renderCvReview = (review: string) => {
   </h3>
 </div>
                   </div>
-
+ 
                   <div className="mt-6 text-sm">
   {renderCvReview(cvReview)}
 </div>
@@ -2697,7 +3153,7 @@ const renderCvReview = (review: string) => {
           </div>
         </section>
       )}
-
+ 
       {activeTool === 'job-analysis' && (
         <section
           id="job-analysis-section"
@@ -2710,11 +3166,11 @@ const renderCvReview = (review: string) => {
                   <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
                     BA Job Analysis
                   </p>
-
+ 
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
                     Give Odi the job description.
                   </h2>
-
+ 
                   <p className="mt-4 max-w-2xl leading-7 text-slate-400">
                     Odi will break down a Business Analyst role, identify the
                     key requirements, responsibilities, capabilities and
@@ -2722,7 +3178,7 @@ const renderCvReview = (review: string) => {
                     looking for.
                   </p>
                 </div>
-
+ 
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
@@ -2731,7 +3187,7 @@ const renderCvReview = (review: string) => {
                   Close
                 </button>
               </div>
-
+ 
               <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
                 <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
                   <div className="mb-5 flex items-center justify-between gap-4">
@@ -2743,12 +3199,12 @@ const renderCvReview = (review: string) => {
                         Paste the full Business Analyst job description below.
                       </p>
                     </div>
-
+ 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-slate-400">
                       BA roles
                     </span>
                   </div>
-
+ 
                   <textarea
                     value={jobText}
                     onChange={(event) => {
@@ -2758,13 +3214,13 @@ const renderCvReview = (review: string) => {
                     placeholder="Paste the job description here..."
                     className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
                   />
-
+ 
                   <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-xs leading-5 text-slate-500">
                       For best results, include the responsibilities,
                       requirements and skills sections.
                     </p>
-
+ 
                     <button
                       type="button"
                       onClick={() => {
@@ -2777,7 +3233,7 @@ const renderCvReview = (review: string) => {
                       Clear
                     </button>
                   </div>
-
+ 
                   {jobAnalysisError && (
                     <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
                       {jobAnalysisError}
@@ -2793,18 +3249,18 @@ const renderCvReview = (review: string) => {
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
-
+ 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                   <div className="mb-6">
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">
                       Odi analysis
                     </p>
-
+ 
                     <h3 className="mt-2 text-xl font-semibold text-white">
                       What Odi will look for
                     </h3>
                   </div>
-
+ 
                   <div className="space-y-3">
                     {[
                       'Core Business Analysis requirements',
@@ -2824,7 +3280,7 @@ const renderCvReview = (review: string) => {
                           size={18}
                           className="mt-0.5 shrink-0 text-emerald-300"
                         />
-
+ 
                         <span className="text-sm leading-6 text-slate-300">
                           {item}
                         </span>
@@ -2833,7 +3289,7 @@ const renderCvReview = (review: string) => {
                   </div>
                 </div>
               </div>
-
+ 
               {isAnalysingJob && (
                 <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
                   <div className="flex items-center gap-3">
@@ -2844,7 +3300,7 @@ const renderCvReview = (review: string) => {
                   </div>
                 </div>
               )}
-
+ 
               {jobAnalysis && (
                 <div className="mt-8 rounded-3xl border border-emerald-300/15 bg-white/[0.035] p-6 sm:p-8">
                   <div className="mb-7 flex flex-col gap-3 border-b border-white/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
@@ -2860,7 +3316,7 @@ const renderCvReview = (review: string) => {
                       11 analysis areas
                     </span>
                   </div>
-
+ 
                   {renderJobAnalysis(jobAnalysis)}
                 </div>
               )}
@@ -2868,7 +3324,7 @@ const renderCvReview = (review: string) => {
           </div>
         </section>
       )}
-
+ 
       {activeTool === 'cv-role-match' && (
         <section
           id="cv-role-match-section"
@@ -2881,11 +3337,11 @@ const renderCvReview = (review: string) => {
                   <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
                     CV ↔ Role Matching
                   </p>
-
+ 
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
                     See how your CV aligns with the role.
                   </h2>
-
+ 
                   <p className="mt-4 max-w-3xl leading-7 text-slate-400">
                     Give Odi your CV and the Business Analyst job description.
                     Odi will compare the role requirements against the evidence
@@ -2893,7 +3349,7 @@ const renderCvReview = (review: string) => {
                     evidence gaps.
                   </p>
                 </div>
-
+ 
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
@@ -2902,7 +3358,7 @@ const renderCvReview = (review: string) => {
                   Close
                 </button>
               </div>
-
+ 
               <div className="mt-10 grid gap-6 lg:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
                   <div className="mb-5">
@@ -2911,7 +3367,7 @@ const renderCvReview = (review: string) => {
                       Paste the CV text you want Odi to compare against the role.
                     </p>
                   </div>
-
+ 
                   <textarea
                     value={matchCvText}
                     onChange={(event) => {
@@ -2921,12 +3377,12 @@ const renderCvReview = (review: string) => {
                     placeholder="Paste your CV text here..."
                     className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
                   />
-
+ 
                   <p className="mt-3 text-xs leading-5 text-slate-500">
                     For the first version, paste the text from your CV.
                   </p>
                 </div>
-
+ 
                 <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
                   <div className="mb-5">
                     <h3 className="text-lg font-semibold text-white">Job description</h3>
@@ -2934,7 +3390,7 @@ const renderCvReview = (review: string) => {
                       Paste the full Business Analyst role you want to compare against.
                     </p>
                   </div>
-
+ 
                   <textarea
                     value={matchJobText}
                     onChange={(event) => {
@@ -2944,19 +3400,19 @@ const renderCvReview = (review: string) => {
                     placeholder="Paste the job description here..."
                     className="min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
                   />
-
+ 
                   <p className="mt-3 text-xs leading-5 text-slate-500">
                     Include the responsibilities, requirements and skills sections where available.
                   </p>
                 </div>
               </div>
-
+ 
               {matchError && (
                 <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
                   {matchError}
                 </div>
               )}
-
+ 
               <button
                 type="button"
                 onClick={handleMatchCvRole}
@@ -2970,7 +3426,7 @@ const renderCvReview = (review: string) => {
                 {isMatchingCv ? 'Comparing CV with role…' : 'Match CV to Role'}
                 <ArrowRight className="h-4 w-4" />
               </button>
-
+ 
               {isMatchingCv && (
                 <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
                   <div className="flex items-center gap-3">
@@ -2981,7 +3437,7 @@ const renderCvReview = (review: string) => {
                   </div>
                 </div>
               )}
-
+ 
               {matchAnalysis && (
                 <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
                   <div className="mb-6">
@@ -2992,7 +3448,7 @@ const renderCvReview = (review: string) => {
                       Your CV ↔ Role Analysis
                     </h3>
                   </div>
-
+ 
                   <div className="text-sm">{renderCvReview(matchAnalysis)}</div>
                 </div>
               )}
@@ -3000,7 +3456,7 @@ const renderCvReview = (review: string) => {
           </div>
         </section>
       )}
-
+ 
       {activeTool === 'cv-tailor' && (
         <section
           id="cv-tailor-section"
@@ -3022,7 +3478,7 @@ const renderCvReview = (review: string) => {
                     the role without inventing experience, achievements or qualifications.
                   </p>
                 </div>
-
+ 
                 <button
                   type="button"
                   onClick={() => setActiveTool(null)}
@@ -3031,7 +3487,7 @@ const renderCvReview = (review: string) => {
                   Close
                 </button>
               </div>
-
+ 
               <div className="mt-10 grid gap-6 lg:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
                   <h3 className="text-lg font-semibold text-white">Your CV</h3>
@@ -3048,7 +3504,7 @@ const renderCvReview = (review: string) => {
                     className="mt-5 min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
                   />
                 </div>
-
+ 
                 <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
                   <h3 className="text-lg font-semibold text-white">Target role</h3>
                   <p className="mt-1 text-sm leading-6 text-slate-400">
@@ -3065,13 +3521,13 @@ const renderCvReview = (review: string) => {
                   />
                 </div>
               </div>
-
+ 
               {tailorError && (
                 <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
                   {tailorError}
                 </div>
               )}
-
+ 
               <button
                 type="button"
                 onClick={handleTailorCv}
@@ -3085,7 +3541,7 @@ const renderCvReview = (review: string) => {
                 {isTailoringCv ? 'Tailoring your CV…' : 'Tailor My CV'}
                 <ArrowRight className="h-4 w-4" />
               </button>
-
+ 
               {isTailoringCv && (
                 <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
                   <div className="flex items-center gap-3">
@@ -3096,7 +3552,7 @@ const renderCvReview = (review: string) => {
                   </div>
                 </div>
               )}
-
+ 
               {tailoredCv && (
                 <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
                   <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -3135,18 +3591,54 @@ const renderCvReview = (review: string) => {
           </div>
         </section>
       )}
-
+ 
       {activeTool === 'interview-practice' && (
         <section id="interview-practice-section" className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]">
           <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
             <div className="rounded-3xl border border-cyan-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
               <div className="flex items-start justify-between gap-6">
                 <div><p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">Interview Practice</p><h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Practise a realistic Business Analyst interview.</h2><p className="mt-4 max-w-3xl leading-7 text-slate-400">Odi will ask one question at a time, evaluate your answer against the role, probe where useful, and finish with a practical preparation summary.</p></div>
-                <button type="button" onClick={() => setActiveTool(null)} className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5">Close</button>
+                <button type="button" onClick={handleCloseInterview} className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5">Close</button>
               </div>
               {!interviewQuestion && !interviewSummary && (
                 <div className="mt-10 space-y-6">
-                  <div className="grid gap-6 lg:grid-cols-2">
+  <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-2">
+    <div className="grid grid-cols-2 gap-2">
+      <button
+        type="button"
+        onClick={() => handleInterviewModeChange('text')}
+        className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+          interviewMode === 'text'
+            ? 'bg-white text-slate-950 shadow-lg'
+            : 'text-slate-300 hover:bg-white/5'
+        }`}
+      >
+        <MessageCircle className="h-4 w-4" />
+        Text Interview
+      </button>
+ 
+      <button
+        type="button"
+        onClick={() => handleInterviewModeChange('voice')}
+        className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+          interviewMode === 'voice'
+            ? 'bg-cyan-300 text-slate-950 shadow-lg'
+            : 'text-slate-300 hover:bg-white/5'
+        }`}
+      >
+        <Mic className="h-4 w-4" />
+        Voice Interview
+      </button>
+    </div>
+ 
+    <div className="px-3 pb-2 pt-3 text-center text-xs text-slate-400">
+      {interviewMode === 'voice'
+        ? 'Odi will ask questions aloud and you can answer using your microphone.'
+        : 'Type your answers and receive structured interview feedback from Odi.'}
+    </div>
+  </div>
+ 
+  <div className="grid gap-6 lg:grid-cols-2">
                     <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6"><label className="text-sm font-semibold text-white" htmlFor="interview-type">Interview focus</label><select id="interview-type" value={interviewType} onChange={(event) => setInterviewType(event.target.value)} className="mt-4 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-emerald-300/40"><option>Job-specific Business Analyst interview</option><option>General Business Analyst interview</option><option>Requirements & Stakeholder Management</option><option>Agile & Delivery Business Analyst</option><option>Change & Transformation Business Analyst</option></select></div>
                     <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6"><h3 className="text-sm font-semibold text-white">Optional CV context</h3><p className="mt-2 text-sm leading-6 text-slate-400">Add your CV if you want Odi to challenge you using your actual experience.</p><textarea value={interviewCvText} onChange={(event) => { setInterviewCvText(event.target.value); setInterviewError(''); }} placeholder="Paste your CV here (optional)..." className="mt-4 min-h-[180px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40" /></div>
                   </div>
@@ -3158,10 +3650,228 @@ const renderCvReview = (review: string) => {
               {interviewQuestion && !interviewSummary && (
                 <div className="mt-10 space-y-6">
                   <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em]"><span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-cyan-200">Question {interviewHistory.length + 1}</span>{interviewQuestionType && <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-slate-400">{interviewQuestionType}</span>}</div>
-                  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.04] p-7 sm:p-9"><p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">Odi asks</p><h3 className="mt-4 text-2xl font-semibold leading-9 text-white sm:text-3xl">{interviewQuestion}</h3>{interviewWhatItTests && <p className="mt-5 text-sm leading-7 text-slate-400"><span className="font-semibold text-slate-300">What this tests:</span>{' '}{interviewWhatItTests}</p>}</div>
+                  <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.04] p-7 sm:p-9">
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
+      Odi asks
+    </p>
+ 
+    {interviewMode === 'voice' && (
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => speakOdi(interviewQuestion)}
+          disabled={isOdiSpeaking || voiceMuted}
+          className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Volume2 className="h-4 w-4" />
+          {isOdiSpeaking ? 'Odi is speaking…' : 'Hear question again'}
+        </button>
+ 
+        <button
+          type="button"
+          onClick={() => {
+            if (isOdiSpeaking) {
+              stopOdiSpeaking();
+            }
+ 
+            setVoiceMuted((current) => !current);
+          }}
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.08]"
+        >
+          {voiceMuted ? (
+            <>
+              <VolumeX className="h-4 w-4" />
+              Unmute Odi
+            </>
+          ) : (
+            <>
+              <Volume2 className="h-4 w-4" />
+              Mute Odi
+            </>
+          )}
+        </button>
+      </div>
+    )}
+  </div>
+ 
+  <h3 className="mt-4 text-2xl font-semibold leading-9 text-white sm:text-3xl">
+    {interviewQuestion}
+  </h3>
+ 
+  {interviewMode === 'voice' && isOdiSpeaking && (
+    <div className="mt-5 flex items-center gap-2 text-sm text-cyan-200">
+      <span className="flex items-center gap-1" aria-hidden="true">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
+        <span className="h-3 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:120ms]" />
+        <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:240ms]" />
+      </span>
+      Odi is speaking
+    </div>
+  )}
+ 
+  {interviewWhatItTests && (
+    <p className="mt-5 text-sm leading-7 text-slate-400">
+      <span className="font-semibold text-slate-300">
+        What this tests:
+      </span>{' '}
+      {interviewWhatItTests}
+    </p>
+  )}
+</div>
                   {interviewFeedback && <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7 sm:p-9"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-300">Feedback on your last answer</p><p className="mt-4 leading-7 text-slate-300">{interviewFeedback.overall}</p><div className="mt-6 grid gap-6 lg:grid-cols-2"><div><h4 className="font-semibold text-white">What worked</h4><div className="mt-3 space-y-2">{(interviewFeedback.strengths || []).map((item: string, index: number) => <div key={index} className="flex gap-3 text-sm leading-6 text-slate-300"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" /><span>{item}</span></div>)}</div></div><div><h4 className="font-semibold text-white">What to improve</h4><div className="mt-3 space-y-2">{(interviewFeedback.improvements || []).map((item: string, index: number) => <div key={index} className="flex gap-3 text-sm leading-6 text-slate-300"><ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-300" /><span>{item}</span></div>)}</div></div></div><div className="mt-6 grid gap-4 sm:grid-cols-3">{[['Evidence', interviewFeedback.evidenceUse], ['Structure & clarity', interviewFeedback.structureAndClarity], ['Role relevance', interviewFeedback.relevance]].map(([label, value]) => <div key={label} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p><p className="mt-2 text-sm leading-6 text-slate-300">{value}</p></div>)}</div></div>}
-                  <div><label className="text-sm font-semibold text-white" htmlFor="interview-answer">Your answer</label><textarea id="interview-answer" value={interviewAnswer} onChange={(event) => { setInterviewAnswer(event.target.value); setInterviewError(''); }} placeholder="Answer as if you were in the interview. Use a real example where appropriate..." className="mt-4 min-h-[260px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-5 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40" /></div>
-                  {interviewError && <div className="rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">{interviewError}</div>}
+{interviewMode === 'text' ? (
+  <div>
+    <label
+      className="text-sm font-semibold text-white"
+      htmlFor="interview-answer"
+    >
+      Your answer
+    </label>
+ 
+    <textarea
+      id="interview-answer"
+      value={interviewAnswer}
+      onChange={(event) => {
+        setInterviewAnswer(event.target.value);
+        setInterviewError('');
+      }}
+      placeholder="Answer as if you were in the interview. Use a real example where appropriate..."
+      className="mt-4 min-h-[260px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-5 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+    />
+  </div>
+) : (
+  <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-7">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p className="text-sm font-semibold text-white">
+          Your answer
+        </p>
+        <p className="mt-1 text-sm text-slate-400">
+          Speak naturally. Odi will transcribe your answer before analysing it.
+        </p>
+      </div>
+ 
+      {isRecordingInterview && (
+        <span className="inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-semibold text-red-300">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-400" />
+          Listening…
+        </span>
+      )}
+    </div>
+ 
+    <div className="mt-6 flex flex-col items-center justify-center rounded-3xl border border-cyan-300/10 bg-slate-950/70 px-6 py-10 text-center">
+      {isRecordingInterview ? (
+        <>
+          <div className="flex items-center gap-1.5" aria-hidden="true">
+            <span className="h-6 w-2 animate-pulse rounded-full bg-cyan-300" />
+            <span className="h-10 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:120ms]" />
+            <span className="h-7 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:240ms]" />
+            <span className="h-12 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:360ms]" />
+            <span className="h-6 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:480ms]" />
+          </div>
+ 
+          <p className="mt-5 text-lg font-semibold text-white">
+            Odi is listening
+          </p>
+ 
+          <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">
+            Take your time and answer as you would in a real interview.
+          </p>
+ 
+          <button
+            type="button"
+            onClick={handleStopVoiceRecording}
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+          >
+            <MicOff className="h-4 w-4" />
+            Stop recording
+          </button>
+        </>
+      ) : isTranscribingInterview ? (
+        <>
+          <div className="flex items-center gap-1.5" aria-hidden="true">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
+            <span className="h-3 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:120ms]" />
+            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300 [animation-delay:240ms]" />
+          </div>
+ 
+          <p className="mt-5 text-lg font-semibold text-white">
+            Transcribing your answer…
+          </p>
+ 
+          <p className="mt-2 text-sm text-slate-400">
+            Odi is converting your recording into text.
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10">
+            <Mic className="h-7 w-7 text-cyan-200" />
+          </div>
+ 
+          <p className="mt-5 text-lg font-semibold text-white">
+            Ready when you are
+          </p>
+ 
+          <p className="mt-2 max-w-md text-sm leading-6 text-slate-400">
+            Click below and speak your answer. You can review the transcript before sending it to Odi.
+          </p>
+ 
+          <button
+            type="button"
+            onClick={handleStartVoiceRecording}
+            disabled={isEvaluatingInterview || isFinishingInterview}
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Mic className="h-4 w-4" />
+            Start speaking
+          </button>
+        </>
+      )}
+    </div>
+ 
+    {voiceTranscript && !isRecordingInterview && !isTranscribingInterview && (
+      <div className="mt-5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-white">
+            Your transcript
+          </p>
+ 
+          <button
+            type="button"
+            onClick={() => {
+              setVoiceTranscript('');
+              setInterviewAnswer('');
+              setInterviewError('');
+            }}
+            className="text-xs font-semibold text-slate-400 transition hover:text-white"
+          >
+            Record again
+          </button>
+        </div>
+ 
+        <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950 p-5 text-sm leading-7 text-slate-300">
+          {voiceTranscript}
+        </div>
+ 
+        <button
+          type="button"
+          onClick={() =>
+            handleSubmitInterviewAnswer(voiceTranscript)
+          }
+          disabled={isEvaluatingInterview || isFinishingInterview}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Send className="h-4 w-4" />
+          {isEvaluatingInterview
+            ? 'Odi is reviewing your answer…'
+            : 'Send answer to Odi'}
+        </button>
+      </div>
+    )}
+  </div>
+)}                  {interviewError && <div className="rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">{interviewError}</div>}
                   <div className="space-y-4">
                     {(isEvaluatingInterview || isFinishingInterview) && (
                       <motion.div
@@ -3180,7 +3890,7 @@ const renderCvReview = (review: string) => {
                       </motion.div>
                     )}
                     <div className="flex flex-col gap-3 sm:flex-row">
-                      <button type="button" onClick={handleSubmitInterviewAnswer} disabled={isEvaluatingInterview || isFinishingInterview || interviewAnswer.trim().length < 10} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40">{isEvaluatingInterview ? 'Odi is reviewing your answer…' : 'Submit Answer'}<ArrowRight className="h-4 w-4" /></button>
+                      <button type="button" onClick={() => handleSubmitInterviewAnswer()} disabled={isEvaluatingInterview || isFinishingInterview || interviewAnswer.trim().length < 10} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40">{isEvaluatingInterview ? 'Odi is reviewing your answer…' : 'Submit Answer'}<ArrowRight className="h-4 w-4" /></button>
                       <button type="button" onClick={handleFinishInterview} disabled={isFinishingInterview || isEvaluatingInterview || !interviewHistory.length} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40">{isFinishingInterview ? 'Odi is preparing your summary…' : 'Finish Practice'}</button>
                     </div>
                   </div>
@@ -3191,7 +3901,7 @@ const renderCvReview = (review: string) => {
           </div>
         </section>
       )}
-
+ 
       <section className="border-t border-white/10 bg-white/[0.02]">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
           <div className="rounded-3xl border border-emerald-300/10 bg-emerald-300/[0.03] p-8 sm:p-10">
@@ -3200,16 +3910,16 @@ const renderCvReview = (review: string) => {
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
                   Built for real applications
                 </p>
-
+ 
                 <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">
                   Odi will become your personal BA workspace.
                 </h2>
-
+ 
                 <p className="mt-3 max-w-2xl leading-7 text-slate-400">
                   Start with CV and BA job analysis. Then build towards requirements analysis, user stories, process analysis, and delivery support.
                 </p>
               </div>
-
+ 
               <a
                 href="/"
                 className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-200"
@@ -3227,13 +3937,13 @@ const renderCvReview = (review: string) => {
 export default function ArcklenConsultingWebsite() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageKey>(getPageFromPath());
-
+ 
   useEffect(() => {
     const handleRouteChange = () => setCurrentPage(getPageFromPath());
     window.addEventListener('popstate', handleRouteChange);
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
-
+ 
   const navItems = useMemo(
     () => [
       { label: 'Home', href: '/' as const, key: 'home' as PageKey },
@@ -3245,14 +3955,14 @@ export default function ArcklenConsultingWebsite() {
     ],
     []
   );
-
+ 
   const navigateTo = (href: string) => {
     window.history.pushState({}, '', href);
     setCurrentPage(getPageFromPath());
     setMobileOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
+ 
   const renderPage = () => {
     switch (currentPage) {
       case 'about':
@@ -3271,12 +3981,12 @@ export default function ArcklenConsultingWebsite() {
         return <LandingPage />;
     }
   };
-
+ 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <SeoManager page={currentPage} />
       <RobChatbot />
-
+ 
       <div className="border-b border-white/10 bg-slate-950">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 text-sm text-slate-300 lg:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-emerald-200">
@@ -3299,9 +4009,9 @@ export default function ArcklenConsultingWebsite() {
           </div>
         </div>
       </div>
-
+ 
       <AnimatedServiceStrip />
-
+ 
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <button onClick={() => navigateTo('/')} className="flex items-center gap-4 text-left">
@@ -3311,7 +4021,7 @@ export default function ArcklenConsultingWebsite() {
               <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Business Analysis & Transformation Consulting</p>
             </div>
           </button>
-
+ 
           <nav className="hidden items-center gap-7 lg:flex">
             {navItems.map((item) => (
               <button
@@ -3332,12 +4042,12 @@ export default function ArcklenConsultingWebsite() {
               <ArrowRight className="h-4 w-4" />
             </a>
           </nav>
-
+ 
           <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden">
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-
+ 
         {mobileOpen && (
           <div className="border-t border-white/10 px-6 py-5 lg:hidden">
             <div className="flex flex-col gap-4">
@@ -3353,9 +4063,9 @@ export default function ArcklenConsultingWebsite() {
           </div>
         )}
       </header>
-
+ 
       {renderPage()}
-
+ 
       <footer className="border-t border-white/10 bg-slate-950">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 pb-28 lg:grid-cols-4 lg:px-8 lg:pb-12">
           <div className="lg:col-span-2">
@@ -3370,7 +4080,7 @@ export default function ArcklenConsultingWebsite() {
               Arcklen supports UK businesses with business analysis, process improvement, documentation, and change & transformation support.
             </p>
           </div>
-
+ 
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Quick Links</h4>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-400">
@@ -3381,7 +4091,7 @@ export default function ArcklenConsultingWebsite() {
               ))}
             </div>
           </div>
-
+ 
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Business Info</h4>
             <div className="mt-4 space-y-3 text-sm text-slate-400">
@@ -3399,22 +4109,22 @@ export default function ArcklenConsultingWebsite() {
     </div>
   );
 }
-
+ 
 export const __sanityChecks = {
   navItemCount: 6,
   serviceCount: services.length,
   caseStudyCount: caseStudies.length,
   blogPostCount: blogPosts.length,
 };
-
-
-
-
-
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
