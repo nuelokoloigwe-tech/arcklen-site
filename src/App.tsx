@@ -1686,6 +1686,12 @@ const [tailorCopied, setTailorCopied] = useState(false);
 const [isTailoringCv, setIsTailoringCv] = useState(false);
 const [tailorError, setTailorError] = useState('');
 const [tailorMessageIndex, setTailorMessageIndex] = useState(0);
+const [coverLetterCvText, setCoverLetterCvText] = useState('');
+const [coverLetterJobText, setCoverLetterJobText] = useState('');
+const [coverLetter, setCoverLetter] = useState('');
+const [coverLetterCopied, setCoverLetterCopied] = useState(false);
+const [isCreatingCoverLetter, setIsCreatingCoverLetter] = useState(false);
+const [coverLetterError, setCoverLetterError] = useState('');
 const [interviewType, setInterviewType] = useState('Job-specific Business Analyst interview');
 const [interviewJobText, setInterviewJobText] = useState('');
 const [interviewCvText, setInterviewCvText] = useState('');
@@ -2397,6 +2403,72 @@ const handleTailorCv = async () => {
   }
 };
  
+const handleCopyCoverLetter = async () => {
+  if (!coverLetter) return;
+
+  try {
+    await navigator.clipboard.writeText(coverLetter);
+    setCoverLetterCopied(true);
+    window.setTimeout(() => setCoverLetterCopied(false), 2000);
+  } catch (error) {
+    console.error('Odi cover letter copy error:', error);
+  }
+};
+
+const handleCreateCoverLetter = async () => {
+  if (coverLetterCvText.trim().length < 100) {
+    setCoverLetterError(
+      'Please provide at least 100 characters of CV text.',
+    );
+    return;
+  }
+
+  if (coverLetterJobText.trim().length < 100) {
+    setCoverLetterError(
+      'Please provide at least 100 characters of job description.',
+    );
+    return;
+  }
+
+  setIsCreatingCoverLetter(true);
+  setCoverLetter('');
+  setCoverLetterError('');
+  setCoverLetterCopied(false);
+
+  try {
+    const response = await fetch('/api/create-cover-letter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        cvText: coverLetterCvText.trim(),
+        jobText: coverLetterJobText.trim(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error || 'Odi could not create the cover letter.',
+      );
+    }
+
+    setCoverLetter(data.coverLetter || '');
+  } catch (error) {
+    console.error('Odi cover letter error:', error);
+
+    setCoverLetterError(
+      error instanceof Error
+        ? error.message
+        : 'Odi could not create the cover letter right now. Please try again.',
+    );
+  } finally {
+    setIsCreatingCoverLetter(false);
+  }
+};
+
 useEffect(() => {
   if (!isTailoringCv) {
     setTailorMessageIndex(0);
@@ -2462,6 +2534,12 @@ const jobAnalysisMessages = [
     {
   title: 'Tailor my CV',
   description: 'Tailor your CV to a specific role using only the experience and evidence already in your CV.',
+  icon: FileText,
+  active: true,
+},
+{
+  title: 'Create a cover letter',
+  description: 'Create a tailored cover letter from your CV and a job description.',
   icon: FileText,
   active: true,
 },
@@ -2873,15 +2951,15 @@ const renderCvReview = (review: string) => {
             </div>
  
             <h1 className="mt-6 text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-              Your AI Business Analysis Assistant.
+              Your AI Career Assistant for Business Analysts.
             </h1>
  
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Analyse roles, strengthen your CV, understand requirements, and prepare for delivery with an assistant built specifically for Business Analysts.
+            Review your CV, analyse roles, tailor your applications, create cover letters, and practise interviews with an assistant built specifically for Business Analysts.
             </p>
  
             <div className="mt-10 flex flex-wrap gap-3">
-              {['CV Review', 'BA Job Analysis', 'Requirements Analysis', 'Process Thinking'].map((item) => (
+              {['CV Review', 'Job Analysis', 'CV Matching', 'Cover Letters', 'Interview Practice'].map((item) => (
                 <span
                   key={item}
                   className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200"
@@ -2901,12 +2979,11 @@ const renderCvReview = (review: string) => {
           </p>
  
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Choose what you want to work on.
+            Choose what you want to improve.
           </h2>
  
           <p className="mt-4 text-slate-400">
-            Odi is being built around the practical tasks Business Analysts use to understand problems, create clarity, and support delivery.
-          </p>
+Odi helps Business Analysts turn their experience into stronger CVs, targeted applications and better interview preparation.          </p>
         </div>
  
         <div className="mt-10 grid gap-5 md:grid-cols-2">
@@ -2929,8 +3006,10 @@ const renderCvReview = (review: string) => {
       : tool.title === 'Match CV to role'
         ? 'cv-role-match'
         : tool.title === 'Tailor my CV'
-          ? 'cv-tailor'
-          : 'interview-practice';
+  ? 'cv-tailor'
+  : tool.title === 'Create a cover letter'
+    ? 'cover-letter'
+    : 'interview-practice';
  
   const sectionId =
   tool.title === 'Review my CV'
@@ -2941,7 +3020,9 @@ const renderCvReview = (review: string) => {
         ? 'cv-role-match-section'
         : tool.title === 'Tailor my CV'
           ? 'cv-tailor-section'
-          : 'interview-practice-section';
+          : tool.title === 'Create a cover letter'
+            ? 'cover-letter-section'
+            : 'interview-practice-section';
  
   if (activeTool === 'interview-practice' && toolKey !== 'interview-practice') {
     // The voice cleanup is handled inside OdiPage when its interview controls change or unmount.
@@ -2983,8 +3064,10 @@ const renderCvReview = (review: string) => {
                         : tool.title === 'Match CV to role'
                           ? 'Start matching'
                           : tool.title === 'Tailor my CV'
-                            ? 'Start tailoring'
-                            : 'Start interview practice'
+  ? 'Start tailoring'
+  : tool.title === 'Create a cover letter'
+    ? 'Create cover letter'
+    : 'Start interview practice'
                     : 'Coming next'}
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                 </div>
@@ -3592,6 +3675,151 @@ const renderCvReview = (review: string) => {
         </section>
       )}
  
+      {activeTool === 'cover-letter' && (
+        <section
+          id="cover-letter-section"
+          className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]"
+        >
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+            <div className="rounded-3xl border border-emerald-300/20 bg-slate-900/70 p-7 shadow-2xl sm:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                    Create a Cover Letter
+                  </p>
+
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Create a tailored cover letter.
+                  </h2>
+
+                  <p className="mt-4 max-w-3xl leading-7 text-slate-400">
+                    Give Odi your CV and the target job description. Odi will
+                    create a professional cover letter based only on the
+                    experience and evidence contained in your CV.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTool(null)}
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-10 grid gap-6 lg:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+                  <h3 className="text-lg font-semibold text-white">
+                    Your CV
+                  </h3>
+
+                  <p className="mt-1 text-sm leading-6 text-slate-400">
+                    Paste the CV you want Odi to use.
+                  </p>
+
+                  <textarea
+                    value={coverLetterCvText}
+                    onChange={(event) => {
+                      setCoverLetterCvText(event.target.value);
+                      setCoverLetterError('');
+                    }}
+                    placeholder="Paste your CV text here..."
+                    className="mt-5 min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+                  <h3 className="text-lg font-semibold text-white">
+                    Target role
+                  </h3>
+
+                  <p className="mt-1 text-sm leading-6 text-slate-400">
+                    Paste the full job description for the role.
+                  </p>
+
+                  <textarea
+                    value={coverLetterJobText}
+                    onChange={(event) => {
+                      setCoverLetterJobText(event.target.value);
+                      setCoverLetterError('');
+                    }}
+                    placeholder="Paste the job description here..."
+                    className="mt-5 min-h-[360px] w-full resize-y rounded-2xl border border-white/10 bg-slate-950 p-4 text-sm leading-7 text-white outline-none placeholder:text-slate-600 focus:border-emerald-300/40"
+                  />
+                </div>
+              </div>
+
+              {coverLetterError && (
+                <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
+                  {coverLetterError}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleCreateCoverLetter}
+                disabled={
+                  isCreatingCoverLetter ||
+                  coverLetterCvText.trim().length < 100 ||
+                  coverLetterJobText.trim().length < 100
+                }
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {isCreatingCoverLetter
+                  ? 'Creating your cover letter…'
+                  : 'Create Cover Letter'}
+
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              {isCreatingCoverLetter && (
+                <div className="mt-8 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-300" />
+
+                    <p className="text-sm font-medium text-emerald-200">
+                      Odi is creating your tailored cover letter…
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {coverLetter && (
+                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                  <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                        Your Cover Letter
+                      </p>
+
+                      <h3 className="mt-2 text-2xl font-semibold text-white">
+                        Ready to use
+                      </h3>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleCopyCoverLetter}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
+                    >
+                      {coverLetterCopied ? 'Copied' : 'Copy Cover Letter'}
+                      <Copy className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6">
+                    <pre className="whitespace-pre-wrap font-sans text-sm leading-7 text-slate-200">
+                      {coverLetter}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {activeTool === 'interview-practice' && (
         <section id="interview-practice-section" className="scroll-mt-28 border-t border-white/10 bg-white/[0.02]">
           <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
