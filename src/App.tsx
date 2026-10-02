@@ -4177,6 +4177,7 @@ export default function ArcklenConsultingWebsite() {
       { label: 'Home', href: '/' as const, key: 'home' as PageKey },
       { label: 'About', href: '/about' as const, key: 'about' as PageKey },
       { label: 'Services', href: '/services' as const, key: 'services' as PageKey },
+      { label: 'Odi', href: '/odi' as const, key: 'odi' as PageKey },
       { label: 'Case Studies', href: '/case-studies' as const, key: 'case-studies' as PageKey },
       { label: 'Insights', href: '/insights' as const, key: 'insights' as PageKey },
       { label: 'Contact', href: '/contact' as const, key: 'contact' as PageKey },
