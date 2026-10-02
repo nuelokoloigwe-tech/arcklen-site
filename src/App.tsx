@@ -29,15 +29,15 @@ const serviceIconMap = [FileText, TrendingUp, ShieldCheck, Sparkles];
 const services = [
   {
     title: 'Business Analysis',
-    desc: 'Turn business needs into clear requirements, aligned stakeholders, and workable solutions.',
+desc: 'Turn business needs into clear requirements, aligned stakeholders, and practical solutions that support better decisions and delivery.',
   },
   {
     title: 'Process Improvement',
-    desc: 'Understand current processes, remove friction, and create clearer ways of working.',
+    desc: 'Understand current processes, remove friction, and create clearer, more efficient ways of working.',
   },
   {
     title: 'Change & Transformation',
-    desc: 'Support people, processes, and technology through structured, delivery-focused change.',
+desc: 'Support people, processes, and technology through structured change that keeps delivery focused on meaningful outcomes.',
   },
 ];
  
@@ -413,8 +413,8 @@ function LandingPage() {
         </h1>
  
         <p className="mt-6 max-w-xl text-lg leading-8 text-slate-200 sm:text-xl">
-          We help organisations understand problems, improve processes and
-          deliver meaningful change.
+          We help organisations turn complex business problems into clear
+requirements, better processes and meaningful change.
         </p>
  
         <div className="mt-9 flex flex-wrap gap-4">
@@ -438,7 +438,7 @@ function LandingPage() {
             }}
             className="inline-flex items-center gap-2 rounded-full border border-emerald-300/60 bg-slate-950/30 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
           >
-            Get in Touch
+            Discuss Your Challenge
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -481,13 +481,11 @@ function LandingPage() {
  
         <div className="absolute bottom-12 right-0 max-w-[220px] border-l-2 border-emerald-300 pl-5">
           <p className="text-xl font-medium uppercase leading-9 tracking-[0.16em] text-white">
-            Clearer
+            Clarity.
             <br />
-            Processes.
+            Alignment.
             <br />
-            Brighter
-            <br />
-            Tomorrow.
+            Delivery.
           </p>
         </div>
       </motion.div>
@@ -501,9 +499,16 @@ function LandingPage() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600">Our Services</p>
-              <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Practical solutions for real change.</h2>
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+              Turning business challenges into practical outcomes.
+              </h2>
+            
             </div>
-            <p className="max-w-xl text-base leading-7 text-slate-600">We provide business analysis, process improvement and transformation support, with a people-focused approach that keeps delivery moving.</p>
+           <p className="max-w-xl text-base leading-7 text-slate-600">
+            From understanding business needs to improving processes and supporting
+            transformation, we bring structure, clarity and practical thinking to
+            complex change.
+          </p>           
           </div>
  
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -4256,20 +4261,22 @@ export default function ArcklenConsultingWebsite() {
               <button
                 key={item.label}
                 onClick={() => navigateTo(item.href)}
-                className={`text-sm font-medium transition hover:text-white ${currentPage === item.key ? 'text-white' : 'text-slate-300'}`}
+                className={`whitespace-nowrap text-sm font-medium transition hover:text-white ${
+  currentPage === item.key ? 'text-white' : 'text-slate-300'
+}`}
               >
                 {item.label}
               </button>
             ))}
             <a
-              href={bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900"
-            >
-              Book a Consultation
-              <ArrowRight className="h-4 w-4" />
-            </a>
+  href={bookingUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-6 py-2.5 text-sm font-normal text-white transition hover:bg-white/15"
+>
+  Book a Consultation
+  <ArrowRight className="h-4 w-4 text-white" />
+</a>
           </nav>
  
           <button onClick={() => setMobileOpen((prev) => !prev)} className="rounded-2xl border border-white/10 bg-white/5 p-3 lg:hidden">
@@ -4285,8 +4292,7 @@ export default function ArcklenConsultingWebsite() {
                   {item.label}
                 </button>
               ))}
-              <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">
-                Book a Consultation
+<a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-900 whitespace-nowrap">                Book a Consultation
               </a>
             </div>
           </div>
