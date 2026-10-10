@@ -1,6 +1,7 @@
 ﻿import type { FormEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import OdiWorkspace from './OdiWorkspace';
 import {
   ArrowRight,
   CalendarDays,
@@ -1637,6 +1638,7 @@ type InterviewSummary = {
 };
  
 function OdiPage() {
+  const [showWorkspace, setShowWorkspace] = useState(false);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [cvText, setCvText] = useState('');
   const [cvFileName, setCvFileName] = useState('');
@@ -2943,8 +2945,26 @@ const renderCvReview = (review: string) => {
       );
     });
   };
+  if (showWorkspace) {
   return (
-    <main className="bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white">
+      <div className="mx-auto max-w-7xl px-6 pt-6 lg:px-8">
+        <button
+          type="button"
+          onClick={() => setShowWorkspace(false)}
+          className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+        >
+          <span aria-hidden="true">←</span>
+          Back to Odi Tools
+        </button>
+      </div>
+      <OdiWorkspace />
+    </div>
+  );
+}
+
+return (
+  <main className="bg-slate-950 text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <LuxeBackground />
  
@@ -2973,6 +2993,20 @@ const renderCvReview = (review: string) => {
                 </span>
               ))}
             </div>
+          <div className="mt-8">
+  <button
+    type="button"
+    onClick={() => setShowWorkspace(true)}
+    className="inline-flex items-center gap-3 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/30 transition hover:bg-blue-500"
+  >
+    <span aria-hidden="true">▦</span>
+    Open BA Thinking Workspace
+    <span aria-hidden="true">→</span>
+  </button>
+  <p className="mt-3 text-sm text-slate-400">
+    Turn project briefs into requirements, process maps and professional BA deliverables.
+  </p>
+</div>  
           </div>
         </div>
       </section>
