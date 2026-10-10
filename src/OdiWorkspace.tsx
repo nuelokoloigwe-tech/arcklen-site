@@ -286,7 +286,185 @@ setAnalysis(data.analysis || 'No analysis was returned.');
 
   {analysis && (
     <div className="mt-4 whitespace-pre-wrap rounded-lg border bg-white p-4 text-sm leading-6 text-slate-700">
-      {analysis}
+      
+
+
+<div className="space-y-6">
+  {(() => {
+    const lines = analysis
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .split('\n');
+
+    const sections: { heading: string; content: string[] }[] = [];
+    let current = {
+      heading: 'Project Analysis',
+      content: [] as string[],
+    };
+
+    const clean = (text: string) =>
+      text
+        .replace(/^#{1,6}\s*/, '')
+        .replace(/\*\*/g, '')
+        .trim();
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      const headingMatch = trimmed.match(/^#{1,6}\s+(.+)$/);
+
+      if (headingMatch) {
+        if (
+          current.content.length ||
+          current.heading !== 'Project Analysis'
+        ) {
+          sections.push(current);
+        }
+
+        current = {
+          heading: clean(headingMatch[1]).replace(/^\d+\.\s*/, ''),
+          content: [],
+        };
+        continue;
+      }
+
+      if (
+        trimmed &&
+        clean(trimmed).replace(/^\d+\.\s*/, '').toLowerCase() ===
+          current.heading.toLowerCase()
+      ) {
+        continue;
+      }
+
+      if (/^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) {
+        continue;
+      }
+
+      current.content.push(line);
+    }
+
+    sections.push(current);
+
+    return sections
+      .filter(section => section.content.join('').trim())
+      .map((section, sectionIndex) => {
+        const blocks: string[][] = [];
+        let block: string[] = [];
+
+        for (const line of section.content) {
+          const trimmed = line.trim();
+          const isTable = trimmed.startsWith('|') && trimmed.endsWith('|');
+          const previousIsTable =
+            block.length > 0 &&
+            block[block.length - 1].trim().startsWith('|') &&
+            block[block.length - 1].trim().endsWith('|');
+
+          if (
+            block.length &&
+            trimmed === ''
+          ) {
+            blocks.push(block);
+            block = [];
+            continue;
+          }
+
+          if (block.length && isTable !== previousIsTable) {
+            blocks.push(block);
+            block = [];
+          }
+
+          if (trimmed) block.push(line);
+        }
+
+        if (block.length) blocks.push(block);
+
+        return (
+          <section
+            key={sectionIndex}
+            className="rounded-xl border border-slate-200 bg-white p-5"
+          >
+            {section.heading !== 'Project Analysis' && (
+              <h3 className="mb-4 text-base font-semibold text-slate-900">
+                {section.heading}
+              </h3>
+            )}
+
+            <div className="space-y-4 text-sm leading-7 text-slate-700">
+              {blocks.map((rows, blockIndex) => {
+                const first = rows[0].trim();
+
+                if (first.startsWith('|') && first.endsWith('|')) {
+                  const tableRows = rows
+                    .map(row =>
+                      row.trim().replace(/^\|/, '').replace(/\|$/, '')
+                        .split('|').map(cell => clean(cell))
+                    )
+                    .filter(row =>
+                      !row.every(cell => /^:?-{3,}:?$/.test(cell))
+                    );
+
+                  if (!tableRows.length) return null;
+
+                  return (
+                    <div key={blockIndex} className="overflow-x-auto rounded-lg border border-slate-200">
+                      <table className="w-full border-collapse text-left text-sm">
+                        <thead className="bg-slate-50">
+                          <tr>
+                            {tableRows[0].map((cell, i) => (
+                              <th key={i} className="border-b px-3 py-2 font-semibold text-slate-900">
+                                {cell}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tableRows.slice(1).map((row, i) => (
+                            <tr key={i}>
+                              {row.map((cell, j) => (
+                                <td key={j} className="border-b border-slate-100 px-3 py-2 align-top">
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                }
+
+                const isList = rows.every(row =>
+                  /^\s*(?:[-*•]\s+|\d+[.)]\s+)/.test(row)
+                );
+
+                if (isList) {
+                  const numbered = /^\s*\d+[.)]\s+/.test(first);
+                  const List = numbered ? 'ol' : 'ul';
+
+                  return (
+                    <List key={blockIndex} className={`${numbered ? 'list-decimal' : 'list-disc'} space-y-1 pl-6`}>
+                      {rows.map((row, i) => (
+                        <li key={i}>
+                          {clean(row).replace(/^(?:[-*•]|\d+[.)])\s*/, '')}
+                        </li>
+                      ))}
+                    </List>
+                  );
+                }
+
+                return (
+                  <p key={blockIndex} className="whitespace-pre-wrap">
+                    {rows.map(clean).join('\n')}
+                  </p>
+                );
+              })}
+            </div>
+          </section>
+        );
+      });
+  })()}
+</div>
+
+
     </div>
   )}
 </div>
