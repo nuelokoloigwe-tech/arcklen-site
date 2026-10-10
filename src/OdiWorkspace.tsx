@@ -258,6 +258,24 @@ setAnalysis(data.analysis || 'No analysis was returned.');
     >
       {isAnalysing ? 'Analysing brief...' : 'Analyse Project Brief'}
     </button>
+    
+{isAnalysing && (
+  <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+    <div className="flex items-center gap-3">
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+
+      <p className="font-semibold text-blue-900">
+        Odi is analysing your project brief...
+      </p>
+    </div>
+
+    <p className="mt-2 text-sm text-blue-800">
+      Please wait while Odi reviews your brief and identifies
+      key business analysis considerations. This may take a few moments.
+    </p>
+  </div>
+)}
+
   </div>
 
   {analysisError && (
