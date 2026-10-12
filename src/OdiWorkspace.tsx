@@ -286,8 +286,25 @@ setAnalysis(data.analysis || 'No analysis was returned.');
 
   {analysis && (
     <div className="mt-4 whitespace-pre-wrap rounded-lg border bg-white p-4 text-sm leading-6 text-slate-700">
-      
 
+    
+<div className="mb-4 flex justify-end">
+  <button
+    type="button"
+    onClick={async () => {
+      try {
+        await navigator.clipboard.writeText(analysis);
+        alert('Analysis copied to clipboard.');
+      } catch {
+        alert('Unable to copy automatically. Please select and copy the analysis manually.');
+      }
+    }}
+    className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+  >
+    Copy Analysis
+  </button>
+</div>
+  
 
 <div className="space-y-6">
   {(() => {
